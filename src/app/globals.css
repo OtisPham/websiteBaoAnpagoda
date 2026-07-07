@@ -1,26 +1,113 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fdf7f2; /* Màu kem nhạt ấm cúng, đúng chuẩn thiết kế */
+  --foreground: #3d2c23; /* Màu Neutral nâu đen trầm */
+  
+  --primary: #8b4513; /* Màu Primary nâu đỏ sậm */
+  --secondary: #a0522d; /* Màu Secondary nâu đất ấm */
+  --tertiary: #d4a017; /* Màu Vàng đồng sang trọng */
+  --neutral: #3d2c23;
+  
+  --card-bg: #fbf1e8; /* Màu nền card kem trầm dịu nhẹ */
+  --accent: #8b4513;
+  --accent-foreground: #ffffff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
+  --color-neutral: var(--neutral);
+  --color-card-bg: var(--card-bg);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  
+  --font-sans: var(--font-geist-sans), Inter, sans-serif;
+  --font-serif: var(--font-playfair), "Playfair Display", Georgia, serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #191412; /* Màu gỗ mun trầm tối */
+    --foreground: #f5ede6;
+    --primary: #c67945;
+    --secondary: #d98859;
+    --tertiary: #e5b83b;
+    --card-bg: #271f1b;
   }
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.writing-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-family: var(--font-serif), serif;
+}
+
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  @page {
+    margin: 10mm 15mm;
+  }
+  
+  @page so-page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
+
+  .receipt-print-area {
+    width: 80mm;
+    max-width: 80mm;
+    padding: 2mm;
+    margin: 0 auto;
+  }
+}
+
+/* Hiệu ứng xoay nhẹ chậm cho bông hoa sen / la bàn */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 69, 19, 0.2);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 69, 19, 0.4);
 }

@@ -1,0 +1,136 @@
+'use client'
+
+import { useState, useTransition } from 'react'
+import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Compass, RefreshCw } from 'lucide-react'
+import { login } from '../actions'
+
+export default function LoginPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  
+  const urlError = searchParams.get('error')
+  const urlMessage = searchParams.get('message')
+
+  const [error, setError] = useState(urlError || '')
+  const [message, setMessage] = useState(urlMessage || '')
+  const [isPending, startTransition] = useTransition()
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setError('')
+    setMessage('')
+
+    const formData = new FormData(e.currentTarget)
+
+    startTransition(async () => {
+      const res = await login(formData)
+      if (res.success) {
+        if (res.role === 'USER') {
+          router.push('/phat-tu')
+        } else {
+          router.push('/dashboard')
+        }
+      } else {
+        setError(res.error || 'Có lỗi xảy ra trong quá trình đăng nhập.')
+      }
+    })
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col justify-center bg-[#faf8f5] dark:bg-[#12100e] py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <Link href="/" className="inline-flex items-center gap-2 text-amber-700 dark:text-amber-500">
+          <Compass className="h-10 w-10 animate-spin-slow" />
+          <span className="font-serif text-2xl font-bold tracking-wider">PAGODA ERP</span>
+        </Link>
+        <h2 className="mt-6 font-serif text-3xl font-bold tracking-tight text-stone-950 dark:text-white">
+          Đăng nhập hệ thống
+        </h2>
+        <p className="mt-2 text-sm text-stone-600 dark:text-stone-400">
+          Hoặc{' '}
+          <Link href="/auth/register" className="font-medium text-amber-700 hover:text-amber-800 dark:text-amber-500 dark:hover:text-amber-400">
+            đăng ký tài khoản Phật tử mới
+          </Link>
+        </p>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white dark:bg-[#1c1816] py-8 px-4 shadow-xl rounded-2xl border border-stone-200 dark:border-stone-800 sm:px-10">
+          
+          {error && (
+            <div className="mb-4 rounded-md bg-red-50 dark:bg-red-950/20 p-3 border border-red-200 dark:border-red-800">
+              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+            </div>
+          )}
+
+          {message && (
+            <div className="mb-4 rounded-md bg-green-50 dark:bg-green-950/20 p-3 border border-green-200 dark:border-green-800">
+              <p className="text-sm text-green-700 dark:text-green-400">{message}</p>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
+                Địa chỉ Email
+              </label>
+              <div className="mt-1">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  placeholder="name@example.com"
+                  className="block w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white placeholder-stone-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 sm:text-sm"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-stone-700 dark:text-stone-300">
+                Mật khẩu
+              </label>
+              <div className="mt-1">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  placeholder="••••••••"
+                  className="block w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white placeholder-stone-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 sm:text-sm"
+                />
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                disabled={isPending}
+                className="flex w-full justify-center rounded-lg bg-amber-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 transition disabled:opacity-50"
+              >
+                {isPending ? (
+                  <span className="flex items-center gap-1.5">
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    Đang đăng nhập...
+                  </span>
+                ) : (
+                  'Đăng nhập'
+                )}
+              </button>
+            </div>
+          </form>
+
+          <div className="mt-6 border-t border-stone-200 dark:border-stone-800 pt-6 text-center">
+            <Link href="/" className="text-sm font-medium text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-300">
+              ← Quay lại trang chủ
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

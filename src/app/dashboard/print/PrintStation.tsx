@@ -1,0 +1,397 @@
+'use client'
+
+import { useState } from 'react'
+import { Printer, Calendar, Clock, FileText, CheckCircle2, ChevronRight, RefreshCw, X } from 'lucide-react'
+import { markAsPrinted } from './actions'
+
+interface TargetPerson {
+  id: string
+  full_name: string
+  dharma_name?: string | null
+  birth_year?: number | null
+  death_year?: number | null
+  relation?: string | null
+  type: 'CAU_AN' | 'CAU_SIEU'
+}
+
+interface FormRecord {
+  id: string
+  form_code: string
+  form_type: 'CAU_AN' | 'CAU_SIEU'
+  status: string
+  is_delegated: boolean
+  scheduled_date: string
+  selected_time_slot?: string | null
+  note?: string | null
+  created_at: string
+  users?: { full_name: string; phone: string } | null
+  targets: TargetPerson[]
+}
+
+interface TemplateRecord {
+  id: string
+  name: string
+  form_type: string
+  file_url: string
+}
+
+interface Props {
+  acceptedForms: FormRecord[]
+  templates: TemplateRecord[]
+}
+
+export default function PrintStation({ acceptedForms, templates }: Props) {
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [isPrinting, setIsPrinting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('')
+  const [printMode, setPrintMode] = useState<'READING' | 'POSTER'>('READING')
+
+  const selectedTemplateUrl = templates.find(t => t.id === selectedTemplateId)?.file_url
+
+  // Toggle chọn phiếu
+  const handleToggleSelect = (id: string) => {
+    if (selectedIds.includes(id)) {
+      setSelectedIds(selectedIds.filter((x) => x !== id))
+    } else {
+      setSelectedIds([...selectedIds, id])
+    }
+  }
+
+  const handleSelectAll = () => {
+    if (selectedIds.length === acceptedForms.length) {
+      setSelectedIds([])
+    } else {
+      setSelectedIds(acceptedForms.map((f) => f.id))
+    }
+  }
+
+  // Bắt đầu chuẩn bị in sớ
+  const handlePreparePrint = () => {
+    if (selectedIds.length === 0) {
+      alert('Vui lòng chọn ít nhất một phiếu cúng để in.')
+      return
+    }
+    setIsPrinting(true)
+  }
+
+  // Đánh dấu đã in sớ thành công
+  const handleConfirmPrinted = async () => {
+    if (confirm('Hệ thống sẽ cập nhật trạng thái các phiếu này thành [Printed] và ghi nhận vào lịch sử in. Tiếp tục?')) {
+      setIsSubmitting(true)
+      const res = await markAsPrinted(selectedIds)
+      if (res.success) {
+        alert('Đã cập nhật trạng thái sớ thành công!')
+        setIsPrinting(false)
+        window.location.reload()
+      } else {
+        alert('Lỗi: ' + res.error)
+      }
+      setIsSubmitting(false)
+    }
+  }
+
+  const selectedForms = acceptedForms.filter((f) => selectedIds.includes(f.id))
+
+  return (
+    <div className="space-y-6">
+      {!isPrinting ? (
+        // Giao diện trạm in sớ (Default view)
+        <>
+          <div>
+            <h1 className="font-serif text-3xl font-bold tracking-tight">Trạm Chuẩn Bị In Sớ Hàng Loạt</h1>
+            <p className="text-stone-500 dark:text-stone-400 mt-1">
+              Danh sách các phiếu sớ đã duyệt tịnh tài tạ quầy, sẵn sàng để in ra sớ giấy để chư Tăng làm lễ đọc tụng.
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-[#1c1816] p-6 rounded-2xl border border-stone-200 dark:border-stone-850 shadow-sm space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="font-serif text-lg font-bold">Phiếu Lễ Sẵn Sàng In ({acceptedForms.length})</h3>
+              <div className="flex gap-3">
+                {selectedIds.length > 0 && (
+                  <button
+                    onClick={handlePreparePrint}
+                    className="flex items-center gap-2 bg-amber-700 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-amber-800 transition text-xs"
+                  >
+                    <Printer className="h-4 w-4" />
+                    Chuẩn bị in sớ ({selectedIds.length} phiếu)
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="overflow-x-auto border border-stone-100 dark:border-stone-800 rounded-xl">
+              <table className="min-w-full divide-y divide-stone-200 dark:divide-stone-800 text-left text-xs">
+                <thead className="bg-stone-50 dark:bg-stone-900/40 text-stone-500 dark:text-stone-400 font-bold uppercase tracking-wider">
+                  <tr>
+                    <th className="px-6 py-4 w-12">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.length === acceptedForms.length && acceptedForms.length > 0}
+                        onChange={handleSelectAll}
+                        className="rounded text-amber-700 focus:ring-amber-500 h-4 w-4"
+                      />
+                    </th>
+                    <th className="px-6 py-4">Mã Phiếu & Loại</th>
+                    <th className="px-6 py-4">Phật Tử Đăng Ký</th>
+                    <th className="px-6 py-4">Ca Cúng</th>
+                    <th className="px-6 py-4">Danh Sách Người Thụ Lễ</th>
+                    <th className="px-6 py-4">Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
+                  {acceptedForms.map((form) => (
+                    <tr key={form.id} className="hover:bg-stone-50/30 dark:hover:bg-stone-900/10">
+                      <td className="px-6 py-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.includes(form.id)}
+                          onChange={() => handleToggleSelect(form.id)}
+                          className="rounded text-amber-700 focus:ring-amber-500 h-4 w-4"
+                        />
+                      </td>
+                      <td className="px-6 py-4 space-y-1">
+                        <span className="font-bold text-stone-900 dark:text-white">{form.form_code}</span>
+                        <div>
+                          <span className={`inline-block text-[8px] uppercase font-extrabold tracking-widest px-1.5 py-0.5 rounded ${form.form_type === 'CAU_AN' ? 'bg-green-50 text-green-700 border border-green-200/50 dark:bg-green-950/20' : 'bg-rose-50 text-rose-700 border border-rose-200/50 dark:bg-rose-950/20'}`}>
+                            {form.form_type === 'CAU_AN' ? 'Cầu An' : 'Cầu Siêu'}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="font-semibold text-stone-850 dark:text-stone-200">{form.users?.full_name}</p>
+                        <p className="text-[10px] text-stone-500">{form.users?.phone}</p>
+                      </td>
+                      <td className="px-6 py-4 font-medium text-stone-700 dark:text-stone-300">
+                        {form.is_delegated ? 'Ủy nhiệm cho chùa' : form.selected_time_slot}
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="font-semibold text-stone-800 dark:text-stone-300">
+                          {form.targets.map(t => `${t.full_name} ${t.dharma_name ? `(${t.dharma_name})` : ''}`).join(', ')}
+                        </p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200/50 dark:bg-amber-950/20 dark:text-amber-400 font-bold uppercase tracking-wider text-[9px]">
+                          {form.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                  {acceptedForms.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="text-center py-12 text-stone-400 italic">
+                        Không có phiếu sớ nào ở trạng thái chờ in cúng dường.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      ) : (
+        // GIAO DIỆN IN SỚ (Full-screen Overlay & Horizontal Writing Mode)
+        <div className="space-y-6 print:space-y-0">
+          <div className="print:hidden bg-white dark:bg-[#1c1816] p-4 rounded-xl border border-stone-200 dark:border-stone-800 flex justify-between items-center shadow-sm flex-wrap gap-4">
+            <div className="space-y-1">
+              <h3 className="font-serif text-lg font-bold text-amber-800 dark:text-amber-500">Xem Trước Bản In Sớ</h3>
+              <p className="text-xs text-stone-500">Hãy nhấn nút in trình duyệt bên cạnh. Sớ đã được định dạng chuẩn in ngang dồn phải.</p>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <label className="text-sm font-semibold text-stone-700 dark:text-stone-300">Chế độ in:</label>
+              <select
+                value={printMode}
+                onChange={(e) => setPrintMode(e.target.value as 'READING' | 'POSTER')}
+                className="rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-1.5 text-sm text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 font-semibold"
+              >
+                <option value="READING">Mẫu Quý Thầy Đọc (Xoay Ngang)</option>
+                <option value="POSTER">Mẫu Dán Chánh Điện (Bảng Biểu)</option>
+              </select>
+            </div>
+
+            {printMode === 'READING' && (
+              <div className="flex items-center gap-3">
+                <label className="text-sm font-semibold text-stone-700 dark:text-stone-300">Phôi sớ:</label>
+                <select
+                  value={selectedTemplateId}
+                  onChange={(e) => setSelectedTemplateId(e.target.value)}
+                  className="rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-1.5 text-sm text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500"
+                >
+                  <option value="">-- Mặc định (Không nền) --</option>
+                  {templates.map(t => (
+                    <option key={t.id} value={t.id}>{t.name} ({t.form_type === 'CAU_AN' ? 'Cầu An' : 'Cầu Siêu'})</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => window.print()}
+                className="flex items-center gap-1.5 bg-green-600 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-green-700 transition text-xs"
+              >
+                <Printer className="h-4 w-4" />
+                Mở lệnh in sớ
+              </button>
+              <button
+                onClick={handleConfirmPrinted}
+                disabled={isSubmitting}
+                className="flex items-center gap-1.5 bg-amber-700 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-amber-800 transition text-xs"
+              >
+                {isSubmitting ? 'Đang cập nhật...' : 'Đánh dấu ĐÃ IN thành công'}
+              </button>
+              <button
+                onClick={() => setIsPrinting(false)}
+                className="flex items-center gap-1.5 bg-transparent border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-4 py-2 rounded-lg hover:bg-stone-50 transition text-xs"
+              >
+                <X className="h-4 w-4" />
+                Đóng bản in
+              </button>
+            </div>
+          </div>
+
+          {/* Vùng in ấn sớ */}
+          <div className="so-print-layout print:m-0 print:p-0">
+            {selectedForms.map((form, idx) => {
+              const traiChuTarget = form.targets.find(t => t.relation === 'TRAI_CHU')
+              const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name
+              const traiChuDharma = traiChuTarget?.dharma_name
+              const actualTargets = form.targets.filter(t => t.relation !== 'TRAI_CHU')
+
+              if (printMode === 'POSTER') {
+                const shortCode = form.form_code.slice(-3)
+                
+                // Thuật toán Line-Weight & Column Chunking
+                const MAX_LINES_PER_COL = 21
+                const columns: string[][] = []
+                let currentCol: string[] = []
+                let currentLines = 0
+
+                actualTargets.forEach(t => {
+                  const name = t.full_name.trim()
+                  const wordCount = name.split(/\s+/).length
+                  const linesNeeded = wordCount < 5 ? 1 : 2
+
+                  if (currentLines + linesNeeded > MAX_LINES_PER_COL && currentCol.length > 0) {
+                    columns.push(currentCol)
+                    currentCol = []
+                    currentLines = 0
+                  }
+
+                  currentCol.push(name)
+                  currentLines += linesNeeded
+                })
+                if (currentCol.length > 0) {
+                  columns.push(currentCol)
+                }
+                
+                return (
+                  <div
+                    key={form.id}
+                    className="so-page-block bg-white text-black p-8 w-full print:border-none print:shadow-none print:m-0 print:p-8 break-after-page flex justify-center gap-16 min-h-[50vh]"
+                    style={{ pageBreakAfter: 'always', page: 'so-page' as any }}
+                  >
+                    {columns.map((colNames, colIdx) => (
+                      <div key={colIdx} className="flex flex-col items-center flex-1 max-w-[300px]">
+                        <div className="text-[72px] font-bold leading-none mb-8 text-black text-center">
+                          {shortCode}
+                        </div>
+                        <div className="flex flex-col gap-3 w-full">
+                          {colNames.map((name, nIdx) => (
+                            <div key={nIdx} className="text-2xl font-bold text-center text-black uppercase leading-tight">
+                              {name}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )
+              }
+
+              return (
+              <div
+                key={form.id}
+                className="so-page-block bg-white text-black p-8 w-full print:border-none print:shadow-none print:m-0 print:p-0 break-after-page"
+                style={{ pageBreakAfter: 'always', page: 'so-page' as any }}
+              >
+                {/* Khối Body Sớ nằm dọc hoàn toàn */}
+                <div 
+                  className="relative w-full aspect-[1/1.414] border border-stone-200 rounded-3xl p-12 bg-[#fcfaf6] bg-cover bg-center bg-no-repeat flex flex-row-reverse justify-start gap-8 overflow-hidden shadow-sm print:border-none print:shadow-none print:bg-transparent print:bg-none print:p-8 print:w-[98%] print:mx-auto"
+                  style={{
+                    backgroundImage: selectedTemplateUrl ? `url(${selectedTemplateUrl})` : 'none'
+                  }}
+                >
+                  {/* Lớp phủ trong suốt chứa nội dung (Overlay Container) */}
+                  <div className="absolute inset-0 z-10 flex flex-row-reverse justify-start gap-8 p-12 print:p-8">
+                    {/* Dấu niêm phong sớ của chùa ở góc */}
+                    <div className="absolute top-8 left-8 border-4 border-double border-red-700 text-red-700 font-serif font-bold p-3 text-xs rounded-lg uppercase tracking-wider flex items-center justify-center opacity-85">
+                      Báo Ân Cổ Tự <br /> Pháp Ấn
+                    </div>
+
+                    {/* 1. Tiêu đề chính của sớ ở đầu sớ (góc phải vì đọc từ phải qua trái) */}
+                    <div className="writing-vertical flex items-center justify-center font-bold text-xl text-amber-900 border-l border-amber-900/10 pl-6 print:border-transparent">
+                      {form.form_type === 'CAU_AN' 
+                        ? 'NAM MÔ TIÊU TAI DIÊN THỌ DƯỢC SƯ LƯU LY QUANG VƯƠNG PHẬT' 
+                        : 'NAM MÔ TIẾP DẪN ĐẠO SƯ A DI ĐÀ PHẬT'}
+                    </div>
+
+                    {/* 2. Cột thông tin Trai Chủ (Thay cho đường kẻ) */}
+                    <div className="writing-vertical flex items-start justify-around border-l border-stone-200 pl-4 pr-2 text-sm text-stone-800 print:border-transparent">
+                      <span className="font-bold text-lg uppercase tracking-widest text-amber-950">
+                        Trai Chủ: {traiChuName} {traiChuDharma ? `(${traiChuDharma})` : ''}
+                      </span>
+                      <span className="font-bold text-amber-800 tracking-wider">Mã sớ: {form.form_code}</span>
+                      <span className="font-semibold">Ca lễ: {form.is_delegated ? 'Chùa xếp' : form.selected_time_slot}</span>
+                    </div>
+
+                    {/* 3. Tiêu đề danh sách */}
+                    <div className="writing-vertical flex items-start justify-start pt-12 border-l border-stone-200 pl-4 pr-2 font-bold text-base uppercase tracking-widest text-stone-700 print:border-transparent">
+                      {form.form_type === 'CAU_AN' ? 'Danh Sách Phật Tử Cầu An' : 'Danh Sách Hương Linh'}
+                    </div>
+
+                    {/* 4. Danh sách mục tiêu (Chia cột tự động, tối đa 15 người 1 cột) */}
+                    <div className="flex-1 h-full">
+                      <div className="flex flex-row-reverse justify-start gap-6 w-full h-full">
+                        {(() => {
+                          const MAX_ITEMS_PER_COL = 15
+                          const numCols = Math.max(1, Math.ceil(actualTargets.length / MAX_ITEMS_PER_COL))
+                          const columns = []
+                          for (let i = 0; i < numCols; i++) {
+                            columns.push(actualTargets.slice(i * MAX_ITEMS_PER_COL, (i + 1) * MAX_ITEMS_PER_COL))
+                          }
+
+                          return columns.map((colTargets, colIdx) => (
+                            <div key={colIdx} className="writing-vertical flex flex-col items-start justify-start border-r border-stone-200/50 print:border-transparent pr-4 pl-4" style={{ direction: 'ltr' }}>
+                              {colTargets.map((t, tIdx) => (
+                                <div key={tIdx} className="text-stone-900 font-semibold tracking-wide text-sm leading-relaxed mb-6">
+                                  {t.full_name} {t.dharma_name ? `(${t.dharma_name})` : ''} 
+                                  {t.birth_year ? ` SN: ${t.birth_year}` : ''} 
+                                  {t.death_year ? ` Mất: ${t.death_year}` : ''}
+                                  {t.relation ? ` (${t.relation})` : ''}
+                                </div>
+                              ))}
+                            </div>
+                          ))
+                        })()}
+                      </div>
+                    </div>
+
+                    {/* 5. Lời nguyện cúng ở cuối sớ (góc trái) */}
+                    <div className="writing-vertical flex items-center justify-center font-serif font-bold text-xs text-stone-600 border-r border-amber-900/10 pr-6 print:border-transparent">
+                      {form.form_type === 'CAU_AN'
+                        ? 'Đệ tử chúng đẳng thành tâm khấu bái nguyện cầu gia quyến khang ninh khương thái cát tường.'
+                        : 'Đệ tử chúng đẳng thành tâm khấu bái nguyện cầu hương linh vãng sinh cực lạc, siêu sinh tịnh độ.'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )})}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pagoda Management System (Hệ thống Quản lý Chùa O2O)
 
-## Getting Started
+Hệ thống quản lý tổng thể cho Chùa Báo Ân, kết nối giữa Phật tử và Ban Trị Sự (Tăng Ni, Tình nguyện viên). 
 
-First, run the development server:
+## Các tính năng chính
+1. **Phật tử (O2O)**: Đăng ký sớ Cầu An, Cầu Siêu trực tuyến. Cập nhật trạng thái sớ, theo dõi lịch sử cúng dường.
+2. **Quầy Công Đức (Donation Desk)**: Ban Trị Sự tiếp nhận đóng góp tịnh tài tại quầy, in biên lai công đức K80 bằng máy in nhiệt.
+3. **Quản lý Đại Lễ**: Lên lịch các sự kiện lớn (Vu Lan, Cầu An Đầu Năm), chia ca cúng để Phật tử hoặc Chùa tự động sắp xếp.
+4. **Trạm In Sớ**: In sớ hàng loạt dồn phải theo khổ giấy truyền thống. Hỗ trợ in dọc (vertical writing).
+5. **Quản lý Phôi Sớ Động (Dynamic Print Templates)**: Admin có thể tải lên các file hình ảnh phôi sớ mới. Tại trạm in, Tăng Ni có thể chọn phôi phù hợp, nội dung sớ sẽ tự động được in đè lên trên hình nền phôi đã chọn.
+
+## Cài đặt & Chạy dự án
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Cấu trúc CSDL (Supabase)
+Dự án sử dụng Supabase làm Backend-as-a-Service (BaaS). Các bảng chính bao gồm:
+- `users`: Quản lý người dùng và phân quyền (ADMIN, MONK, VOLUNTEER, USER).
+- `forms`: Quản lý các phiếu sớ.
+- `target_persons`: Quản lý danh sách người thụ lễ (Hương linh / Phật tử).
+- `donations`: Quản lý đóng góp tịnh tài.
+- `events`: Quản lý Đại lễ.
+- `templates`: Quản lý phôi sớ động.

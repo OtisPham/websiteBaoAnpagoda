@@ -1,0 +1,29 @@
+-- Chạy đoạn mã này trong SQL Editor của Supabase để cập nhật bảng templates
+
+-- 1. Bỏ các ràng buộc cũ
+ALTER TABLE public.templates DROP CONSTRAINT IF EXISTS templates_template_type_check;
+ALTER TABLE public.templates DROP CONSTRAINT IF EXISTS templates_template_type_key;
+
+-- 2. Đổi tên cột template_type nếu muốn, hoặc đơn giản là thêm các cột mới
+ALTER TABLE public.templates ADD COLUMN IF NOT EXISTS name text;
+ALTER TABLE public.templates ADD COLUMN IF NOT EXISTS form_type text CHECK (form_type IN ('CAU_AN', 'CAU_SIEU'));
+ALTER TABLE public.templates ADD COLUMN IF NOT EXISTS is_active boolean DEFAULT true;
+
+-- 3. Tạo Bucket print_templates nếu chưa có
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('print_templates', 'print_templates', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- 4. Thiết lập Storage Policies cho bucket print_templates
+-- Cho phép mọi người (authenticated và anon) xem file
+CREATE POLICY "Public Access" 
+ON storage.objects FOR SELECT 
+USING (bucket_id = 'print_templates');
+
+-- Chỉ cho phép ADMIN/MONK upload (Giả sử authenticated users được upload)
+CREATE POLICY "Authenticated Upload" 
+ON storage.objects FOR INSERT 
+WITH CHECK (
+  bucket_id = 'print_templates' 
+  AND auth.role() = 'authenticated'
+);

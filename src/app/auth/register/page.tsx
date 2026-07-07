@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Compass, RefreshCw } from 'lucide-react'
 import { signup } from '../actions'
 
-export default function RegisterPage() {
+function RegisterContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const urlError = searchParams.get('error')
@@ -149,3 +149,12 @@ export default function RegisterPage() {
     </div>
   )
 }
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[#faf8f5] dark:bg-[#12100e]">Đang tải...</div>}>
+      <RegisterContent />
+    </Suspense>
+  )
+}
+

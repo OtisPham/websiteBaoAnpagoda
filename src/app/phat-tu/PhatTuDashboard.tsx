@@ -30,6 +30,7 @@ interface FormRecord {
   is_delegated: boolean
   scheduled_date: string
   selected_time_slot?: string | null
+  event_id?: string | null
   note?: string | null
   created_at: string
   events?: { title: string } | null
@@ -182,7 +183,7 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
       }
 
       if (res.success) {
-        setSuccessMsg(editingForm ? 'Cập nhật phiếu thành công!' : `Gửi phiếu thành công! Mã phiếu của bạn là: ${res.formCode}. ${res.assignedSlot ? `Hệ thống đã tự động xếp vào ca cúng: ${res.assignedSlot}` : ''}`)
+        setSuccessMsg(editingForm ? 'Cập nhật phiếu thành công!' : `Gửi phiếu thành công! Mã phiếu của bạn là: ${(res as any).formCode || ''}. ${(res as any).assignedSlot ? `Hệ thống đã tự động xếp vào ca cúng: ${(res as any).assignedSlot}` : ''}`)
         setTimeout(() => {
           setIsModalOpen(false)
           window.location.reload()
@@ -212,7 +213,7 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
 
   // Format Badge trạng thái sớ
   const renderStatusBadge = (status: string) => {
-    const statusConfig: Record<string, { bg: string; text: string; label: string }> = {
+    const statusConfig: Record<string, { bg: string; label: string }> = {
       Draft: { bg: 'bg-stone-100 text-stone-700 dark:bg-stone-900/50 dark:text-stone-400', label: 'Bản nháp' },
       Submitted: { bg: 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-800', label: 'Đã gửi phiếu' },
       'Waiting Verification': { bg: 'bg-yellow-50 text-yellow-700 border border-yellow-200 dark:bg-yellow-950/20 dark:text-yellow-400 dark:border-yellow-800', label: 'Chờ duyệt cúng dường' },

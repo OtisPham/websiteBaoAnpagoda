@@ -31,6 +31,7 @@ interface FormRecord {
   scheduled_date: string
   selected_time_slot?: string | null
   event_id?: string | null
+  events?: { title: string } | null
   note?: string | null
   created_at: string
   users?: { full_name: string; phone: string; email: string } | null

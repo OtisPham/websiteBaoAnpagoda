@@ -197,7 +197,7 @@ export default async function DashboardPage() {
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-xs text-stone-500 dark:text-stone-400">
-                    <span className="font-medium">{form.users?.full_name || 'Phật tử ẩn danh'}</span>
+                    <span className="font-medium">{(Array.isArray(form.users) ? form.users[0]?.full_name : (form.users as any)?.full_name) || 'Phật tử ẩn danh'}</span>
                     <span>{form.selected_time_slot || 'Chưa phân ca'}</span>
                   </div>
                 </li>

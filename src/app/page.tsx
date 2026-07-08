@@ -120,20 +120,17 @@ export default async function HomePage() {
       <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-stone-200/50 dark:border-stone-850">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="relative h-12 w-12 flex items-center justify-center overflow-hidden rounded-full border-2 border-amber-600/40 bg-white dark:bg-white/95 p-1 shadow-md group-hover:scale-105 transition-transform duration-300">
-                <img
-                  src="/images/logopagoda.png"
-                  alt="Logo Chùa Báo Ân"
-                  className="h-full w-full object-contain"
-                />
-              </div>
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <img
+                src="/images/logopagoda.png"
+                alt="Logo Chùa Báo Ân"
+                className="h-9 w-9 sm:h-10 sm:w-10 object-contain mix-blend-multiply dark:mix-blend-normal group-hover:scale-105 transition-transform duration-300"
+              />
               <div className="flex flex-col">
-                <span className="font-serif text-xl sm:text-2xl font-bold tracking-wider text-primary dark:text-amber-400 group-hover:text-amber-700 transition-colors">
+                <span className="font-serif text-lg sm:text-xl font-bold tracking-wider text-primary dark:text-amber-400 group-hover:text-amber-700 transition-colors">
                   Chùa Báo Ân
                 </span>
-                <span className="text-[10px] tracking-widest uppercase font-semibold text-stone-500 dark:text-stone-400 -mt-1">
+                <span className="text-[9px] tracking-widest uppercase font-semibold text-stone-500 dark:text-stone-400 -mt-0.5">
                   Báo Ân Pagoda
                 </span>
               </div>

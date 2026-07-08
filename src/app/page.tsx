@@ -226,33 +226,33 @@ export default async function HomePage() {
           {/* Grid 3 Cards */}
           <div className="grid md:grid-cols-3 gap-8">
             {/* Card 1 */}
-            <div className="bg-card-bg/30 dark:bg-[#1f1a18] p-8 rounded-2xl border border-stone-200/40 dark:border-stone-800 shadow-sm space-y-6">
-              <div className="text-primary">
+            <div className="group bg-card-bg/30 dark:bg-[#1f1a18] p-8 rounded-2xl border border-stone-200/40 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:shadow-amber-500/20 dark:hover:shadow-amber-500/15 hover:border-amber-400/80 dark:hover:border-amber-500/60 hover:bg-amber-50/50 dark:hover:bg-[#2c221a] hover:-translate-y-2 transition-all duration-500 ease-out space-y-6 cursor-pointer">
+              <div className="text-primary group-hover:scale-110 group-hover:text-amber-600 transition-transform duration-300">
                 <HomeIcon className="h-8 w-8" />
               </div>
-              <h3 className="font-serif text-xl font-bold text-neutral dark:text-white">Kế Thừa Di Sản</h3>
+              <h3 className="font-serif text-xl font-bold text-neutral dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">Kế Thừa Di Sản</h3>
               <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed">
                 Gìn giữ những giá trị tâm linh quý báu từ ngàn xưa, kết nối hiện tại với dòng chảy văn hóa Phật giáo Việt Nam trường tồn qua các thế hệ.
               </p>
             </div>
 
             {/* Card 2 */}
-            <div className="bg-card-bg/30 dark:bg-[#1f1a18] p-8 rounded-2xl border border-stone-200/40 dark:border-stone-800 shadow-sm space-y-6">
-              <div className="text-primary">
+            <div className="group bg-card-bg/30 dark:bg-[#1f1a18] p-8 rounded-2xl border border-stone-200/40 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:shadow-amber-500/20 dark:hover:shadow-amber-500/15 hover:border-amber-400/80 dark:hover:border-amber-500/60 hover:bg-amber-50/50 dark:hover:bg-[#2c221a] hover:-translate-y-2 transition-all duration-500 ease-out space-y-6 cursor-pointer">
+              <div className="text-primary group-hover:scale-110 group-hover:text-amber-600 transition-transform duration-300">
                 <Heart className="h-8 w-8" />
               </div>
-              <h3 className="font-serif text-xl font-bold text-neutral dark:text-white">Gieo Mầm Từ Bi</h3>
+              <h3 className="font-serif text-xl font-bold text-neutral dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">Gieo Mầm Từ Bi</h3>
               <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed">
                 Thực hành hạnh nguyện cứu khổ ban vui, lan tỏa lòng nhân ái và sự thấu cảm đến cộng đồng qua các hoạt động thiện nguyện thiết thực.
               </p>
             </div>
 
             {/* Card 3 */}
-            <div className="bg-card-bg/30 dark:bg-[#1f1a18] p-8 rounded-2xl border border-stone-200/40 dark:border-stone-800 shadow-sm space-y-6">
-              <div className="text-primary">
+            <div className="group bg-card-bg/30 dark:bg-[#1f1a18] p-8 rounded-2xl border border-stone-200/40 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:shadow-amber-500/20 dark:hover:shadow-amber-500/15 hover:border-amber-400/80 dark:hover:border-amber-500/60 hover:bg-amber-50/50 dark:hover:bg-[#2c221a] hover:-translate-y-2 transition-all duration-500 ease-out space-y-6 cursor-pointer">
+              <div className="text-primary group-hover:scale-110 group-hover:text-amber-600 transition-transform duration-300">
                 <Sparkles className="h-8 w-8" />
               </div>
-              <h3 className="font-serif text-xl font-bold text-neutral dark:text-white">Kiến Tạo Tương Lai</h3>
+              <h3 className="font-serif text-xl font-bold text-neutral dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">Kiến Tạo Tương Lai</h3>
               <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed">
                 Hướng đến sự giải thoát và an lạc trong tâm hồn thông qua việc giáo dục Phật pháp và rèn luyện chánh niệm cho mọi lứa tuổi.
               </p>
@@ -331,20 +331,20 @@ export default async function HomePage() {
                 : evt.scheduled_date
 
               return (
-                <div key={evt.id} className="relative grid grid-cols-2 gap-8 items-center mb-12 last:mb-0">
+                <div key={evt.id} className="group relative grid grid-cols-2 gap-8 items-center mb-12 last:mb-0">
                   {isEven ? (
                     <>
                       {/* Cột trái: Ngày tháng */}
                       <div className="text-right pr-4">
-                        <span className="font-serif text-lg sm:text-xl font-bold text-neutral dark:text-stone-300">
+                        <span className="font-serif text-lg sm:text-xl font-bold text-neutral dark:text-stone-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                           {formattedDate}
                         </span>
                       </div>
                       {/* Chấm giữa */}
-                      <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background z-10"></div>
+                      <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background z-10 group-hover:scale-150 group-hover:bg-amber-500 group-hover:shadow-lg group-hover:shadow-amber-500/50 transition-all duration-300"></div>
                       {/* Cột phải: Card nội dung */}
-                      <div className="bg-white dark:bg-[#1c1816] p-6 rounded-2xl border border-stone-250/50 dark:border-stone-800 shadow-sm ml-4">
-                        <h4 className="font-serif text-base font-bold text-neutral dark:text-white mb-2">{evt.title}</h4>
+                      <div className="bg-white dark:bg-[#1c1816] p-6 rounded-2xl border border-stone-250/50 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:shadow-amber-500/25 dark:hover:shadow-amber-500/15 hover:border-amber-400 dark:hover:border-amber-500/80 hover:bg-amber-50/60 dark:hover:bg-[#2a2019] hover:-translate-y-1.5 transition-all duration-500 ease-out ml-4 cursor-pointer">
+                        <h4 className="font-serif text-base font-bold text-neutral dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors mb-2">{evt.title}</h4>
                         {evt.description && (
                           <p className="text-stone-600 dark:text-stone-400 text-xs leading-relaxed">
                             {evt.description}
@@ -355,8 +355,8 @@ export default async function HomePage() {
                   ) : (
                     <>
                       {/* Cột trái: Card nội dung */}
-                      <div className="bg-white dark:bg-[#1c1816] p-6 rounded-2xl border border-stone-250/50 dark:border-stone-800 shadow-sm mr-4 text-right">
-                        <h4 className="font-serif text-base font-bold text-neutral dark:text-white mb-2">{evt.title}</h4>
+                      <div className="bg-white dark:bg-[#1c1816] p-6 rounded-2xl border border-stone-250/50 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:shadow-amber-500/25 dark:hover:shadow-amber-500/15 hover:border-amber-400 dark:hover:border-amber-500/80 hover:bg-amber-50/60 dark:hover:bg-[#2a2019] hover:-translate-y-1.5 transition-all duration-500 ease-out mr-4 text-right cursor-pointer">
+                        <h4 className="font-serif text-base font-bold text-neutral dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors mb-2">{evt.title}</h4>
                         {evt.description && (
                           <p className="text-stone-600 dark:text-stone-400 text-xs leading-relaxed">
                             {evt.description}
@@ -364,10 +364,10 @@ export default async function HomePage() {
                         )}
                       </div>
                       {/* Chấm giữa */}
-                      <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background z-10"></div>
+                      <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background z-10 group-hover:scale-150 group-hover:bg-amber-500 group-hover:shadow-lg group-hover:shadow-amber-500/50 transition-all duration-300"></div>
                       {/* Cột phải: Ngày tháng */}
                       <div className="pl-4">
-                        <span className="font-serif text-lg sm:text-xl font-bold text-neutral dark:text-stone-300">
+                        <span className="font-serif text-lg sm:text-xl font-bold text-neutral dark:text-stone-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                           {formattedDate}
                         </span>
                       </div>

@@ -109,7 +109,7 @@ export default async function DashboardPage() {
       {/* Tiêu đề & Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-serif text-3xl font-bold tracking-tight">Tổng Quan Pháp Sự</h1>
+          <h1 className="font-serif text-3xl font-bold tracking-tight">Tổng Quan Phật Sự</h1>
           <p className="text-stone-500 dark:text-stone-400 mt-1">Thống kê hoạt động của chùa.</p>
         </div>
         <MonkCreateForm events={events || []} />

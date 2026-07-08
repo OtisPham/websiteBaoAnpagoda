@@ -19,7 +19,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Chùa Báo ÂN",
+  title: "Chùa Báo Ân",
   description: "Trang web chính thức của Chùa Báo Ân",
 };
 

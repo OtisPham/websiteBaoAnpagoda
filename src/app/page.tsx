@@ -93,8 +93,15 @@ export default async function HomePage() {
     }
   ]
 
-  // Tin tức (3 bài viết)
-  const news = [
+  // Lấy danh sách bài viết & tin tức đã xuất bản (PUBLISHED) từ DB Supabase
+  const { data: publishedPostsData } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('status', 'PUBLISHED')
+    .order('created_at', { ascending: false })
+    .limit(6)
+
+  const defaultNews = [
     {
       category: "THÔNG BÁO",
       title: "Thông báo về việc trùng tu chính điện",
@@ -114,6 +121,15 @@ export default async function HomePage() {
       img: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80"
     }
   ]
+
+  const news = publishedPostsData && publishedPostsData.length > 0
+    ? publishedPostsData.map((p: any) => ({
+        category: p.category || 'PHẬT PHÁP',
+        title: p.title,
+        desc: p.content ? p.content.replace(/<[^>]*>?/gm, '').replace(/!\[.*?\]\(.*?\)/g, '').slice(0, 115) + '...' : '',
+        img: p.thumbnail_url || 'https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?auto=format&fit=crop&w=600&q=80'
+      }))
+    : defaultNews
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">

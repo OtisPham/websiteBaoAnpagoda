@@ -89,9 +89,9 @@ export default async function DashboardLayout({
           {/* Logo */}
           <div className="h-16 flex items-center gap-2.5 px-5 border-b border-stone-100 dark:border-stone-850">
             <img
-              src="/images/logopagoda.png"
+              src="/images/logo2.png"
               alt="Logo Chùa Báo Ân"
-              className="h-8 w-8 object-contain mix-blend-multiply dark:mix-blend-normal flex-shrink-0"
+              className="h-9 w-9 object-contain drop-shadow-sm flex-shrink-0"
             />
             <div className="flex flex-col">
               <span className="font-serif font-bold tracking-wider text-base text-amber-800 dark:text-amber-400">

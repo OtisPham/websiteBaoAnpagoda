@@ -239,9 +239,9 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <img
-              src="/images/logopagoda.png"
+              src="/images/logo2.png"
               alt="Logo Chùa Báo Ân"
-              className="h-8 w-8 sm:h-9 sm:w-9 object-contain mix-blend-multiply dark:mix-blend-normal"
+              className="h-9 w-9 sm:h-10 sm:w-10 object-contain drop-shadow-sm"
             />
             <div className="flex flex-col">
               <span className="font-serif text-base sm:text-lg font-bold tracking-wider text-amber-800 dark:text-amber-400">

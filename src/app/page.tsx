@@ -122,9 +122,9 @@ export default async function HomePage() {
           <div className="flex h-20 items-center justify-between">
             <Link href="/" className="flex items-center gap-2.5 group">
               <img
-                src="/images/logopagoda.png"
+                src="/images/logo2.png"
                 alt="Logo Chùa Báo Ân"
-                className="h-9 w-9 sm:h-10 sm:w-10 object-contain mix-blend-multiply dark:mix-blend-normal group-hover:scale-105 transition-transform duration-300"
+                className="h-10 w-10 sm:h-11 sm:w-11 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
               />
               <div className="flex flex-col">
                 <span className="font-serif text-lg sm:text-xl font-bold tracking-wider text-primary dark:text-amber-400 group-hover:text-amber-700 transition-colors">

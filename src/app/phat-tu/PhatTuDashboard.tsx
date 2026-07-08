@@ -237,9 +237,22 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
       {/* Banner / Navigation */}
       <header className="bg-white dark:bg-[#1c1816] border-b border-stone-200 dark:border-stone-800 shadow-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-amber-700 dark:text-amber-500">
-            <Compass className="h-7 w-7" />
-            <span className="font-serif text-lg font-bold tracking-wider">Chùa BÁO ÂN - PHẬT TỬ</span>
+          <div className="flex items-center gap-3">
+            <div className="relative h-11 w-11 flex items-center justify-center overflow-hidden rounded-full border-2 border-amber-600/40 bg-white dark:bg-white/95 p-1 shadow-sm">
+              <img
+                src="/images/logopagoda.png"
+                alt="Logo Chùa Báo Ân"
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-serif text-lg font-bold tracking-wider text-amber-800 dark:text-amber-400">
+                Chùa Báo Ân
+              </span>
+              <span className="text-[10px] tracking-widest uppercase font-semibold text-stone-500 dark:text-stone-400 -mt-0.5">
+                Cổng Phật Tử
+              </span>
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="hidden sm:block text-right">

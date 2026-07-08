@@ -87,9 +87,22 @@ export default async function DashboardLayout({
       <aside className="w-64 bg-white dark:bg-[#1c1816] border-r border-stone-200 dark:border-stone-850 flex flex-col justify-between fixed inset-y-0 left-0 z-20 print:hidden">
         <div className="flex flex-col flex-1">
           {/* Logo */}
-          <div className="h-16 flex items-center gap-2 px-6 border-b border-stone-100 dark:border-stone-850 text-amber-700 dark:text-amber-500">
-            <Compass className="h-6 w-6" />
-            <span className="font-serif font-bold tracking-wider text-base">BAN TRỊ SỰ</span>
+          <div className="h-20 flex items-center gap-3 px-5 border-b border-stone-100 dark:border-stone-850">
+            <div className="relative h-11 w-11 flex-shrink-0 flex items-center justify-center overflow-hidden rounded-full border-2 border-amber-600/40 bg-white dark:bg-white/95 p-1 shadow-sm">
+              <img
+                src="/images/logopagoda.png"
+                alt="Logo Chùa Báo Ân"
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-serif font-bold tracking-wider text-base text-amber-800 dark:text-amber-400">
+                Chùa Báo Ân
+              </span>
+              <span className="text-[10px] tracking-widest uppercase font-semibold text-stone-500 dark:text-stone-400 -mt-0.5">
+                Hệ Thống Nội Bộ
+              </span>
+            </div>
           </div>
 
           {/* User Profile */}

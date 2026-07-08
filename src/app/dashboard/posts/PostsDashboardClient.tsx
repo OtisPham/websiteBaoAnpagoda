@@ -59,6 +59,7 @@ export default function PostsDashboardClient({
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const wordInputRef = useRef<HTMLInputElement>(null)
+  const inlineImageRef = useRef<HTMLInputElement>(null)
 
   // Kiểm tra xem Volunteer có bị khóa chỉnh sửa không
   const isVolunteerLocked = isVolunteer && (currentStatus === 'PENDING_APPROVAL' || currentStatus === 'PUBLISHED')
@@ -159,6 +160,24 @@ export default function PostsDashboardClient({
   const insertFormatting = (prefix: string, suffix: string = '') => {
     if (isVolunteerLocked) return
     setContent(prev => `${prev}\n${prefix} `)
+  }
+
+  // Chèn nhiều hình ảnh (2-3 ảnh) trực tiếp vào giữa bài viết
+  const handleInlineImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+
+    files.forEach(file => {
+      const reader = new FileReader()
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          const imgTag = `\n\n![Hình ảnh minh hoạ - ${file.name}](${reader.result})\n\n`
+          setContent(prev => prev + imgTag)
+        }
+      }
+      reader.readAsDataURL(file)
+    })
+    setSuccessMsg(`Đã chèn ${files.length} hình ảnh vào nội dung bài viết!`)
   }
 
   // LƯU BÀI VIẾT (Save Draft / Submit for Review / Publish Now)
@@ -281,7 +300,7 @@ export default function PostsDashboardClient({
         <div>
           <div className="flex items-center gap-3">
             <h1 className="font-serif text-2xl font-bold text-stone-900 dark:text-stone-100">
-              Quản Lý Bài Viết & Tin Tức (CMS)
+              Quản Lý Bài Viết & Tin Tức
             </h1>
             {isMonk ? (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#8B4513]/10 text-[#8B4513] dark:text-amber-400 border border-[#8B4513]/30">
@@ -718,6 +737,24 @@ export default function PostsDashboardClient({
                     >
                       <Quote className="h-4 w-4" />
                     </button>
+
+                    <button
+                      type="button"
+                      onClick={() => inlineImageRef.current?.click()}
+                      className="px-3 py-1.5 rounded-lg bg-[#8B4513]/10 text-[#8B4513] dark:text-amber-400 hover:bg-[#8B4513]/20 text-xs font-bold flex items-center gap-1.5 ml-auto"
+                      title="Chọn 2-3 hình ảnh để chèn trực tiếp vào nội dung bài viết"
+                    >
+                      <ImageIcon className="h-4 w-4" />
+                      + Chèn Ảnh Vào Bài Viết (2-3 ảnh)
+                    </button>
+                    <input
+                      type="file"
+                      ref={inlineImageRef}
+                      onChange={handleInlineImageUpload}
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                    />
                   </div>
                 )}
 

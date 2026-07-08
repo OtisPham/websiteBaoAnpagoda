@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Compass, Heart, Sparkles, Home as HomeIcon, ChevronDown } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
+import PagodaLogo from '@/components/PagodaLogo'
 
 export const dynamic = 'force-dynamic'
 
@@ -121,11 +122,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
             <Link href="/" className="flex items-center gap-2.5 group">
-              <img
-                src="/images/logo2.png"
-                alt="Logo Chùa Báo Ân"
-                className="h-10 w-10 sm:h-11 sm:w-11 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
-              />
+              <PagodaLogo className="h-10 w-10 sm:h-11 sm:w-11 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" />
               <div className="flex flex-col">
                 <span className="font-serif text-lg sm:text-xl font-bold tracking-wider text-primary dark:text-amber-400 group-hover:text-amber-700 transition-colors">
                   Chùa Báo Ân

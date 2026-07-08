@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { Compass, LayoutDashboard, FileText, Calendar, Landmark, Printer, Settings, LogOut, User } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { signout } from '../auth/actions'
+import PagodaLogo from '@/components/PagodaLogo'
 
 export const dynamic = 'force-dynamic'
 
@@ -88,11 +89,7 @@ export default async function DashboardLayout({
         <div className="flex flex-col flex-1">
           {/* Logo */}
           <div className="h-16 flex items-center gap-2.5 px-5 border-b border-stone-100 dark:border-stone-850">
-            <img
-              src="/images/logo2.png"
-              alt="Logo Chùa Báo Ân"
-              className="h-9 w-9 object-contain drop-shadow-sm flex-shrink-0"
-            />
+            <PagodaLogo className="h-9 w-9 flex-shrink-0" />
             <div className="flex flex-col">
               <span className="font-serif font-bold tracking-wider text-base text-amber-800 dark:text-amber-400">
                 Chùa Báo Ân

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Plus, Edit2, Trash2, Calendar, Clock, FileText, ChevronRight, LogOut, Compass, Info, CheckCircle2, RefreshCw } from 'lucide-react'
 import { signout } from '../auth/actions'
 import { createForm, updateForm, cancelForm, TargetPersonInput } from './actions'
+import PagodaLogo from '@/components/PagodaLogo'
 
 interface EventData {
   id: string
@@ -238,11 +239,7 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
       <header className="bg-white dark:bg-[#1c1816] border-b border-stone-200 dark:border-stone-800 shadow-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <img
-              src="/images/logo2.png"
-              alt="Logo Chùa Báo Ân"
-              className="h-9 w-9 sm:h-10 sm:w-10 object-contain drop-shadow-sm"
-            />
+            <PagodaLogo className="h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0" />
             <div className="flex flex-col">
               <span className="font-serif text-base sm:text-lg font-bold tracking-wider text-amber-800 dark:text-amber-400">
                 Chùa Báo Ân

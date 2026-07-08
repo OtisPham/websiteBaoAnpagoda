@@ -8,114 +8,115 @@ interface PagodaLogoProps {
 export default function PagodaLogo({ className = 'h-10 w-10', size }: PagodaLogoProps) {
   return (
     <svg
-      viewBox="0 0 100 100"
+      viewBox="0 0 120 120"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={`${className} transition-transform duration-300 drop-shadow-sm`}
+      className={`${className} transition-transform duration-300`}
       style={size ? { width: size, height: size } : undefined}
     >
-      <defs>
-        {/* Vàng kim sang trọng */}
-        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FDE68A" />
-          <stop offset="35%" stopColor="#F59E0B" />
-          <stop offset="70%" stopColor="#D97706" />
-          <stop offset="100%" stopColor="#92400E" />
-        </linearGradient>
-
-        <linearGradient id="petalGradient" x1="50%" y1="0%" x2="50%" y2="100%">
-          <stop offset="0%" stopColor="#FEF3C7" />
-          <stop offset="45%" stopColor="#F59E0B" />
-          <stop offset="100%" stopColor="#B45309" />
-        </linearGradient>
-
-        <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#FFFBEB" />
-          <stop offset="55%" stopColor="#F59E0B" />
-          <stop offset="100%" stopColor="#92400E" />
-        </radialGradient>
-      </defs>
-
-      {/* Hào quang tròn bên ngoài */}
-      <circle
-        cx="50"
-        cy="50"
-        r="46"
-        stroke="url(#goldGradient)"
+      {/* Vòng cung hoa văn cổ điển bao quanh tháp (Decorative Circular Frame) */}
+      <path
+        d="M20 78 A44 44 0 1 1 100 78"
+        stroke="currentColor"
         strokeWidth="2.5"
-        fill="none"
-        opacity="0.9"
+        strokeLinecap="round"
+        className="text-amber-900 dark:text-amber-400"
       />
-      <circle
-        cx="50"
-        cy="50"
-        r="41"
-        stroke="url(#goldGradient)"
-        strokeWidth="1"
+      <path
+        d="M25 78 A39 39 0 1 1 95 78"
+        stroke="currentColor"
+        strokeWidth="1.2"
         strokeDasharray="3 3"
-        fill="none"
-        opacity="0.6"
+        className="text-amber-800 dark:text-amber-500"
+        opacity="0.8"
       />
 
-      {/* Đài Hoa Sen Bát Nhã (Lotus Base & Blooming Petals) */}
-      <g transform="translate(0, 4)">
-        {/* Cánh sen trung tâm cao nhất */}
-        <path
-          d="M50 18 C42 34 38 46 50 62 C62 46 58 34 50 18 Z"
-          fill="url(#petalGradient)"
-          stroke="#92400E"
-          strokeWidth="0.8"
-        />
-        {/* Cánh sen lớp trái 1 */}
-        <path
-          d="M50 62 C38 52 28 42 26 30 C36 34 44 46 50 62 Z"
-          fill="url(#petalGradient)"
-          opacity="0.92"
-        />
-        {/* Cánh sen lớp phải 1 */}
-        <path
-          d="M50 62 C62 52 72 42 74 30 C64 34 56 46 50 62 Z"
-          fill="url(#petalGradient)"
-          opacity="0.92"
-        />
-        {/* Cánh sen tỏa hai bên trái 2 */}
-        <path
-          d="M50 64 C34 58 20 50 16 40 C28 48 40 56 50 64 Z"
-          fill="url(#goldGradient)"
-          opacity="0.85"
-        />
-        {/* Cánh sen tỏa hai bên phải 2 */}
-        <path
-          d="M50 64 C66 58 80 50 84 40 C72 48 60 56 50 64 Z"
-          fill="url(#goldGradient)"
-          opacity="0.85"
-        />
-
-        {/* Đế sen đỡ phía dưới */}
-        <path
-          d="M24 64 C36 71 64 71 76 64 C68 76 32 76 24 64 Z"
-          fill="url(#goldGradient)"
-        />
+      {/* Hoa sen trang trí bên trái vòng cung */}
+      <g className="text-amber-800 dark:text-amber-400" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round">
+        <path d="M17 56 C15 50 19 46 21 44 C23 46 27 50 25 56 Z" fill="none" />
+        <path d="M14 54 C16 57 21 57 21 57" />
+        <path d="M28 54 C26 57 21 57 21 57" />
       </g>
 
-      {/* Pháp Luân (Dharma Wheel) ở trung tâm */}
-      <circle
-        cx="50"
-        cy="52"
-        r="11"
-        fill="url(#centerGlow)"
-        stroke="#92400E"
-        strokeWidth="1.5"
-      />
-      {/* 8 căm Pháp Luân */}
-      <g stroke="#92400E" strokeWidth="1.2" opacity="0.85">
-        <line x1="50" y1="41" x2="50" y2="63" />
-        <line x1="39" y1="52" x2="61" y2="52" />
-        <line x1="42.2" y1="44.2" x2="57.8" y2="59.8" />
-        <line x1="57.8" y1="44.2" x2="42.2" y2="59.8" />
+      {/* Hoa sen trang trí bên phải vòng cung */}
+      <g className="text-amber-800 dark:text-amber-400" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round">
+        <path d="M103 56 C105 50 101 46 99 44 C97 46 93 50 95 56 Z" fill="none" />
+        <path d="M106 54 C104 57 99 57 99 57" />
+        <path d="M92 54 C94 57 99 57 99 57" />
       </g>
-      {/* Tâm Pháp Luân sáng rực */}
-      <circle cx="50" cy="52" r="3.5" fill="#FEF3C7" stroke="#D97706" strokeWidth="1" />
+
+      {/* ================= THÁP CHÙA 7 TẦNG (7-TIER VIETNAMESE PAGODA) ================= */}
+      <g className="text-amber-950 dark:text-amber-300" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        {/* Đỉnh tháp (Stupa Finial / Chóp bảo tháp) */}
+        <path d="M60 8 L60 14" strokeWidth="2.2" />
+        <path d="M57 14 L63 14 L60 8 Z" fill="currentColor" />
+
+        {/* TẦNG 7 (Trên cùng) */}
+        <path d="M48 18 Q60 21 72 18 Q73 15 71 14 L49 14 Q47 15 48 18 Z" />
+        <line x1="51" y1="18" x2="51" y2="24" />
+        <line x1="69" y1="18" x2="69" y2="24" />
+
+        {/* TẦNG 6 */}
+        <path d="M45 27 Q60 30 75 27 Q77 23 74 22 L46 22 Q43 23 45 27 Z" />
+        <line x1="48" y1="27" x2="48" y2="34" />
+        <line x1="72" y1="27" x2="72" y2="34" />
+        {/* Tượng Phật nhỏ trong khám tầng 6 */}
+        <path d="M58 34 A2 2 0 0 1 62 34" strokeWidth="1.2" />
+        <circle cx="60" cy="31" r="1.2" fill="currentColor" />
+
+        {/* TẦNG 5 */}
+        <path d="M43 38 Q60 41 77 38 Q79 34 76 33 L44 33 Q41 34 43 38 Z" />
+        <line x1="46" y1="38" x2="46" y2="45" />
+        <line x1="74" y1="38" x2="74" y2="45" />
+
+        {/* TẦNG 4 */}
+        <path d="M40 49 Q60 53 80 49 Q83 45 79 44 L41 44 Q37 45 40 49 Z" />
+        <line x1="44" y1="49" x2="44" y2="57" />
+        <line x1="76" y1="49" x2="76" y2="57" />
+        {/* Tượng Phật trong khám tầng 4 */}
+        <path d="M57 57 A3 3 0 0 1 63 57" strokeWidth="1.3" />
+        <circle cx="60" cy="53" r="1.5" fill="currentColor" />
+
+        {/* TẦNG 3 */}
+        <path d="M37 61 Q60 65 83 61 Q86 57 82 56 L38 56 Q34 57 37 61 Z" />
+        <line x1="42" y1="61" x2="42" y2="69" />
+        <line x1="78" y1="61" x2="78" y2="69" />
+
+        {/* TẦNG 2 */}
+        <path d="M34 73 Q60 77 86 73 Q89 69 85 68 L35 68 Q31 69 34 73 Z" />
+        <line x1="40" y1="73" x2="40" y2="82" />
+        <line x1="80" y1="73" x2="80" y2="82" />
+
+        {/* TẦNG 1 (Mái hạ gian chính) */}
+        <path d="M30 86 Q60 91 90 86 Q94 81 89 80 L31 80 Q26 81 30 86 Z" />
+
+        {/* Lan can đá / Thềm chánh điện (Terrace Balustrade) */}
+        <path d="M36 86 L36 93 L84 93 L84 86" />
+        <line x1="46" y1="86" x2="46" y2="93" />
+        <line x1="56" y1="86" x2="56" y2="93" />
+        <line x1="64" y1="86" x2="64" y2="93" />
+        <line x1="74" y1="86" x2="74" y2="93" />
+
+        {/* Chân đế bệ đá tháp */}
+        <path d="M33 93 L38 101 L82 101 L87 93" strokeWidth="2" />
+      </g>
+
+      {/* Đường nền ngang chân tháp */}
+      <line x1="22" y1="101" x2="98" y2="101" stroke="currentColor" strokeWidth="2" className="text-amber-950 dark:text-amber-300" />
+
+      {/* Hoa sen & vân sóng thủy triều phía dưới tháp (Lotus & Water Waves Motif) */}
+      <g className="text-amber-900 dark:text-amber-400" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none">
+        {/* Bông sen nở giữa vân sóng */}
+        <path d="M60 115 C55 109 55 104 60 102 C65 104 65 109 60 115 Z" />
+        <path d="M53 113 C51 108 53 105 57 105" />
+        <path d="M67 113 C69 108 67 105 63 105" />
+
+        {/* Vân sóng tỏa ra hai bên */}
+        <path d="M45 106 C38 108 30 106 25 103" />
+        <path d="M48 111 C39 113 31 111 28 108" />
+        <path d="M75 106 C82 108 90 106 95 103" />
+        <path d="M72 111 C81 113 89 111 92 108" />
+      </g>
     </svg>
   )
 }

@@ -161,36 +161,36 @@ export default async function HomePage() {
 
       {/* Hero Banner Section */}
       <section className="relative h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden">
-        {/* Background Image overlayed with gradient */}
+        {/* Background Image overlayed with slow zoom animation and gradient */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat animate-hero-bg"
           style={{ 
             backgroundImage: "url('/images/banner.jpg')",
           }}
         >
-          <div className="absolute inset-0 bg-black/45 dark:bg-black/60"></div>
+          <div className="absolute inset-0 bg-black/45 dark:bg-black/60 backdrop-brightness-95"></div>
         </div>
 
         {/* Hero Content */}
         <div className="relative z-10 mx-auto max-w-5xl px-6 lg:px-8 text-center text-white space-y-8">
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-tight">
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-tight animate-fade-in-up drop-shadow-md">
             Nơi Tìm Thấy Sự Bình An Giữa<br />Lòng Đời
           </h1>
           
-          <p className="mx-auto max-w-3xl text-sm sm:text-base lg:text-lg text-stone-200/90 leading-relaxed font-light">
+          <p className="mx-auto max-w-3xl text-sm sm:text-base lg:text-lg text-stone-200/90 leading-relaxed font-light animate-fade-in-up-delay-1">
             Chào mừng quý Phật tử và thiện hữu xa gần ghé thăm Chùa Báo Ân – điểm tựa tâm linh cho tâm hồn xao động.
           </p>
 
-          <div className="pt-4 flex flex-wrap gap-4 justify-center">
+          <div className="pt-4 flex flex-wrap gap-4 justify-center animate-fade-in-up-delay-2">
             <Link
               href="/auth/register"
-              className="rounded-full bg-primary px-8 py-3 text-sm font-semibold text-white hover:bg-primary/95 transition shadow-lg"
+              className="rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-white hover:bg-primary/90 hover:scale-105 hover:shadow-xl hover:shadow-primary/40 active:scale-95 transition-all duration-300 shadow-lg"
             >
               Khám Phá Chùa
             </Link>
             <a
               href="#activities"
-              className="rounded-full border border-white px-8 py-3 text-sm font-semibold text-white hover:bg-white/10 transition"
+              className="rounded-full border border-white/80 bg-white/5 backdrop-blur-sm px-8 py-3.5 text-sm font-semibold text-white hover:bg-white hover:text-stone-900 hover:scale-105 active:scale-95 transition-all duration-300"
             >
               Hoạt Động Phật Sự
             </a>
@@ -198,8 +198,10 @@ export default async function HomePage() {
         </div>
 
         {/* Scroll down indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-white animate-bounce">
-          <ChevronDown className="h-6 w-6" />
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
+          <a href="#activities" className="text-white/70 hover:text-white transition-colors duration-300 block p-2">
+            <ChevronDown className="h-7 w-7" />
+          </a>
         </div>
       </section>
 
@@ -276,27 +278,27 @@ export default async function HomePage() {
             </a>
           </div>
 
-          {/* Grid 6 ảnh */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Grid 6 ảnh hoạt động */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {activities.map((act, index) => (
               <div 
-                key={index}
-                className="group relative aspect-[4/3] rounded-2xl overflow-hidden shadow-md cursor-pointer"
+                key={index} 
+                className="group relative overflow-hidden rounded-2xl bg-white dark:bg-[#1c1816] border border-stone-200/60 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500"
               >
-                {/* Background Image */}
-                <div 
-                  className="absolute inset-0 bg-cover bg-center transition duration-500 group-hover:scale-105"
-                  style={{ backgroundImage: `url('${act.img}')` }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10"></div>
+                {/* Image container */}
+                <div className="aspect-[4/3] w-full overflow-hidden bg-stone-100 dark:bg-stone-800">
+                  <img
+                    src={act.img}
+                    alt={act.title}
+                    className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                  />
                 </div>
-
-                {/* Overlaid Text */}
-                <div className="absolute bottom-6 left-6 right-6 text-white space-y-1.5">
-                  <h4 className="font-serif text-lg sm:text-xl font-bold leading-tight">
+                {/* Metadata */}
+                <div className="p-6 space-y-2">
+                  <h4 className="font-serif text-lg font-bold text-neutral dark:text-white">
                     {act.title}
                   </h4>
-                  <p className="text-[11px] text-stone-200/95 font-light">
+                  <p className="text-stone-600 dark:text-stone-400 text-sm">
                     {act.desc}
                   </p>
                 </div>

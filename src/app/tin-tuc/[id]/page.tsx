@@ -78,23 +78,25 @@ function renderArticleContent(content: string) {
   })
 }
 
-export default async function ArticleDetailPage({ params }: { params: { id: string } }) {
+export default async function ArticleDetailPage({ params }: { params: Promise<{ id: string }> | { id: string } }) {
+  const resolvedParams = await Promise.resolve(params)
+  const id = resolvedParams.id
   const supabase = await createClient()
 
   let post: any = null
 
-  if (!params.id.startsWith('demo-')) {
+  if (!id.startsWith('demo-')) {
     const { data } = await supabase
       .from('posts')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
     post = data
   }
 
   // Nếu bài viết demo hoặc không tìm thấy ID trong DB, dùng dữ liệu demo
   if (!post) {
-    if (params.id === 'demo-1') {
+    if (id === 'demo-1') {
       post = {
         title: 'Thông báo về việc trùng tu chính điện Chùa Báo Ân',
         category: 'THÔNG BÁO',
@@ -110,7 +112,7 @@ Nhằm đảm bảo an toàn cho Quý Phật tử về chùa hành lễ và bả
 
 Trong thời gian thi công sửa chữa, các thời khóa tụng kinh hằng ngày và khóa lễ sẽ được tạm thời chuyển sang khu vực nhà giảng đường phía Đông. Kính mong toàn thể Quý Đạo hữu và Phật tử hoan hỷ chia sẻ.`
       }
-    } else if (params.id === 'demo-2') {
+    } else if (id === 'demo-2') {
       post = {
         title: 'Hạnh phúc đến từ sự buông bỏ phiền não',
         category: 'PHẬT PHÁP',

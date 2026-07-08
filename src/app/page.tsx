@@ -129,8 +129,8 @@ export default async function HomePage() {
     ? publishedPostsData.map((p: any) => ({
         id: p.id,
         category: p.category || 'PHẬT PHÁP',
-        title: p.title,
-        desc: p.content ? p.content.replace(/<[^>]*>?/gm, '').replace(/!\[.*?\]\(.*?\)/g, '').slice(0, 115) + '...' : '',
+        title: p.title || 'Bài viết mới',
+        desc: typeof p.content === 'string' ? p.content.replace(/<[^>]*>?/gm, '').replace(/!\[.*?\]\(.*?\)/g, '').slice(0, 115) + '...' : '',
         img: p.thumbnail_url || 'https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?auto=format&fit=crop&w=600&q=80'
       }))
     : defaultNews

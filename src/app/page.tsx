@@ -4,6 +4,22 @@ import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
+function formatVietnamEventDate(dateStr: string) {
+  if (!dateStr) return 'Sắp diễn ra'
+  try {
+    const parts = dateStr.split('-')
+    if (parts.length === 3) {
+      const year = parts[0]
+      const month = parseInt(parts[1], 10)
+      const day = parseInt(parts[2], 10)
+      return `${day} Tháng ${month}, ${year}`
+    }
+    return dateStr
+  } catch {
+    return dateStr
+  }
+}
+
 export default async function HomePage() {
   const supabase = await createClient()
   
@@ -19,6 +35,28 @@ export default async function HomePage() {
       .single()
     role = profile?.role || 'USER'
   }
+
+  // Lấy danh sách sự kiện từ DB (để hiển thị lên timeline Sự Kiện Sắp Tới)
+  const { data: upcomingEventsData } = await supabase
+    .from('events')
+    .select('id, title, scheduled_date, description')
+    .is('deleted_at', null)
+    .order('scheduled_date', { ascending: true })
+
+  const upcomingEvents = upcomingEventsData && upcomingEventsData.length > 0 ? upcomingEventsData : [
+    {
+      id: 'default-1',
+      title: 'Đại Lễ Phật Đản',
+      scheduled_date: '15 Tháng 4, Giáp Thìn',
+      description: 'Kỷ niệm ngày Đức Thế Tôn đản sinh với các nghi thức tắm Phật và cầu nguyện quốc thái dân an.'
+    },
+    {
+      id: 'default-2',
+      title: 'Khóa Tu Một Ngày An Lạc',
+      scheduled_date: 'Chủ Nhật Hàng Tuần',
+      description: 'Ngày tu tập tập trung dành cho cư sĩ, trải nghiệm đời sống tỉnh thức giữa nhịp sống hối hả.'
+    }
+  ]
 
   // Danh sách hoạt động hàng ngày (6 ảnh)
   const activities = [
@@ -284,49 +322,58 @@ export default async function HomePage() {
             {/* Trục dọc timeline ở giữa */}
             <div className="absolute left-1/2 transform -translate-x-1/2 w-0.5 bg-stone-300 dark:bg-stone-800 h-full"></div>
 
-            {/* Cột mốc 1 (Bên trái text, bên phải Card) */}
-            <div className="relative grid grid-cols-2 gap-8 items-center mb-12">
-              <div className="text-right pr-4">
-                <span className="font-serif text-lg sm:text-xl font-bold text-neutral dark:text-stone-300">
-                  15 Tháng 4, Giáp Thìn
-                </span>
-              </div>
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background z-10"></div>
-              <div className="bg-white dark:bg-[#1c1816] p-6 rounded-2xl border border-stone-250/50 dark:border-stone-800 shadow-sm ml-4">
-                <h4 className="font-serif text-base font-bold text-neutral dark:text-white mb-2">Đại Lễ Phật Đản</h4>
-                <p className="text-stone-600 dark:text-stone-400 text-xs leading-relaxed">
-                  Kỷ niệm ngày Đức Thế Tôn đản sinh với các nghi thức tắm Phật và cầu nguyện quốc thái dân an.
-                </p>
-              </div>
-            </div>
+            {upcomingEvents.map((evt, idx) => {
+              const isEven = idx % 2 === 0
+              const formattedDate = evt.scheduled_date.includes('-') 
+                ? formatVietnamEventDate(evt.scheduled_date) 
+                : evt.scheduled_date
 
-            {/* Cột mốc 2 (Bên trái Card, bên phải Trống) */}
-            <div className="relative grid grid-cols-2 gap-8 items-center mb-12">
-              <div className="bg-white dark:bg-[#1c1816] p-6 rounded-2xl border border-stone-250/50 dark:border-stone-800 shadow-sm mr-4 text-right">
-                <h4 className="font-serif text-base font-bold text-neutral dark:text-white mb-2">Khóa Tu Một Ngày An Lạc</h4>
-                <p className="text-stone-600 dark:text-stone-400 text-xs leading-relaxed">
-                  Ngày tu tập tập trung dành cho cư sĩ, trải nghiệm đời sống tỉnh thức giữa nhịp sống hối hả.
-                </p>
-              </div>
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background z-10"></div>
-              <div className="pl-4">
-                {/* Trống */}
-              </div>
-            </div>
-
-            {/* Cột mốc 3 (Bên trái trống, bên phải text) */}
-            <div className="relative grid grid-cols-2 gap-8 items-center">
-              <div className="pr-4">
-                {/* Trống */}
-              </div>
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background z-10"></div>
-              <div className="pl-4">
-                <span className="font-serif text-lg sm:text-xl font-bold text-neutral dark:text-stone-300">
-                  Chủ Nhật Hàng Tuần
-                </span>
-              </div>
-            </div>
-
+              return (
+                <div key={evt.id} className="relative grid grid-cols-2 gap-8 items-center mb-12 last:mb-0">
+                  {isEven ? (
+                    <>
+                      {/* Cột trái: Ngày tháng */}
+                      <div className="text-right pr-4">
+                        <span className="font-serif text-lg sm:text-xl font-bold text-neutral dark:text-stone-300">
+                          {formattedDate}
+                        </span>
+                      </div>
+                      {/* Chấm giữa */}
+                      <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background z-10"></div>
+                      {/* Cột phải: Card nội dung */}
+                      <div className="bg-white dark:bg-[#1c1816] p-6 rounded-2xl border border-stone-250/50 dark:border-stone-800 shadow-sm ml-4">
+                        <h4 className="font-serif text-base font-bold text-neutral dark:text-white mb-2">{evt.title}</h4>
+                        {evt.description && (
+                          <p className="text-stone-600 dark:text-stone-400 text-xs leading-relaxed">
+                            {evt.description}
+                          </p>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Cột trái: Card nội dung */}
+                      <div className="bg-white dark:bg-[#1c1816] p-6 rounded-2xl border border-stone-250/50 dark:border-stone-800 shadow-sm mr-4 text-right">
+                        <h4 className="font-serif text-base font-bold text-neutral dark:text-white mb-2">{evt.title}</h4>
+                        {evt.description && (
+                          <p className="text-stone-600 dark:text-stone-400 text-xs leading-relaxed">
+                            {evt.description}
+                          </p>
+                        )}
+                      </div>
+                      {/* Chấm giữa */}
+                      <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background z-10"></div>
+                      {/* Cột phải: Ngày tháng */}
+                      <div className="pl-4">
+                        <span className="font-serif text-lg sm:text-xl font-bold text-neutral dark:text-stone-300">
+                          {formattedDate}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )
+            })}
           </div>
 
         </div>

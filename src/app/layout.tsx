@@ -19,8 +19,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Pagoda ERP - Hệ Thống Quản Lý Pháp Sự & Website Chùa",
-  description: "Giải pháp quản lý Phật tử, phiếu Cầu An, Cầu Siêu, cúng dường O2O và in ấn sớ chuyên nghiệp.",
+  title: "Chùa Báo ÂN",
+  description: "Trang web chính thức của Chùa Báo Ân",
 };
 
 export default function RootLayout({

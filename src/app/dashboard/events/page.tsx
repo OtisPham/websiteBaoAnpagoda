@@ -20,7 +20,7 @@ export default async function AdminEventsPage() {
     .eq('id', user.id)
     .single()
 
-  if (!profile || !['ADMIN', 'MONK'].includes(profile.role)) {
+  if (!profile || !['ADMIN', 'MONK', 'VOLUNTEER', 'MASTER'].includes(profile.role)) {
     redirect('/unauthorized')
   }
 

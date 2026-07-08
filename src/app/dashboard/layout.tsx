@@ -51,7 +51,7 @@ export default async function DashboardLayout({
       title: 'Đại Lễ & Ca Cúng',
       href: '/dashboard/events',
       icon: Calendar,
-      roles: ['ADMIN', 'MONK']
+      roles: ['ADMIN', 'MONK', 'VOLUNTEER', 'MASTER']
     },
     {
       title: 'Quầy Công Đức O2O',
@@ -79,7 +79,7 @@ export default async function DashboardLayout({
     }
   ]
 
-  const activeMenus = menuItems.filter(item => item.roles.includes(role))
+  const activeMenus = menuItems.filter(item => item.roles.includes(role) || role === 'MASTER' || role === 'ADMIN')
 
   return (
     <div className="flex min-h-screen bg-[#faf8f5] dark:bg-[#12100e] text-stone-900 dark:text-stone-100">

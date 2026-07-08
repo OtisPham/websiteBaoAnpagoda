@@ -54,25 +54,25 @@ export async function updateSession(request: NextRequest) {
 
     // RBAC: Check route constraints
     
-    // 1. Strict protection of the entire /dashboard area: Only ADMIN, MONK, VOLUNTEER allowed.
+    // 1. Strict protection of the entire /dashboard area: Only ADMIN, MONK, VOLUNTEER, MASTER allowed.
     if (path.startsWith('/dashboard')) {
-      if (!['ADMIN', 'MONK', 'VOLUNTEER'].includes(role)) {
+      if (!['ADMIN', 'MONK', 'VOLUNTEER', 'MASTER'].includes(role)) {
         return NextResponse.redirect(new URL('/unauthorized', request.url))
       }
     }
 
-    // 2. Settings & logs are strictly for ADMIN
-    if (path.startsWith('/dashboard/settings') && role !== 'ADMIN') {
+    // 2. Settings & logs are strictly for ADMIN & MASTER
+    if (path.startsWith('/dashboard/settings') && !['ADMIN', 'MASTER'].includes(role)) {
       return NextResponse.redirect(new URL('/unauthorized', request.url))
     }
 
-    // 3. Events management is strictly for ADMIN & MONK
-    if (path.startsWith('/dashboard/events') && !['ADMIN', 'MONK'].includes(role)) {
+    // 3. Events management is for ADMIN, MONK, VOLUNTEER, MASTER
+    if (path.startsWith('/dashboard/events') && !['ADMIN', 'MONK', 'VOLUNTEER', 'MASTER'].includes(role)) {
       return NextResponse.redirect(new URL('/unauthorized', request.url))
     }
 
-    // 4. Donations reception is strictly for ADMIN, MONK, and VOLUNTEER (protected by dashboard top constraint but check for completeness)
-    if (path.startsWith('/dashboard/donations') && !['ADMIN', 'MONK', 'VOLUNTEER'].includes(role)) {
+    // 4. Donations reception is for ADMIN, MONK, VOLUNTEER, MASTER
+    if (path.startsWith('/dashboard/donations') && !['ADMIN', 'MONK', 'VOLUNTEER', 'MASTER'].includes(role)) {
       return NextResponse.redirect(new URL('/unauthorized', request.url))
     }
 

@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
 
-// Chỉ ADMIN và MONK mới được quản lý sự kiện lễ
+// Chỉ ADMIN, MONK, VOLUNTEER, MASTER mới được quản lý sự kiện lễ
 async function checkAuthAndRole() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -18,8 +18,8 @@ async function checkAuthAndRole() {
     .single()
 
   const role = profile?.role || 'USER'
-  if (!['ADMIN', 'MONK'].includes(role)) {
-    throw new Error('Không có quyền thực hiện thao tác này. Chỉ Tăng Ni hoặc Admin được cấu hình sự kiện.')
+  if (!['ADMIN', 'MONK', 'VOLUNTEER', 'MASTER'].includes(role)) {
+    throw new Error('Không có quyền thực hiện thao tác này. Chỉ Tăng Ni, Tình nguyện viên hoặc Admin được cấu hình sự kiện.')
   }
 
   return { supabase }

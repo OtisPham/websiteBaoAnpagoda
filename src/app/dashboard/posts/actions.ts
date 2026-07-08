@@ -126,9 +126,12 @@ export async function savePost(input: SavePostInput): Promise<{ success: boolean
     const updatePayload: Record<string, any> = {
       title: input.title,
       content: input.content,
-      thumbnail_url: input.thumbnail_url,
-      category: input.category,
+      thumbnail_url: input.thumbnail_url || null,
+      category: input.category || 'PHẬT PHÁP',
       status: targetStatus
+    }
+    if (targetStatus === 'PUBLISHED') {
+      updatePayload.approved_by = user.id
     }
 
     const { data, error } = await supabase
@@ -157,10 +160,12 @@ export async function savePost(input: SavePostInput): Promise<{ success: boolean
     const newPayload: Record<string, any> = {
       title: input.title,
       content: input.content,
-      thumbnail_url: input.thumbnail_url,
-      category: input.category,
+      thumbnail_url: input.thumbnail_url || null,
+      category: input.category || 'PHẬT PHÁP',
       author_id: user.id,
-      status: targetStatus
+      status: targetStatus,
+      approved_by: targetStatus === 'PUBLISHED' ? user.id : null,
+      created_at: new Date().toISOString()
     }
 
     const { data, error } = await supabase

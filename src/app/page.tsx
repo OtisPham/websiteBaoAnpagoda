@@ -103,18 +103,21 @@ export default async function HomePage() {
 
   const defaultNews = [
     {
+      id: "demo-1",
       category: "THÔNG BÁO",
       title: "Thông báo về việc trùng tu chính điện",
       desc: "Chùa Báo Ân xin thông báo kế hoạch trùng tu hạng mục chính điện nhằm đảm bảo an toàn...",
       img: "https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?auto=format&fit=crop&w=600&q=80"
     },
     {
+      id: "demo-2",
       category: "PHẬT PHÁP",
       title: "Hạnh phúc đến từ sự buông bỏ",
       desc: "Chia sẻ của Thầy Trụ Trì về cách tìm thấy niềm vui tự tại trong những điều giản đơn nhất của...",
       img: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80"
     },
     {
+      id: "demo-3",
       category: "SỰ KIỆN",
       title: "Tổng kết khóa tu mùa hè cho thanh thiếu niên",
       desc: "Những khoảnh khắc xúc động và những bài học ý nghĩa mà các em học sinh đã trải qua trong 7...",
@@ -124,6 +127,7 @@ export default async function HomePage() {
 
   const news = publishedPostsData && publishedPostsData.length > 0
     ? publishedPostsData.map((p: any) => ({
+        id: p.id,
         category: p.category || 'PHẬT PHÁP',
         title: p.title,
         desc: p.content ? p.content.replace(/<[^>]*>?/gm, '').replace(/!\[.*?\]\(.*?\)/g, '').slice(0, 115) + '...' : '',
@@ -416,7 +420,7 @@ export default async function HomePage() {
           {/* Grid 3 Card tin tức */}
           <div className="grid md:grid-cols-3 gap-8">
             {news.map((item, index) => (
-              <div key={index} className="space-y-4 cursor-pointer group">
+              <Link key={index} href={`/tin-tuc/${item.id}`} className="space-y-4 cursor-pointer group block">
                 {/* Image */}
                 <div className="aspect-[1.5] w-full rounded-2xl overflow-hidden shadow-sm">
                   <img 
@@ -435,7 +439,7 @@ export default async function HomePage() {
                     {item.desc}
                   </p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 

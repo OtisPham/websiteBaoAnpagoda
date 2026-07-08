@@ -4,6 +4,7 @@ import { useState, useTransition, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Compass, RefreshCw } from 'lucide-react'
+import PagodaLogo from '@/components/PagodaLogo'
 import { signup } from '../actions'
 
 function RegisterContent() {
@@ -33,12 +34,12 @@ function RegisterContent() {
   return (
     <div className="flex min-h-screen flex-col justify-center bg-[#faf8f5] dark:bg-[#12100e] py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <Link href="/" className="inline-flex items-center gap-2 text-amber-700 dark:text-amber-500">
-          <Compass className="h-10 w-10 animate-spin-slow" />
-          <span className="font-serif text-2xl font-bold tracking-wider">PAGODA ERP</span>
+        <Link href="/" className="inline-flex items-center gap-2.5 text-amber-800 dark:text-amber-500 hover:opacity-80 transition">
+          <PagodaLogo className="h-10 w-10" />
+          <span className="font-serif text-2xl font-bold tracking-wider">Chùa Báo Ân</span>
         </Link>
         <h2 className="mt-6 font-serif text-3xl font-bold tracking-tight text-stone-950 dark:text-white">
-          Đăng ký tài khoản Phật tử
+          Chào mừng Phật tử đến với Chùa
         </h2>
         <p className="mt-2 text-sm text-stone-600 dark:text-stone-400">
           Đã có tài khoản?{' '}

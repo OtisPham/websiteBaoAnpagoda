@@ -60,6 +60,8 @@ export default function PostsDashboardClient({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const wordInputRef = useRef<HTMLInputElement>(null)
   const inlineImageRef = useRef<HTMLInputElement>(null)
+  const contentRef = useRef<HTMLTextAreaElement>(null)
+  const [attachedImages, setAttachedImages] = useState<{ name: string; url: string }[]>([])
 
   // Kiểm tra xem Volunteer có bị khóa chỉnh sửa không
   const isVolunteerLocked = isVolunteer && (currentStatus === 'PENDING_APPROVAL' || currentStatus === 'PUBLISHED')
@@ -156,13 +158,42 @@ export default function PostsDashboardClient({
     }
   }
 
-  // Chèn định dạng vào nội dung (Mini Rich Text Editor Helper)
+  // Chèn định dạng có hỗ trợ quét chọn/bôi đen từ ngữ (Highlight selection formatting)
   const insertFormatting = (prefix: string, suffix: string = '') => {
     if (isVolunteerLocked) return
-    setContent(prev => `${prev}\n${prefix} `)
+    const textarea = contentRef.current
+    if (!textarea) {
+      setContent(prev => `${prev}\n${prefix} `)
+      return
+    }
+
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+
+    if (start !== end) {
+      // Có bôi đen đoạn văn/chữ -> bọc định dạng xung quanh chữ được quét chọn
+      const selectedText = content.substring(start, end)
+      const newText =
+        content.substring(0, start) +
+        prefix + selectedText + suffix +
+        content.substring(end)
+      setContent(newText)
+      setTimeout(() => {
+        textarea.focus()
+        textarea.setSelectionRange(start + prefix.length, end + prefix.length)
+      }, 0)
+    } else {
+      // Không bôi đen -> chèn tại vị trí con trỏ
+      const insertion = prefix.endsWith(' ') ? `\n${prefix}` : `${prefix}${suffix}`
+      const newText =
+        content.substring(0, start) +
+        insertion +
+        content.substring(start)
+      setContent(newText)
+    }
   }
 
-  // Chèn nhiều hình ảnh (2-3 ảnh) trực tiếp vào giữa bài viết
+  // Tải danh sách hình ảnh (2-3 ảnh) vào thẻ đính kèm bài viết (không chèn chuỗi mã dài vào nội dung thô)
   const handleInlineImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
     if (files.length === 0) return
@@ -171,13 +202,32 @@ export default function PostsDashboardClient({
       const reader = new FileReader()
       reader.onload = () => {
         if (typeof reader.result === 'string') {
-          const imgTag = `\n\n![Hình ảnh minh hoạ - ${file.name}](${reader.result})\n\n`
-          setContent(prev => prev + imgTag)
+          setAttachedImages(prev => [
+            ...prev,
+            { name: file.name, url: reader.result as string }
+          ])
         }
       }
       reader.readAsDataURL(file)
     })
-    setSuccessMsg(`Đã chèn ${files.length} hình ảnh vào nội dung bài viết!`)
+    setSuccessMsg(`Đã đính kèm ${files.length} hình ảnh thành công!`)
+  }
+
+  // Chèn thẻ ảnh sạch sẽ vào vị trí con trỏ khi bấm nút Chèn từ danh sách ảnh đính kèm
+  const insertAttachedImageToEditor = (img: { name: string; url: string }) => {
+    const textarea = contentRef.current
+    const tag = `\n\n![${img.name}](${img.url})\n\n`
+    if (textarea) {
+      const start = textarea.selectionStart
+      const newContent =
+        content.substring(0, start) +
+        tag +
+        content.substring(start)
+      setContent(newContent)
+    } else {
+      setContent(prev => prev + tag)
+    }
+    setSuccessMsg(`Đã chèn ảnh ${img.name} vào bài viết!`)
   }
 
   // LƯU BÀI VIẾT (Save Draft / Submit for Review / Publish Now)
@@ -682,6 +732,73 @@ export default function PostsDashboardClient({
                 </div>
               )}
 
+              {/* ATTACH MULTIPLE IMAGES CARD (2-3 IMAGES) LIKE WORD CARD */}
+              {!isVolunteerLocked && (
+                <div className="bg-stone-50 dark:bg-[#1c1816] border border-stone-300 dark:border-stone-800 p-4 rounded-2xl space-y-3">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-[#8B4513]/10 dark:bg-amber-950/40 text-[#8B4513] dark:text-amber-400 flex items-center justify-center flex-shrink-0">
+                        <ImageIcon className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-stone-900 dark:text-stone-100">
+                          Đính Kèm Hình Ảnh Vào Bài Viết (2 - 3 ảnh)
+                        </p>
+                        <p className="text-xs text-stone-500 dark:text-stone-400">
+                          Chọn ảnh từ máy tính để đính kèm. Ảnh sẽ hiển thị trang nhã trong bài chi tiết (không hiện mã thô).
+                        </p>
+                      </div>
+                    </div>
+
+                    <input
+                      type="file"
+                      ref={inlineImageRef}
+                      onChange={handleInlineImageUpload}
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => inlineImageRef.current?.click()}
+                      className="px-4 py-2 rounded-xl bg-white dark:bg-stone-900 border-2 border-[#8B4513] text-[#8B4513] dark:text-amber-400 text-xs font-bold hover:bg-[#8B4513]/10 transition flex items-center gap-1.5 flex-shrink-0"
+                    >
+                      <Upload className="h-4 w-4" />
+                      Tải Ảnh Lên (2 - 3 ảnh)
+                    </button>
+                  </div>
+
+                  {/* THUMBNAIL PREVIEWS IF ANY */}
+                  {attachedImages.length > 0 && (
+                    <div className="pt-2 border-t border-stone-200 dark:border-stone-800 flex flex-wrap items-center gap-3">
+                      {attachedImages.map((img, idx) => (
+                        <div key={idx} className="relative group rounded-xl overflow-hidden border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-1.5 flex items-center gap-2">
+                          <img src={img.url} alt={img.name} className="h-12 w-12 object-cover rounded-lg" />
+                          <div className="pr-2 max-w-[120px]">
+                            <p className="text-xs font-semibold text-stone-800 dark:text-stone-200 truncate">{img.name}</p>
+                            <button
+                              type="button"
+                              onClick={() => insertAttachedImageToEditor(img)}
+                              className="text-[10px] text-[#8B4513] dark:text-amber-400 hover:underline font-bold"
+                            >
+                              + Chèn vào vị trí viết
+                            </button>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setAttachedImages(prev => prev.filter((_, i) => i !== idx))}
+                            className="text-stone-400 hover:text-red-500 text-xs p-1"
+                            title="Xóa ảnh"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* RICH TEXT EDITOR CARD */}
               <div className="bg-white dark:bg-[#1c1816] rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm overflow-hidden">
                 {/* Formatting Toolbar */}
@@ -708,7 +825,7 @@ export default function PostsDashboardClient({
                       type="button"
                       onClick={() => insertFormatting('**', '**')}
                       className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300"
-                      title="In đậm"
+                      title="Quét chọn chữ rồi bấm để In đậm"
                     >
                       <Bold className="h-4 w-4" />
                     </button>
@@ -716,7 +833,7 @@ export default function PostsDashboardClient({
                       type="button"
                       onClick={() => insertFormatting('_', '_')}
                       className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300"
-                      title="In nghiêng"
+                      title="Quét chọn chữ rồi bấm để In nghiêng"
                     >
                       <Italic className="h-4 w-4" />
                     </button>
@@ -733,38 +850,21 @@ export default function PostsDashboardClient({
                       type="button"
                       onClick={() => insertFormatting('>')}
                       className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300"
-                      title="Trích dẫn"
+                      title="Quét chọn đoạn văn rồi bấm để tạo Trích dẫn"
                     >
                       <Quote className="h-4 w-4" />
                     </button>
-
-                    <button
-                      type="button"
-                      onClick={() => inlineImageRef.current?.click()}
-                      className="px-3 py-1.5 rounded-lg bg-[#8B4513]/10 text-[#8B4513] dark:text-amber-400 hover:bg-[#8B4513]/20 text-xs font-bold flex items-center gap-1.5 ml-auto"
-                      title="Chọn 2-3 hình ảnh để chèn trực tiếp vào nội dung bài viết"
-                    >
-                      <ImageIcon className="h-4 w-4" />
-                      + Chèn Ảnh Vào Bài Viết (2-3 ảnh)
-                    </button>
-                    <input
-                      type="file"
-                      ref={inlineImageRef}
-                      onChange={handleInlineImageUpload}
-                      accept="image/*"
-                      multiple
-                      className="hidden"
-                    />
                   </div>
                 )}
 
                 {/* Content Textarea / Rich Area */}
                 <textarea
+                  ref={contentRef}
                   disabled={isVolunteerLocked}
                   rows={15}
                   value={content}
                   onChange={e => setContent(e.target.value)}
-                  placeholder="Nhập nội dung chi tiết bài viết ở đây... (Bạn có thể gõ trực tiếp hoặc tải từ file Word phía trên)"
+                  placeholder="Nhập nội dung chi tiết bài viết ở đây... (Bạn có thể quét chọn chữ rồi bấm nút in đậm/in nghiêng trên thanh công cụ)"
                   className="w-full p-6 bg-transparent text-stone-900 dark:text-stone-100 text-base leading-relaxed focus:outline-none resize-y min-h-[350px]"
                 />
               </div>

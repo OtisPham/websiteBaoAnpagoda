@@ -492,7 +492,7 @@ export default function PostsDashboardClient({
                           <span className="font-semibold text-stone-800 dark:text-stone-200">
                             ✍️ {post.author_name}
                           </span>
-                          <span>{new Date(post.created_at).toLocaleDateString('vi-VN')}</span>
+                          <span>{new Date(post.created_at || Date.now()).toLocaleDateString('vi-VN')}</span>
                         </div>
                         <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-stone-100 line-clamp-2">
                           {post.title}

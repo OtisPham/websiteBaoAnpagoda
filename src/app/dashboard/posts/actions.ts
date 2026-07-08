@@ -9,16 +9,16 @@ export interface PostData {
   id: string
   title: string
   content: string
-  thumbnail_url: string
-  category: string
+  thumbnail_url?: string
+  category?: string
   author_id: string
-  author_name: string
-  author_role: string
+  author_name?: string
+  author_role?: string
   approved_by?: string
   rejection_reason?: string
   status: PostStatus
-  created_at: string
-  updated_at: string
+  created_at?: string
+  updated_at?: string
 }
 
 export interface SavePostInput {
@@ -63,18 +63,42 @@ export async function fetchPosts(): Promise<{ posts: PostData[]; currentUserId: 
 
   if (error) {
     console.error('Lỗi tải danh sách bài viết:', error.message)
-    // Trường hợp bảng posts chưa tạo trên Supabase, trả về mảng rỗng để không crash
     return { posts: [], currentUserId: user.id, currentUserRole: role }
   }
 
+  const rawPosts = (data || []) as any[]
+
+  // Nạp thông tin tên tác giả từ bảng users dựa vào author_id
+  const authorIds = Array.from(new Set(rawPosts.map(p => p.author_id).filter(Boolean)))
+  let userMap = new Map<string, { full_name: string; role: string }>()
+
+  if (authorIds.length > 0) {
+    const { data: usersData } = await supabase
+      .from('users')
+      .select('id, full_name, role')
+      .in('id', authorIds)
+
+    if (usersData) {
+      usersData.forEach(u => {
+        userMap.set(u.id, { full_name: u.full_name || 'Phật tử', role: u.role || 'VOLUNTEER' })
+      })
+    }
+  }
+
+  const enrichedPosts: PostData[] = rawPosts.map(post => ({
+    ...post,
+    author_name: userMap.get(post.author_id)?.full_name || profile?.full_name || 'Phật tử',
+    author_role: userMap.get(post.author_id)?.role || role
+  }))
+
   return {
-    posts: (data || []) as PostData[],
+    posts: enrichedPosts,
     currentUserId: user.id,
     currentUserRole: role
   }
 }
 
-// Tạo hoặc cập nhật bài viết
+// Tạo hoặc cập nhật bài viết (Chỉ gửi các cột chuẩn trong bảng posts: title, content, thumbnail_url, category, author_id, status, created_at)
 export async function savePost(input: SavePostInput): Promise<{ success: boolean; error?: string; post?: PostData }> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -90,7 +114,6 @@ export async function savePost(input: SavePostInput): Promise<{ success: boolean
     .single()
 
   const role = profile?.role || 'VOLUNTEER'
-  const authorName = input.author_name || profile?.full_name || 'Phật tử'
 
   // Ràng buộc bảo mật: VOLUNTEER không bao giờ được phép trực tiếp đặt status là 'PUBLISHED'
   let targetStatus = input.status
@@ -98,23 +121,14 @@ export async function savePost(input: SavePostInput): Promise<{ success: boolean
     targetStatus = 'PENDING_APPROVAL'
   }
 
-  const now = new Date().toISOString()
-
   if (input.id) {
     // Cập nhật bài viết hiện có
-    const updatePayload: Partial<PostData> = {
+    const updatePayload: Record<string, any> = {
       title: input.title,
       content: input.content,
       thumbnail_url: input.thumbnail_url,
       category: input.category,
-      author_name: authorName,
-      status: targetStatus,
-      updated_at: now
-    }
-
-    // Nếu gởi lại chờ duyệt sau khi bị từ chối, xoá lý do từ chối cũ
-    if (targetStatus === 'PENDING_APPROVAL') {
-      updatePayload.rejection_reason = undefined
+      status: targetStatus
     }
 
     const { data, error } = await supabase
@@ -129,22 +143,24 @@ export async function savePost(input: SavePostInput): Promise<{ success: boolean
       return { success: false, error: error.message }
     }
 
+    const enrichedPost: PostData = {
+      ...data,
+      author_name: profile?.full_name || input.author_name || 'Phật tử',
+      author_role: role
+    }
+
     revalidatePath('/dashboard/posts')
     revalidatePath('/')
-    return { success: true, post: data as PostData }
+    return { success: true, post: enrichedPost }
   } else {
     // Tạo bài viết mới
-    const newPayload = {
+    const newPayload: Record<string, any> = {
       title: input.title,
       content: input.content,
       thumbnail_url: input.thumbnail_url,
       category: input.category,
       author_id: user.id,
-      author_name: authorName,
-      author_role: role,
-      status: targetStatus,
-      created_at: now,
-      updated_at: now
+      status: targetStatus
     }
 
     const { data, error } = await supabase
@@ -158,9 +174,15 @@ export async function savePost(input: SavePostInput): Promise<{ success: boolean
       return { success: false, error: error.message }
     }
 
+    const enrichedPost: PostData = {
+      ...data,
+      author_name: profile?.full_name || input.author_name || 'Phật tử',
+      author_role: role
+    }
+
     revalidatePath('/dashboard/posts')
     revalidatePath('/')
-    return { success: true, post: data as PostData }
+    return { success: true, post: enrichedPost }
   }
 }
 
@@ -191,11 +213,7 @@ export async function reviewPost(params: {
     return { success: false, error: 'Chỉ Quý Thầy (MONK) hoặc Quản trị viên mới có quyền duyệt bài' }
   }
 
-  const now = new Date().toISOString()
-
-  const updateData: Record<string, any> = {
-    updated_at: now
-  }
+  const updateData: Record<string, any> = {}
 
   if (params.editedTitle) updateData.title = params.editedTitle
   if (params.editedContent) updateData.content = params.editedContent
@@ -204,10 +222,8 @@ export async function reviewPost(params: {
   if (params.action === 'APPROVE') {
     updateData.status = 'PUBLISHED'
     updateData.approved_by = user.id
-    updateData.rejection_reason = null
   } else {
     updateData.status = 'REJECTED'
-    updateData.rejection_reason = params.rejection_reason || 'Nội dung chưa phù hợp'
   }
 
   const { error } = await supabase

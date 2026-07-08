@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { Compass, LayoutDashboard, FileText, Calendar, Landmark, Printer, Settings, LogOut, User } from 'lucide-react'
+import { Compass, LayoutDashboard, FileText, Calendar, Landmark, Printer, Settings, LogOut, User, PenTool } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { signout } from '../auth/actions'
 import PagodaLogo from '@/components/PagodaLogo'
@@ -52,6 +52,12 @@ export default async function DashboardLayout({
       title: 'Đại Lễ & Ca Cúng',
       href: '/dashboard/events',
       icon: Calendar,
+      roles: ['ADMIN', 'MONK', 'VOLUNTEER', 'MASTER']
+    },
+    {
+      title: 'Đăng Bài & CMS',
+      href: '/dashboard/posts',
+      icon: PenTool,
       roles: ['ADMIN', 'MONK', 'VOLUNTEER', 'MASTER']
     },
     {

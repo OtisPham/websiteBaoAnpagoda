@@ -74,7 +74,7 @@ export default async function HomePage() {
             title: 'Khóa Tu Tỉnh Thức Một Ngày An Lạc',
             scheduled_date: 'Chủ Nhật Hàng Tuần',
             description:
-              'Thời gian tu tập thanh tịnh dành cho quý cư sĩ Phật tử, thiền tọa chánh niệm và lắng nghe nghe pháp thoại.',
+              'Thời gian tu tập thanh tịnh dành cho quý cư sĩ Phật tử, thiền tọa chánh niệm và lắng nghe pháp thoại.',
           },
           {
             id: 'default-3',
@@ -97,8 +97,8 @@ export default async function HomePage() {
     {
       id: 'demo-1',
       category: 'THÔNG BÁO PHẬT SỰ',
-      title: 'Thông báo lịch tu tập và dâng sớ trực tuyến dịp Đại lễ',
-      desc: 'Chùa Báo Ân trân trọng kính báo đến toàn thể thiện nam tín nữ phật tử xa gần lịch trình khóa lễ và hướng dẫn đăng ký sớ trực tuyến...',
+      title: 'Thông báo lịch tu tập và thời khóa hành lễ định kỳ dịp Đại lễ',
+      desc: 'Chùa Báo Ân trân trọng kính báo đến toàn thể thiện nam tín nữ phật tử xa gần lịch trình khóa lễ và các buổi giảng pháp thoại...',
       img: 'https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?auto=format&fit=crop&w=800&q=80',
       created_at: '2026-07-10',
     },
@@ -142,7 +142,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#faf8f5] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 selection:bg-amber-600/20 selection:text-amber-900 dark:selection:text-amber-200">
-      {/* Top Notification / Philosophy Strip */}
+      {/* Top Philosophy Strip */}
       <div className="bg-gradient-to-r from-amber-950 via-stone-900 to-amber-950 text-amber-200/90 text-xs py-2 px-4 border-b border-amber-500/20">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap">
@@ -152,9 +152,6 @@ export default async function HomePage() {
             </span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-[11px] text-amber-300/80 font-medium">
-            <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3 text-amber-400" /> Giờ viếng chùa: 04:30 – 21:00
-            </span>
             <span className="flex items-center gap-1">
               <MapPin className="h-3 w-3 text-amber-400" /> 53 Lê Bình, Q. Tân Bình, TP.HCM
             </span>
@@ -225,7 +222,7 @@ export default async function HomePage() {
                   href="/auth/login"
                   className="inline-flex items-center gap-2 rounded-full bg-stone-900 dark:bg-amber-500 hover:bg-amber-900 dark:hover:bg-amber-400 text-white dark:text-stone-950 px-5 sm:px-6 py-2.5 text-xs sm:text-sm font-semibold shadow-md transition-all duration-300 active:scale-95"
                 >
-                  <span>Đăng Nhập / Ghi Sớ</span>
+                  <span>Đăng Nhập</span>
                 </Link>
               )}
             </div>
@@ -264,19 +261,19 @@ export default async function HomePage() {
           </h1>
 
           <p className="mx-auto max-w-2xl text-base sm:text-lg text-stone-200/90 leading-relaxed font-light">
-            Chào mừng quý Phật tử và thiện hữu xa gần bước vào chốn thanh tịnh Chùa Báo Ân — nơi
-            gửi gắm tâm nguyện cầu an gia đạo, siêu độ hương linh và thắp sáng ngọn đèn chánh niệm.
+            Chào mừng quý Phật tử và thiện hữu xa gần bước vào chốn thanh tịnh Chùa Báo Ân — điểm
+            tựa tâm linh ấm cúng, nơi lắng nghe pháp thoại và tìm về chánh niệm vững vàng.
           </p>
 
           {/* Primary & Secondary Call to Actions */}
           <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href={user ? (role === 'USER' ? '/phat-tu' : '/dashboard') : '/auth/register'}
+            <a
+              href="#events"
               className="inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 hover:from-amber-500 hover:to-amber-700 text-white px-8 py-4 text-sm font-bold shadow-xl shadow-amber-950/40 hover:shadow-amber-600/30 hover:scale-105 active:scale-95 transition-all duration-300"
             >
-              <span>Dâng Sớ Cầu An - Cầu Siêu</span>
+              <span>Lịch Pháp Sự & Khóa Tu</span>
               <ArrowRight className="h-4 w-4" />
-            </Link>
+            </a>
             <a
               href="#heritage"
               className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-md px-7 py-4 text-sm font-semibold text-white hover:bg-white hover:text-stone-900 hover:border-white hover:scale-105 active:scale-95 transition-all duration-300"
@@ -289,21 +286,21 @@ export default async function HomePage() {
           <div className="pt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto text-left">
             <div className="p-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center gap-3.5">
               <div className="p-2.5 rounded-lg bg-amber-500/20 text-amber-300">
-                <Clock className="h-5 w-5" />
+                <BookOpen className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-xs text-stone-300 font-medium">Giờ Viếng Chùa</p>
-                <p className="text-sm font-bold text-white">04:30 – 21:00 Hàng Ngày</p>
+                <p className="text-xs text-stone-300 font-medium">Tu Học Chánh Niệm</p>
+                <p className="text-sm font-bold text-white">Khóa Tu Tỉnh Thức Định Kỳ</p>
               </div>
             </div>
 
             <div className="p-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center gap-3.5">
               <div className="p-2.5 rounded-lg bg-amber-500/20 text-amber-300">
-                <BookOpen className="h-5 w-5" />
+                <Compass className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-xs text-stone-300 font-medium">Đăng Ký Khấn Nguyện</p>
-                <p className="text-sm font-bold text-white">Sớ Trực Tuyến 24/7</p>
+                <p className="text-xs text-stone-300 font-medium">Hoằng Pháp Lợi Sinh</p>
+                <p className="text-sm font-bold text-white">Pháp Thoại & Kế Thừa Di Sản</p>
               </div>
             </div>
 
@@ -312,8 +309,8 @@ export default async function HomePage() {
                 <Heart className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-xs text-stone-300 font-medium">Lễ Cầu Siêu & Cầu An</p>
-                <p className="text-sm font-bold text-white">Duyệt Sớ Minh Bạch</p>
+                <p className="text-xs text-stone-300 font-medium">Từ Bi Thiện Nguyện</p>
+                <p className="text-sm font-bold text-white">Lan Tỏa Yêu Thương</p>
               </div>
             </div>
           </div>
@@ -344,17 +341,17 @@ export default async function HomePage() {
                   <Compass className="h-6 w-6" />
                 </div>
                 <h3 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 dark:text-white leading-snug">
-                  Kế Thừa Di Sản & Cung Kính Pháp Sớ
+                  Kế Thừa Di Sản Văn Hóa & Tâm Linh Phật Giáo
                 </h3>
                 <p className="text-stone-600 dark:text-stone-300 text-sm sm:text-base leading-relaxed max-w-2xl">
-                  Chùa Báo Ân là chốn cổ tự linh thiêng lưu giữ truyền thống cúng lễ, dâng sớ cầu an
-                  – cầu siêu chuẩn mực. Mọi lá sớ đăng ký của quý Phật tử đều được kiểm duyệt trang
-                  nghiêm, in ấn phôi sớ chuẩn chánh điện và xướng danh cầu nguyện trước Tam Bảo.
+                  Chùa Báo Ân là chốn cổ tự linh thiêng lưu giữ truyền thống hoằng pháp lợi sinh và
+                  tu tập thanh tịnh. Nơi hội tụ thiện duyên, hướng dẫn quý Phật tử tu dưỡng chánh
+                  niệm và gieo trồng những phước điền cao quý.
                 </p>
               </div>
               <div className="pt-4 border-t border-amber-900/10 dark:border-stone-800 flex items-center justify-between">
                 <span className="text-xs font-semibold text-amber-900 dark:text-amber-400">
-                  Quy chuẩn phôi sớ chữ Hán & Việt chuẩn xác
+                  Duy trì mạch nguồn chánh pháp lâu dài
                 </span>
                 <span className="text-xs font-serif italic text-stone-500">Báo Ân Pháp Ấn</span>
               </div>
@@ -372,8 +369,8 @@ export default async function HomePage() {
                     Gieo Mầm Từ Bi & Thiện Nguyện
                   </h3>
                   <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed">
-                    Thực hành hạnh nguyện cứu khổ ban vui, chia sẻ sẻ chia với những hoàn cảnh khó
-                    khăn qua các hoạt động từ thiện và phóng sinh định kỳ.
+                    Thực hành hạnh nguyện cứu khổ ban vui, chia sẻ với những hoàn cảnh khó khăn qua
+                    các hoạt động từ thiện và phóng sinh định kỳ.
                   </p>
                 </div>
               </div>
@@ -468,13 +465,6 @@ export default async function HomePage() {
                 Tin Tức & Thông Báo Phật Sự
               </h2>
             </div>
-            <Link
-              href="/auth/register"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-800 dark:text-amber-400 hover:underline"
-            >
-              <span>Xem tất cả bài viết</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
           </div>
 
           {/* Editorial 3-Column Card Grid */}
@@ -518,58 +508,68 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* SECTION 4: SANCTUARY CALL TO ACTION BANNER */}
+      {/* SECTION 4: SANCTUARY WELCOME BANNER */}
       <section className="py-20 bg-gradient-to-br from-stone-900 via-[#181412] to-amber-950 text-white relative overflow-hidden border-t border-amber-500/20">
         <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="mx-auto max-w-5xl px-6 lg:px-8 text-center relative z-10 space-y-8">
           <div className="space-y-3">
             <span className="text-xs font-bold uppercase tracking-widest text-amber-400">
-              Đăng Ký Sớ Khấn Nguyện Trực Tuyến
+              Chiêm Bái & Lễ Phật
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
-              Gửi Trọn Tâm Nguyện Đến Tam Bảo
+              Bước Vào Chốn Tĩnh Lặng • Tìm Về An Nhiên
             </h2>
             <p className="mx-auto max-w-2xl text-stone-300 text-sm sm:text-base leading-relaxed">
-              Quý Phật tử có thể dễ dàng điền thông tin gia quyến cầu an hoặc hương linh cầu siêu
-              trực tuyến. Nhà chùa sẽ tiếp nhận, khám ấn và tuyên sớ trong các thời khóa tụng niệm.
+              Kính mời quý Phật tử và thiện hữu xa gần sắp xếp thời gian quang lâm bổn tự chiêm bái,
+              tham dự các thời khóa tu học và trải nghiệm đời sống chánh niệm thanh tịnh.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href="/auth/register"
+            <a
+              href="#events"
               className="inline-flex items-center gap-2 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 px-8 py-4 text-sm font-bold shadow-lg hover:shadow-amber-500/30 hover:scale-105 active:scale-95 transition-all duration-300"
             >
-              <span>Đăng Ký Cầu An & Cầu Siêu Ngay</span>
+              <span>Xem Lịch Khóa Tu & Sự Kiện</span>
               <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="/auth/login"
-              className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 hover:bg-white/15 px-8 py-4 text-sm font-semibold text-white transition-all duration-300"
-            >
-              <span>Phật Tử Đã Có Tài Khoản</span>
-            </Link>
+            </a>
           </div>
         </div>
       </section>
 
       {/* SANCTUARY EDITORIAL FOOTER */}
       <footer className="border-t border-stone-200 dark:border-stone-850 bg-white dark:bg-[#0c0a09] py-14">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <PagodaLogo className="h-9 w-9" />
-              <span className="font-serif text-lg font-bold text-stone-900 dark:text-white">
-                Chùa Báo Ân • Bổn Tự Pháp Ấn
-              </span>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 space-y-10">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <PagodaLogo className="h-9 w-9" />
+                <span className="font-serif text-lg font-bold text-stone-900 dark:text-white">
+                  Chùa Báo Ân • Bổn Tự Pháp Ấn
+                </span>
+              </div>
+              <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md leading-relaxed">
+                Địa chỉ: 53 Lê Bình, Phường Tân Sơn Nhất, Quận Tân Bình, TP. Hồ Chí Minh <br />
+                Điện thoại liên hệ hành chính phật sự: 0901.234.567
+              </p>
             </div>
-            <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md leading-relaxed">
-              Địa chỉ: 53 Lê Bình, Phường Tân Sơn Nhất, Quận Tân Bình, TP. Hồ Chí Minh <br />
-              Điện thoại liên hệ hành chính phật sự: 0901.234.567
-            </p>
+
+            {/* Giờ hoạt động ở cuối cùng của Footer */}
+            <div className="bg-amber-50/70 dark:bg-stone-900/80 border border-amber-600/30 dark:border-amber-500/30 px-6 py-4 rounded-2xl text-left md:text-right space-y-1.5 shadow-sm">
+              <div className="flex items-center md:justify-end gap-2 text-amber-800 dark:text-amber-400 font-bold text-xs uppercase tracking-wider">
+                <Clock className="h-4 w-4" />
+                <span>Thời gian chùa hoạt động</span>
+              </div>
+              <p className="text-sm font-bold text-stone-900 dark:text-white">
+                Sáng: (8:00 - 11:00) &nbsp;•&nbsp; Chiều: (14:00 - 20:00)
+              </p>
+              <p className="text-[11px] text-stone-500 dark:text-stone-400 italic">
+                Mở cửa đón tiếp Phật tử & viếng chùa hàng ngày
+              </p>
+            </div>
           </div>
 
-          <div className="flex flex-col md:items-end gap-3 text-xs text-stone-500 dark:text-stone-400">
+          <div className="pt-8 border-t border-stone-100 dark:border-stone-800/80 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-stone-500 dark:text-stone-400">
             <p>© 2026 Chùa Báo Ân. Tất cả các quyền được bảo lưu trang nghiêm.</p>
             <Link
               href="/auth/login"

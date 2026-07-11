@@ -75,6 +75,11 @@ body {
     margin: 10mm;
   }
 
+  @page so-portrait-page {
+    size: A4 portrait;
+    margin: 12mm 15mm;
+  }
+
   .receipt-print-area {
     width: 80mm;
     max-width: 80mm;

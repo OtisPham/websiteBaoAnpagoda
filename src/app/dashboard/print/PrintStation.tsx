@@ -206,7 +206,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                 onChange={(e) => setPrintMode(e.target.value as 'READING' | 'POSTER')}
                 className="rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-1.5 text-sm text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 font-semibold"
               >
-                <option value="READING">Mẫu Quý Thầy Đọc (Xoay Ngang)</option>
+                <option value="READING">Mẫu Quý Thầy Đọc (A4 Dọc Chuẩn)</option>
                 <option value="POSTER">Mẫu Dán Chánh Điện (Bảng Biểu)</option>
               </select>
             </div>
@@ -312,83 +312,137 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               }
 
               return (
-              <div
-                key={form.id}
-                className="so-page-block bg-white text-black p-8 w-full print:border-none print:shadow-none print:m-0 print:p-0 break-after-page"
-                style={{ pageBreakAfter: 'always', page: 'so-page' as any }}
-              >
-                {/* Khối Body Sớ nằm dọc hoàn toàn */}
-                <div 
-                  className="relative w-full aspect-[1/1.414] border border-stone-200 rounded-3xl p-12 bg-[#fcfaf6] bg-cover bg-center bg-no-repeat flex flex-row-reverse justify-start gap-8 overflow-hidden shadow-sm print:border-none print:shadow-none print:bg-transparent print:bg-none print:p-8 print:w-[98%] print:mx-auto"
-                  style={{
-                    backgroundImage: selectedTemplateUrl ? `url(${selectedTemplateUrl})` : 'none'
-                  }}
+                <div
+                  key={form.id}
+                  className="so-page-block bg-white text-stone-900 p-8 print:p-0 w-full max-w-[210mm] mx-auto break-after-page"
+                  style={{ pageBreakAfter: 'always', page: 'so-portrait-page' as any }}
                 >
-                  {/* Lớp phủ trong suốt chứa nội dung (Overlay Container) */}
-                  <div className="absolute inset-0 z-10 flex flex-row-reverse justify-start gap-8 p-12 print:p-8">
-                    {/* Dấu niêm phong sớ của chùa ở góc */}
-                    <div className="absolute top-8 left-8 border-4 border-double border-red-700 text-red-700 font-serif font-bold p-3 text-xs rounded-lg uppercase tracking-wider flex items-center justify-center opacity-85">
-                      Báo Ân Cổ Tự <br /> Pháp Ấn
-                    </div>
+                  {/* Khung Sớ A4 Dọc Chuẩn */}
+                  <div
+                    className="relative w-full min-h-[280mm] border-2 border-amber-900/40 rounded-xl p-10 print:p-8 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:border-amber-900/40 print:shadow-none"
+                    style={{
+                      backgroundImage: selectedTemplateUrl ? `url(${selectedTemplateUrl})` : 'none',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }}
+                  >
+                    {/* Phần trên sớ: Header & Thông tin Trai Chủ */}
+                    <div className="space-y-6">
+                      {/* Header sớ */}
+                      <div className="flex items-start justify-between border-b-2 border-amber-900/30 pb-5">
+                        {/* Ấn đỏ chùa */}
+                        <div className="border-4 border-double border-red-700 text-red-700 font-serif font-bold px-3 py-2 text-xs rounded uppercase tracking-wider text-center leading-snug select-none">
+                          Báo Ân Cổ Tự <br /> Pháp Ấn
+                        </div>
 
-                    {/* 1. Tiêu đề chính của sớ ở đầu sớ (góc phải vì đọc từ phải qua trái) */}
-                    <div className="writing-vertical flex items-center justify-center font-bold text-xl text-amber-900 border-l border-amber-900/10 pl-6 print:border-transparent">
-                      {form.form_type === 'CAU_AN' 
-                        ? 'NAM MÔ TIÊU TAI DIÊN THỌ DƯỢC SƯ LƯU LY QUANG VƯƠNG PHẬT' 
-                        : 'NAM MÔ TIẾP DẪN ĐẠO SƯ A DI ĐÀ PHẬT'}
-                    </div>
+                        {/* Tiêu đề chính */}
+                        <div className="text-center flex-1 px-4">
+                          <p className="text-[11px] font-semibold uppercase tracking-widest text-stone-500 mb-1">
+                            Phật Giáo Việt Nam • Bổn Tự Chùa Báo Ân
+                          </p>
+                          <h2 className="font-serif text-2xl md:text-3xl font-bold text-amber-950 tracking-wide uppercase">
+                            {form.form_type === 'CAU_AN'
+                              ? 'Sớ Phục Nguyện Cầu An'
+                              : 'Sớ Phục Nguyện Cầu Siêu'}
+                          </h2>
+                          <p className="font-serif italic text-sm text-amber-800 mt-1">
+                            {form.form_type === 'CAU_AN'
+                              ? 'Nam Mô Tiêu Tai Diên Thọ Dược Sư Lưu Ly Quang Vương Phật'
+                              : 'Nam Mô Tiếp Dẫn Đạo Sư A Di Đà Phật'}
+                          </p>
+                        </div>
 
-                    {/* 2. Cột thông tin Trai Chủ (Thay cho đường kẻ) */}
-                    <div className="writing-vertical flex items-start justify-around border-l border-stone-200 pl-4 pr-2 text-sm text-stone-800 print:border-transparent">
-                      <span className="font-bold text-lg uppercase tracking-widest text-amber-950">
-                        Trai Chủ: {traiChuName} {traiChuDharma ? `(${traiChuDharma})` : ''}
-                      </span>
-                      <span className="font-bold text-amber-800 tracking-wider">Mã sớ: {form.form_code}</span>
-                      <span className="font-semibold">Ca lễ: {form.is_delegated ? 'Chùa xếp' : form.selected_time_slot}</span>
-                    </div>
+                        {/* Mã sớ & Ca lễ */}
+                        <div className="text-right text-xs text-stone-700 font-medium space-y-1">
+                          <div className="inline-block bg-amber-900/10 text-amber-950 font-bold px-2.5 py-1 rounded">
+                            Mã: {form.form_code}
+                          </div>
+                          <div>Ngày: {form.scheduled_date || 'Hôm nay'}</div>
+                          <div>Giờ: {form.is_delegated ? 'Chùa xếp' : form.selected_time_slot}</div>
+                        </div>
+                      </div>
 
-                    {/* 3. Tiêu đề danh sách */}
-                    <div className="writing-vertical flex items-start justify-start pt-12 border-l border-stone-200 pl-4 pr-2 font-bold text-base uppercase tracking-widest text-stone-700 print:border-transparent">
-                      {form.form_type === 'CAU_AN' ? 'Danh Sách Phật Tử Cầu An' : 'Danh Sách Hương Linh'}
-                    </div>
+                      {/* Khung Thông tin Gia Chủ / Trai Chủ */}
+                      <div className="bg-amber-900/5 border border-amber-900/20 rounded-lg p-4 space-y-1.5">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="font-serif font-bold text-base text-amber-950">
+                            Trai Chủ / Gia Chủ: <span className="text-amber-900">{traiChuName}</span>
+                            {traiChuDharma ? ` (Pháp danh: ${traiChuDharma})` : ''}
+                          </span>
+                          <span className="text-xs text-stone-600">
+                            {form.users?.phone || ''}
+                          </span>
+                        </div>
+                        {form.note && (
+                          <p className="text-xs text-stone-700 italic">
+                            Lời khấn / Ghi chú: &ldquo;{form.note}&rdquo;
+                          </p>
+                        )}
+                      </div>
 
-                    {/* 4. Danh sách mục tiêu (Chia cột tự động, tối đa 15 người 1 cột) */}
-                    <div className="flex-1 h-full">
-                      <div className="flex flex-row-reverse justify-start gap-6 w-full h-full">
-                        {(() => {
-                          const MAX_ITEMS_PER_COL = 15
-                          const numCols = Math.max(1, Math.ceil(actualTargets.length / MAX_ITEMS_PER_COL))
-                          const columns = []
-                          for (let i = 0; i < numCols; i++) {
-                            columns.push(actualTargets.slice(i * MAX_ITEMS_PER_COL, (i + 1) * MAX_ITEMS_PER_COL))
-                          }
+                      {/* Danh Sách Khấn Nguyện */}
+                      <div>
+                        <h3 className="font-serif font-bold text-sm uppercase tracking-wider text-amber-900 border-b border-amber-900/20 pb-2 mb-3">
+                          {form.form_type === 'CAU_AN'
+                            ? 'Danh Sách Hương Linh & Phật Tử Cầu An Tiêu Tai'
+                            : 'Danh Sách Chư Hương Linh Phục Nguyện Siêu Độ'}
+                        </h3>
 
-                          return columns.map((colTargets, colIdx) => (
-                            <div key={colIdx} className="writing-vertical flex flex-col items-start justify-start border-r border-stone-200/50 print:border-transparent pr-4 pl-4" style={{ direction: 'ltr' }}>
-                              {colTargets.map((t, tIdx) => (
-                                <div key={tIdx} className="text-stone-900 font-semibold tracking-wide text-sm leading-relaxed mb-6">
-                                  {t.full_name} {t.dharma_name ? `(${t.dharma_name})` : ''} 
-                                  {t.birth_year ? ` SN: ${t.birth_year}` : ''} 
-                                  {t.death_year ? ` Mất: ${t.death_year}` : ''}
-                                  {t.relation ? ` (${t.relation})` : ''}
+                        {actualTargets.length === 0 ? (
+                          <p className="text-sm italic text-stone-500 py-4 text-center">
+                            (Gia chủ cúng dường chung cho gia quyến)
+                          </p>
+                        ) : (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {actualTargets.map((t, tIdx) => (
+                              <div
+                                key={tIdx}
+                                className="flex items-baseline justify-between border-b border-stone-200/80 pb-2 text-sm"
+                              >
+                                <div>
+                                  <span className="font-semibold text-stone-900">
+                                    {tIdx + 1}. {t.full_name}
+                                  </span>
+                                  {t.dharma_name && (
+                                    <span className="text-amber-800 ml-1.5 font-medium">
+                                      (PD: {t.dharma_name})
+                                    </span>
+                                  )}
                                 </div>
-                              ))}
-                            </div>
-                          ))
-                        })()}
+                                <div className="text-xs text-stone-600 shrink-0 ml-2">
+                                  {t.birth_year ? `SN: ${t.birth_year} ` : ''}
+                                  {t.death_year ? `Mất: ${t.death_year} ` : ''}
+                                  {t.relation ? `• ${t.relation}` : ''}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    {/* 5. Lời nguyện cúng ở cuối sớ (góc trái) */}
-                    <div className="writing-vertical flex items-center justify-center font-serif font-bold text-xs text-stone-600 border-r border-amber-900/10 pr-6 print:border-transparent">
-                      {form.form_type === 'CAU_AN'
-                        ? 'Đệ tử chúng đẳng thành tâm khấu bái nguyện cầu gia quyến khang ninh khương thái cát tường.'
-                        : 'Đệ tử chúng đẳng thành tâm khấu bái nguyện cầu hương linh vãng sinh cực lạc, siêu sinh tịnh độ.'}
+                    {/* Lời nguyện & Chữ ký phía dưới sớ */}
+                    <div className="mt-8 pt-6 border-t border-amber-900/20 space-y-4">
+                      <p className="font-serif italic text-center text-sm text-stone-700 leading-relaxed px-4">
+                        {form.form_type === 'CAU_AN'
+                          ? 'Đệ tử chúng đẳng thành tâm khấu bái, nguyện cầu Tam Bảo chứng minh, gia quyến khang ninh khương thái cát tường, sở cầu như ý, sở nguyện tòng tâm.'
+                          : 'Đệ tử chúng đẳng thành tâm khấu bái, nguyện cầu Tiếp Dẫn Đạo Sư A Di Đà Phật phóng quang tiếp độ chư hương linh trút bỏ trần duyên, siêu sinh tịnh độ.'}
+                      </p>
+
+                      <div className="flex justify-between items-end text-center text-xs text-stone-600 pt-2">
+                        <div>
+                          <p className="font-semibold text-stone-800">Trai Chủ Khấn Nguyện</p>
+                          <p className="mt-6 italic">(Đã đăng ký trực tuyến)</p>
+                        </div>
+                        <div>
+                          <p className="font-serif font-bold text-stone-900 text-sm">Chùa Báo Ân - Bổn Tự Khâm Nguyện</p>
+                          <p className="mt-6 font-semibold text-amber-900">Khám Ấn Duyệt Sớ</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )})}
+              )})}
           </div>
         </div>
       )}

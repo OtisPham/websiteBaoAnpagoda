@@ -466,65 +466,67 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             (Gia chủ cúng dường chung cho gia quyến)
                           </p>
                         ) : (() => {
-                          const mid = Math.ceil(actualTargets.length / 2)
-                          const col1 = actualTargets.slice(0, mid)
-                          const col2 = actualTargets.slice(mid)
+                          // Tối đa 15 tên mỗi cột, sau đó tự động chuyển sang cột kế bên kề bên nhau
+                          const MAX_PER_COL = 15
+                          const isCauSieu = form.form_type !== 'CAU_AN'
+
+                          // Nếu danh sách <= 15 nhưng > 4 người, chia 2 cột cho cân đối trang sớ
+                          const numCols =
+                            actualTargets.length <= 15 && actualTargets.length > 4
+                              ? 2
+                              : Math.ceil(actualTargets.length / MAX_PER_COL)
+
+                          const itemsPerCol = Math.min(MAX_PER_COL, Math.ceil(actualTargets.length / numCols))
+                          const cols: TargetPerson[][] = []
+                          for (let i = 0; i < actualTargets.length; i += itemsPerCol) {
+                            cols.push(actualTargets.slice(i, i + itemsPerCol))
+                          }
 
                           return (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
-                              {/* Cột 1: Đánh số tuần tự từ trên xuống dưới hết cột 1 */}
-                              <div className="space-y-2">
-                                {col1.map((t, idx) => (
-                                  <div
-                                    key={idx}
-                                    className="flex items-baseline justify-between border-b border-stone-200/80 pb-2 text-sm"
-                                  >
-                                    <div>
-                                      <span className="font-semibold text-stone-900">
-                                        {idx + 1}. {t.full_name}
-                                      </span>
-                                      {t.dharma_name && (
-                                        <span className="text-amber-800 ml-1.5 font-medium">
-                                          (PD: {t.dharma_name})
-                                        </span>
-                                      )}
-                                    </div>
-                                    <div className="text-xs text-stone-600 shrink-0 ml-2">
-                                      {t.birth_year ? `SN: ${t.birth_year} ` : ''}
-                                      {t.death_year ? `Mất: ${t.death_year} ` : ''}
-                                      {t.relation ? `• ${t.relation}` : ''}
-                                    </div>
+                            <div
+                              className={`grid gap-x-4 gap-y-1 ${
+                                cols.length === 1
+                                  ? 'grid-cols-1'
+                                  : cols.length === 2
+                                  ? 'grid-cols-2'
+                                  : cols.length === 3
+                                  ? 'grid-cols-3'
+                                  : 'grid-cols-4'
+                              }`}
+                            >
+                              {cols.map((colItems, colIdx) => {
+                                const startNumber = colIdx * itemsPerCol + 1
+                                return (
+                                  <div key={colIdx} className="space-y-1">
+                                    {colItems.map((t, idx) => {
+                                      const globalNum = startNumber + idx
+                                      return (
+                                        <div
+                                          key={idx}
+                                          className="flex items-baseline justify-between border-b border-stone-200/70 py-1 text-xs"
+                                        >
+                                          <div className="truncate">
+                                            <span className="font-semibold text-stone-900">
+                                              {globalNum}. {t.full_name}
+                                            </span>
+                                            {t.dharma_name && (
+                                              <span className="text-amber-800 ml-1 font-medium">
+                                                (PD: {t.dharma_name})
+                                              </span>
+                                            )}
+                                          </div>
+                                          {!isCauSieu && (
+                                            <div className="text-[11px] text-stone-600 shrink-0 ml-1">
+                                              {t.birth_year ? `SN: ${t.birth_year} ` : ''}
+                                              {t.relation ? `• ${t.relation}` : ''}
+                                            </div>
+                                          )}
+                                        </div>
+                                      )
+                                    })}
                                   </div>
-                                ))}
-                              </div>
-
-                              {/* Cột 2: Đánh số nối tiếp cột 1 từ trên xuống dưới hết cột 2 */}
-                              {col2.length > 0 && (
-                                <div className="space-y-2">
-                                  {col2.map((t, idx) => (
-                                    <div
-                                      key={idx}
-                                      className="flex items-baseline justify-between border-b border-stone-200/80 pb-2 text-sm"
-                                    >
-                                      <div>
-                                        <span className="font-semibold text-stone-900">
-                                          {mid + idx + 1}. {t.full_name}
-                                        </span>
-                                        {t.dharma_name && (
-                                          <span className="text-amber-800 ml-1.5 font-medium">
-                                            (PD: {t.dharma_name})
-                                          </span>
-                                        )}
-                                      </div>
-                                      <div className="text-xs text-stone-600 shrink-0 ml-2">
-                                        {t.birth_year ? `SN: ${t.birth_year} ` : ''}
-                                        {t.death_year ? `Mất: ${t.death_year} ` : ''}
-                                        {t.relation ? `• ${t.relation}` : ''}
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
+                                )
+                              })}
                             </div>
                           )
                         })()}

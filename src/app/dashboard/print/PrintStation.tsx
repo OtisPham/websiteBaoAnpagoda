@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Printer, Calendar, Clock, FileText, CheckCircle2, ChevronRight, RefreshCw, X } from 'lucide-react'
 import { markAsPrinted } from './actions'
 
@@ -263,8 +263,10 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               if (printMode === 'POSTER') {
                 const shortCode = form.form_code.slice(-3)
                 
-                // Thuật toán Line-Weight & Column Chunking
-                const MAX_LINES_PER_COL = 21
+                // Cân đối chiều cao A4 Ngang (210mm): tối đa 13 dòng chữ lớn 1 cột, tối đa 4 cột 1 trang
+                const MAX_LINES_PER_COL = 13
+                const MAX_COLS_PER_PAGE = 4
+
                 const columns: string[][] = []
                 let currentCol: string[] = []
                 let currentLines = 0
@@ -286,28 +288,38 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                 if (currentCol.length > 0) {
                   columns.push(currentCol)
                 }
-                
+
+                // Nhóm các cột thành các trang ngang (mỗi trang tối đa 4 cột)
+                const pages: string[][][] = []
+                for (let i = 0; i < columns.length; i += MAX_COLS_PER_PAGE) {
+                  pages.push(columns.slice(i, i + MAX_COLS_PER_PAGE))
+                }
+
                 return (
-                  <div
-                    key={form.id}
-                    className="so-page-block bg-white text-black p-8 w-full print:border-none print:shadow-none print:m-0 print:p-8 break-after-page flex justify-center gap-16 min-h-[50vh]"
-                    style={{ pageBreakAfter: 'always', page: 'so-page' as any }}
-                  >
-                    {columns.map((colNames, colIdx) => (
-                      <div key={colIdx} className="flex flex-col items-center flex-1 max-w-[300px]">
-                        <div className="text-[72px] font-bold leading-none mb-8 text-black text-center">
-                          {shortCode}
-                        </div>
-                        <div className="flex flex-col gap-3 w-full">
-                          {colNames.map((name, nIdx) => (
-                            <div key={nIdx} className="text-2xl font-bold text-center text-black uppercase leading-tight">
-                              {name}
+                  <React.Fragment key={form.id}>
+                    {pages.map((pageCols, pageIdx) => (
+                      <div
+                        key={`${form.id}-page-${pageIdx}`}
+                        className="so-page-block bg-white text-black p-8 print:p-6 w-full print:border-none print:shadow-none print:m-0 break-after-page flex justify-center gap-10 min-h-[50vh]"
+                        style={{ pageBreakAfter: 'always', page: 'so-page' as any }}
+                      >
+                        {pageCols.map((colNames, colIdx) => (
+                          <div key={colIdx} className="flex flex-col items-center flex-1 max-w-[260px]">
+                            <div className="text-[64px] font-bold leading-none mb-6 text-black text-center">
+                              {shortCode}
                             </div>
-                          ))}
-                        </div>
+                            <div className="flex flex-col gap-3 w-full">
+                              {colNames.map((name, nIdx) => (
+                                <div key={nIdx} className="text-xl font-bold text-center text-black uppercase leading-tight">
+                                  {name}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     ))}
-                  </div>
+                  </React.Fragment>
                 )
               }
 
@@ -392,32 +404,69 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                           <p className="text-sm italic text-stone-500 py-4 text-center">
                             (Gia chủ cúng dường chung cho gia quyến)
                           </p>
-                        ) : (
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {actualTargets.map((t, tIdx) => (
-                              <div
-                                key={tIdx}
-                                className="flex items-baseline justify-between border-b border-stone-200/80 pb-2 text-sm"
-                              >
-                                <div>
-                                  <span className="font-semibold text-stone-900">
-                                    {tIdx + 1}. {t.full_name}
-                                  </span>
-                                  {t.dharma_name && (
-                                    <span className="text-amber-800 ml-1.5 font-medium">
-                                      (PD: {t.dharma_name})
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="text-xs text-stone-600 shrink-0 ml-2">
-                                  {t.birth_year ? `SN: ${t.birth_year} ` : ''}
-                                  {t.death_year ? `Mất: ${t.death_year} ` : ''}
-                                  {t.relation ? `• ${t.relation}` : ''}
-                                </div>
+                        ) : (() => {
+                          const mid = Math.ceil(actualTargets.length / 2)
+                          const col1 = actualTargets.slice(0, mid)
+                          const col2 = actualTargets.slice(mid)
+
+                          return (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                              {/* Cột 1: Đánh số tuần tự từ trên xuống dưới hết cột 1 */}
+                              <div className="space-y-2">
+                                {col1.map((t, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="flex items-baseline justify-between border-b border-stone-200/80 pb-2 text-sm"
+                                  >
+                                    <div>
+                                      <span className="font-semibold text-stone-900">
+                                        {idx + 1}. {t.full_name}
+                                      </span>
+                                      {t.dharma_name && (
+                                        <span className="text-amber-800 ml-1.5 font-medium">
+                                          (PD: {t.dharma_name})
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="text-xs text-stone-600 shrink-0 ml-2">
+                                      {t.birth_year ? `SN: ${t.birth_year} ` : ''}
+                                      {t.death_year ? `Mất: ${t.death_year} ` : ''}
+                                      {t.relation ? `• ${t.relation}` : ''}
+                                    </div>
+                                  </div>
+                                ))}
                               </div>
-                            ))}
-                          </div>
-                        )}
+
+                              {/* Cột 2: Đánh số nối tiếp cột 1 từ trên xuống dưới hết cột 2 */}
+                              {col2.length > 0 && (
+                                <div className="space-y-2">
+                                  {col2.map((t, idx) => (
+                                    <div
+                                      key={idx}
+                                      className="flex items-baseline justify-between border-b border-stone-200/80 pb-2 text-sm"
+                                    >
+                                      <div>
+                                        <span className="font-semibold text-stone-900">
+                                          {mid + idx + 1}. {t.full_name}
+                                        </span>
+                                        {t.dharma_name && (
+                                          <span className="text-amber-800 ml-1.5 font-medium">
+                                            (PD: {t.dharma_name})
+                                          </span>
+                                        )}
+                                      </div>
+                                      <div className="text-xs text-stone-600 shrink-0 ml-2">
+                                        {t.birth_year ? `SN: ${t.birth_year} ` : ''}
+                                        {t.death_year ? `Mất: ${t.death_year} ` : ''}
+                                        {t.relation ? `• ${t.relation}` : ''}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })()}
                       </div>
                     </div>
 

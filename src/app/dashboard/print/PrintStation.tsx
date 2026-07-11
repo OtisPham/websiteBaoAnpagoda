@@ -254,30 +254,27 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
 
           {/* Vùng in ấn sớ */}
           <div className="so-print-layout print:m-0 print:p-0">
-            {selectedForms.map((form, idx) => {
-              const traiChuTarget = form.targets.find(t => t.relation === 'TRAI_CHU')
-              const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name
-              const traiChuDharma = traiChuTarget?.dharma_name
-              const actualTargets = form.targets.filter(t => t.relation !== 'TRAI_CHU')
+            {printMode === 'POSTER' ? (() => {
+              // Gom TẤT CẢ các cột từ tất cả các sớ được chọn (selectedForms) để xếp kề bên nhau trên cùng trang
+              const MAX_LINES_PER_COL = 13
+              const MAX_COLS_PER_PAGE = 4
 
-              if (printMode === 'POSTER') {
+              const allColumns: { shortCode: string; names: string[] }[] = []
+
+              selectedForms.forEach((form) => {
                 const shortCode = form.form_code.slice(-3)
-                
-                // Cân đối chiều cao A4 Ngang (210mm): tối đa 13 dòng chữ lớn 1 cột, tối đa 4 cột 1 trang
-                const MAX_LINES_PER_COL = 13
-                const MAX_COLS_PER_PAGE = 4
+                const actualTargets = form.targets.filter(t => t.relation !== 'TRAI_CHU')
 
-                const columns: string[][] = []
                 let currentCol: string[] = []
                 let currentLines = 0
 
-                actualTargets.forEach(t => {
+                actualTargets.forEach((t) => {
                   const name = t.full_name.trim()
                   const wordCount = name.split(/\s+/).length
                   const linesNeeded = wordCount < 5 ? 1 : 2
 
                   if (currentLines + linesNeeded > MAX_LINES_PER_COL && currentCol.length > 0) {
-                    columns.push(currentCol)
+                    allColumns.push({ shortCode, names: currentCol })
                     currentCol = []
                     currentLines = 0
                   }
@@ -286,42 +283,43 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                   currentLines += linesNeeded
                 })
                 if (currentCol.length > 0) {
-                  columns.push(currentCol)
+                  allColumns.push({ shortCode, names: currentCol })
                 }
+              })
 
-                // Nhóm các cột thành các trang ngang (mỗi trang tối đa 4 cột)
-                const pages: string[][][] = []
-                for (let i = 0; i < columns.length; i += MAX_COLS_PER_PAGE) {
-                  pages.push(columns.slice(i, i + MAX_COLS_PER_PAGE))
-                }
+              // Nhóm các cột thành các trang A4 Ngang (mỗi trang tối đa 4 cột kế bên nhau)
+              const pages: { shortCode: string; names: string[] }[][] = []
+              for (let i = 0; i < allColumns.length; i += MAX_COLS_PER_PAGE) {
+                pages.push(allColumns.slice(i, i + MAX_COLS_PER_PAGE))
+              }
 
-                return (
-                  <React.Fragment key={form.id}>
-                    {pages.map((pageCols, pageIdx) => (
-                      <div
-                        key={`${form.id}-page-${pageIdx}`}
-                        className="so-page-block bg-white text-black p-8 print:p-6 w-full print:border-none print:shadow-none print:m-0 break-after-page flex justify-center gap-10 min-h-[50vh]"
-                        style={{ pageBreakAfter: 'always', page: 'so-page' as any }}
-                      >
-                        {pageCols.map((colNames, colIdx) => (
-                          <div key={colIdx} className="flex flex-col items-center flex-1 max-w-[260px]">
-                            <div className="text-[64px] font-bold leading-none mb-6 text-black text-center">
-                              {shortCode}
-                            </div>
-                            <div className="flex flex-col gap-3 w-full">
-                              {colNames.map((name, nIdx) => (
-                                <div key={nIdx} className="text-xl font-bold text-center text-black uppercase leading-tight">
-                                  {name}
-                                </div>
-                              ))}
-                            </div>
+              return pages.map((pageCols, pageIdx) => (
+                <div
+                  key={`poster-page-${pageIdx}`}
+                  className="so-page-block bg-white text-black p-8 print:p-6 w-full print:border-none print:shadow-none print:m-0 break-after-page flex justify-center gap-10 min-h-[50vh]"
+                  style={{ pageBreakAfter: 'always', page: 'so-page' as any }}
+                >
+                  {pageCols.map((col, colIdx) => (
+                    <div key={colIdx} className="flex flex-col items-center flex-1 max-w-[260px]">
+                      <div className="text-[64px] font-bold leading-none mb-6 text-black text-center">
+                        {col.shortCode}
+                      </div>
+                      <div className="flex flex-col gap-3 w-full">
+                        {col.names.map((name, nIdx) => (
+                          <div key={nIdx} className="text-xl font-bold text-center text-black uppercase leading-tight">
+                            {name}
                           </div>
                         ))}
                       </div>
-                    ))}
-                  </React.Fragment>
-                )
-              }
+                    </div>
+                  ))}
+                </div>
+              ))
+            })() : selectedForms.map((form, idx) => {
+              const traiChuTarget = form.targets.find(t => t.relation === 'TRAI_CHU')
+              const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name
+              const traiChuDharma = traiChuTarget?.dharma_name
+              const actualTargets = form.targets.filter(t => t.relation !== 'TRAI_CHU')
 
               return (
                 <div

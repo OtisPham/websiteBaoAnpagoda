@@ -33,7 +33,7 @@ export default async function HomePage() {
       .from('users')
       .select('role')
       .eq('id', user.id)
-      .single()
+      .maybeSingle()
     role = profile?.role || 'USER'
   }
 

@@ -8,21 +8,20 @@ export default async function PhatTuPage() {
   const supabase = await createClient()
 
   // 1. Kiểm tra session và lấy user
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (!user || authError) {
     redirect('/auth/login')
   }
 
-  // 2. Lấy profile Phật tử
+  // 2. Lấy profile Phật tử (dùng maybeSingle để tránh lỗi HTTP 406)
   const { data: profile } = await supabase
     .from('users')
     .select('full_name, email, role')
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
-  if (!profile) {
-    redirect('/auth/login?error=Tài khoản chưa đồng bộ thông tin hồ sơ')
-  }
+  const userEmail = profile?.email || user.email || ''
+  const userFullName = profile?.full_name || user.user_metadata?.full_name || 'Đạo Hữu Phật Tử'
 
   // 3. Lấy danh sách sự kiện lễ sắp diễn ra (để đăng ký)
   const today = new Date().toISOString().split('T')[0]
@@ -69,8 +68,8 @@ export default async function PhatTuPage() {
 
   return (
     <PhatTuDashboard
-      userEmail={profile.email || user.email || ''}
-      userFullName={profile.full_name || 'Phật tử vô danh'}
+      userEmail={userEmail}
+      userFullName={userFullName}
       events={events || []}
       forms={(forms as any) || []}
     />

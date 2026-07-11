@@ -40,20 +40,21 @@ export async function updateSession(request: NextRequest) {
   // Get current user session
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser()
 
-  if (user) {
+  if (user && !authError) {
     // Fetch profile from public.users to check custom DB role in real-time
     const { data: profile } = await supabase
       .from('users')
       .select('role')
       .eq('id', user.id)
-      .single()
+      .maybeSingle()
 
     const role = profile?.role || 'USER'
 
     // RBAC: Check route constraints
-    
+
     // 1. Strict protection of the entire /dashboard area: Only ADMIN, MONK, VOLUNTEER, MASTER allowed.
     if (path.startsWith('/dashboard')) {
       if (!['ADMIN', 'MONK', 'VOLUNTEER', 'MASTER'].includes(role)) {
@@ -85,12 +86,30 @@ export async function updateSession(request: NextRequest) {
       }
     }
   } else {
+    // Nếu token cũ / hết hạn / lỗi token -> Xóa sạch cookie Supabase cũ để tránh dính lỗi token cũ
+    if (authError) {
+      request.cookies.getAll().forEach((cookie) => {
+        if (cookie.name.startsWith('sb-')) {
+          supabaseResponse.cookies.delete(cookie.name)
+        }
+      })
+    }
+
     // If not logged in and attempts to access protected directories
     if (
       path.startsWith('/dashboard') ||
       path.startsWith('/phat-tu')
     ) {
-      return NextResponse.redirect(new URL('/auth/login', request.url))
+      const loginUrl = new URL('/auth/login', request.url)
+      const res = NextResponse.redirect(loginUrl)
+      if (authError) {
+        request.cookies.getAll().forEach((cookie) => {
+          if (cookie.name.startsWith('sb-')) {
+            res.cookies.delete(cookie.name)
+          }
+        })
+      }
+      return res
     }
   }
 

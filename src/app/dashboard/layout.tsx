@@ -25,7 +25,7 @@ export default async function DashboardLayout({
     .from('users')
     .select('full_name, email, role')
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
   if (!profile || profile.role === 'USER') {
     // Phật tử thường không được vào ban quản trị

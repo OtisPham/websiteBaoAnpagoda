@@ -296,12 +296,31 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               return pages.map((pageCols, pageIdx) => (
                 <div
                   key={`poster-page-${pageIdx}`}
-                  className="so-page-block bg-white text-black p-8 print:p-6 w-full print:border-none print:shadow-none print:m-0 break-after-page flex justify-center gap-10 min-h-[50vh]"
+                  className="so-page-block bg-white text-black p-8 print:p-6 w-full print:border-none print:shadow-none print:m-0 break-after-page flex justify-center min-h-[50vh]"
                   style={{ pageBreakAfter: 'always', page: 'so-page' as any }}
                 >
                   {pageCols.map((col, colIdx) => (
-                    <div key={colIdx} className="flex flex-col items-center flex-1 max-w-[260px]">
-                      <div className="text-[64px] font-bold leading-none mb-6 text-black text-center">
+                    <div
+                      key={colIdx}
+                      className={`flex flex-col items-center flex-1 max-w-[265px] px-5 relative ${
+                        colIdx < pageCols.length - 1
+                          ? 'border-r-2 border-dashed border-stone-400 print:border-stone-500'
+                          : ''
+                      }`}
+                    >
+                      {/* Biểu tượng canh cắt ✂ ở đầu và cuối đường nét đứt */}
+                      {colIdx < pageCols.length - 1 && (
+                        <>
+                          <span className="absolute -top-4 -right-2.5 text-xs text-stone-500 print:text-stone-600 select-none">
+                            ✂
+                          </span>
+                          <span className="absolute -bottom-4 -right-2.5 text-xs text-stone-500 print:text-stone-600 select-none rotate-180">
+                            ✂
+                          </span>
+                        </>
+                      )}
+
+                      <div className="text-[64px] font-bold leading-none mb-6 text-black text-center tracking-tight">
                         {col.shortCode}
                       </div>
                       <div className="flex flex-col gap-3 w-full">

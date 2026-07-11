@@ -1,5 +1,17 @@
 import Link from 'next/link'
-import { Compass, Heart, Sparkles, Home as HomeIcon, ChevronDown } from 'lucide-react'
+import {
+  Compass,
+  Heart,
+  Sparkles,
+  Calendar,
+  ArrowRight,
+  Clock,
+  MapPin,
+  Phone,
+  BookOpen,
+  Sun,
+  ChevronRight,
+} from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import PagodaLogo from '@/components/PagodaLogo'
 
@@ -23,10 +35,12 @@ function formatVietnamEventDate(dateStr: string) {
 
 export default async function HomePage() {
   const supabase = await createClient()
-  
-  // Lấy phiên đăng nhập hiện tại nếu có
-  const { data: { user } } = await supabase.auth.getUser()
-  
+
+  // 1. Lấy thông tin người dùng đang đăng nhập
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
   let role = 'USER'
   if (user) {
     const { data: profile } = await supabase
@@ -37,63 +51,41 @@ export default async function HomePage() {
     role = profile?.role || 'USER'
   }
 
-  // Lấy danh sách sự kiện từ DB (để hiển thị lên timeline Sự Kiện Sắp Tới)
+  // 2. Lấy sự kiện sắp tới từ DB
   const { data: upcomingEventsData } = await supabase
     .from('events')
     .select('id, title, scheduled_date, description')
     .is('deleted_at', null)
     .order('scheduled_date', { ascending: true })
 
-  const upcomingEvents = upcomingEventsData && upcomingEventsData.length > 0 ? upcomingEventsData : [
-    {
-      id: 'default-1',
-      title: 'Đại Lễ Phật Đản',
-      scheduled_date: '15 Tháng 4, Giáp Thìn',
-      description: 'Kỷ niệm ngày Đức Thế Tôn đản sinh với các nghi thức tắm Phật và cầu nguyện quốc thái dân an.'
-    },
-    {
-      id: 'default-2',
-      title: 'Khóa Tu Một Ngày An Lạc',
-      scheduled_date: 'Chủ Nhật Hàng Tuần',
-      description: 'Ngày tu tập tập trung dành cho cư sĩ, trải nghiệm đời sống tỉnh thức giữa nhịp sống hối hả.'
-    }
-  ]
+  const upcomingEvents =
+    upcomingEventsData && upcomingEventsData.length > 0
+      ? upcomingEventsData
+      : [
+          {
+            id: 'default-1',
+            title: 'Đại Lễ Phật Đản PL.2570',
+            scheduled_date: '15 Tháng 4, Giáp Thìn',
+            description:
+              'Kỷ niệm ngày Đức Thế Tôn đản sinh với nghi thức tắm Phật trang nghiêm và đàn lễ cầu nguyện quốc thái dân an.',
+          },
+          {
+            id: 'default-2',
+            title: 'Khóa Tu Tỉnh Thức Một Ngày An Lạc',
+            scheduled_date: 'Chủ Nhật Hàng Tuần',
+            description:
+              'Thời gian tu tập thanh tịnh dành cho quý cư sĩ Phật tử, thiền tọa chánh niệm và lắng nghe nghe pháp thoại.',
+          },
+          {
+            id: 'default-3',
+            title: 'Lễ Sám Hối & Tụng Kinh Dược Sư',
+            scheduled_date: '14 & 30 Âm Lịch Hàng Tháng',
+            description:
+              'Khóa lễ định kỳ hàng tháng giúp thanh lọc thân tâm, hướng nguyện tiêu tai giải ức và gia đạo bình an.',
+          },
+        ]
 
-  // Danh sách hoạt động hàng ngày (6 ảnh)
-  const activities = [
-    {
-      title: "Morning Chanting",
-      desc: "4:30 AM - Tụng kinh buổi sớm",
-      img: "https://images.unsplash.com/photo-1507692049790-de58290a4334?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      title: "Meditation",
-      desc: "Daily - Thiền hành & Thiền tọa",
-      img: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      title: "Retreat",
-      desc: "Monthly - khóa tu ngắn hạn",
-      img: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      title: "Charity",
-      desc: "Weekly - Hoạt động thiện nguyện",
-      img: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      title: "Ceremonies",
-      desc: "Calendar - Các ngày đại lễ",
-      img: "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      title: "Study",
-      desc: "Weekend - Lớp học Phật Pháp",
-      img: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=600&q=80"
-    }
-  ]
-
-  // Lấy danh sách bài viết & tin tức đã xuất bản (PUBLISHED) từ DB Supabase
+  // 3. Lấy bài viết & thông báo đã xuất bản từ DB
   const { data: publishedPostsData } = await supabase
     .from('posts')
     .select('*')
@@ -103,81 +95,137 @@ export default async function HomePage() {
 
   const defaultNews = [
     {
-      id: "demo-1",
-      category: "THÔNG BÁO",
-      title: "Thông báo về việc trùng tu chính điện",
-      desc: "Chùa Báo Ân xin thông báo kế hoạch trùng tu hạng mục chính điện nhằm đảm bảo an toàn...",
-      img: "https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?auto=format&fit=crop&w=600&q=80"
+      id: 'demo-1',
+      category: 'THÔNG BÁO PHẬT SỰ',
+      title: 'Thông báo lịch tu tập và dâng sớ trực tuyến dịp Đại lễ',
+      desc: 'Chùa Báo Ân trân trọng kính báo đến toàn thể thiện nam tín nữ phật tử xa gần lịch trình khóa lễ và hướng dẫn đăng ký sớ trực tuyến...',
+      img: 'https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?auto=format&fit=crop&w=800&q=80',
+      created_at: '2026-07-10',
     },
     {
-      id: "demo-2",
-      category: "PHẬT PHÁP",
-      title: "Hạnh phúc đến từ sự buông bỏ",
-      desc: "Chia sẻ của Thầy Trụ Trì về cách tìm thấy niềm vui tự tại trong những điều giản đơn nhất của...",
-      img: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80"
+      id: 'demo-2',
+      category: 'PHÁP THOẠI',
+      title: 'Hạnh phúc đích thực đến từ tâm xả ly và bình an nội tại',
+      desc: 'Chia sẻ sâu sắc từ chốn thiền môn về nghệ thuật sống chánh niệm giữa những biến động của đời sống thường nhật...',
+      img: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=800&q=80',
+      created_at: '2026-07-08',
     },
     {
-      id: "demo-3",
-      category: "SỰ KIỆN",
-      title: "Tổng kết khóa tu mùa hè cho thanh thiếu niên",
-      desc: "Những khoảnh khắc xúc động và những bài học ý nghĩa mà các em học sinh đã trải qua trong 7...",
-      img: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80"
-    }
+      id: 'demo-3',
+      category: 'HOẠT ĐỘNG CHÙA',
+      title: 'Tổng kết chương trình thiện nguyện trao tặng học bổng từ bi',
+      desc: 'Hơn 200 phần quà và học bổng ý nghĩa đã được Ban Từ Thiện Chùa Báo Ân trao gửi đến các em học sinh hiếu học...',
+      img: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80',
+      created_at: '2026-07-05',
+    },
   ]
 
-  const news = publishedPostsData && publishedPostsData.length > 0
-    ? publishedPostsData.map((p: any) => ({
-        id: p.id,
-        category: p.category || 'PHẬT PHÁP',
-        title: p.title || 'Bài viết mới',
-        desc: typeof p.content === 'string' ? p.content.replace(/<[^>]*>?/gm, '').replace(/!\[.*?\]\(.*?\)/g, '').slice(0, 115) + '...' : '',
-        img: p.thumbnail_url || 'https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?auto=format&fit=crop&w=600&q=80'
-      }))
-    : defaultNews
+  const news =
+    publishedPostsData && publishedPostsData.length > 0
+      ? publishedPostsData.map((p: any) => ({
+          id: p.id,
+          category: p.category || 'PHẬT PHÁP',
+          title: p.title || 'Bài viết mới',
+          desc:
+            typeof p.content === 'string'
+              ? p.content
+                  .replace(/<[^>]*>?/gm, '')
+                  .replace(/!\[.*?\]\(.*?\)/g, '')
+                  .slice(0, 130) + '...'
+              : '',
+          img:
+            p.thumbnail_url ||
+            'https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?auto=format&fit=crop&w=800&q=80',
+          created_at: p.created_at?.split('T')[0] || 'Gần đây',
+        }))
+      : defaultNews
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      {/* Header / Navigation */}
-      <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-stone-200/50 dark:border-stone-850">
+    <div className="flex flex-col min-h-screen bg-[#faf8f5] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 selection:bg-amber-600/20 selection:text-amber-900 dark:selection:text-amber-200">
+      {/* Top Notification / Philosophy Strip */}
+      <div className="bg-gradient-to-r from-amber-950 via-stone-900 to-amber-950 text-amber-200/90 text-xs py-2 px-4 border-b border-amber-500/20">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap">
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span className="font-serif italic tracking-wide">
+              &ldquo;Tâm bình thế giới bình • Hương giới đức tỏa ngát khắp muôn phương&rdquo;
+            </span>
+          </div>
+          <div className="hidden md:flex items-center gap-6 text-[11px] text-amber-300/80 font-medium">
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3 text-amber-400" /> Giờ viếng chùa: 04:30 – 21:00
+            </span>
+            <span className="flex items-center gap-1">
+              <MapPin className="h-3 w-3 text-amber-400" /> 53 Lê Bình, Q. Tân Bình, TP.HCM
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Sanctuary Navigation */}
+      <header className="sticky top-0 z-50 bg-[#faf8f5]/90 dark:bg-[#0c0a09]/90 backdrop-blur-xl border-b border-stone-200/80 dark:border-stone-800/80 transition-all">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <PagodaLogo className="h-10 w-10 sm:h-11 sm:w-11 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" />
+            {/* Logo & Brand Identity */}
+            <Link href="/" className="flex items-center gap-3.5 group">
+              <div className="relative">
+                <div className="absolute -inset-1 rounded-full bg-amber-500/20 opacity-0 group-hover:opacity-100 blur transition-opacity duration-500" />
+                <PagodaLogo className="h-11 w-11 sm:h-12 sm:w-12 relative flex-shrink-0 group-hover:scale-105 transition-transform duration-500" />
+              </div>
               <div className="flex flex-col">
-                <span className="font-serif text-lg sm:text-xl font-bold tracking-wider text-primary dark:text-amber-400 group-hover:text-amber-700 transition-colors">
+                <span className="font-serif text-lg sm:text-xl font-bold tracking-wide text-stone-900 dark:text-amber-100 group-hover:text-amber-800 dark:group-hover:text-amber-400 transition-colors">
                   Chùa Báo Ân
                 </span>
-                <span className="text-[9px] tracking-widest uppercase font-semibold text-stone-500 dark:text-stone-400 -mt-0.5">
-                  Báo Ân Pagoda
+                <span className="text-[10px] tracking-[0.22em] uppercase font-semibold text-amber-800/80 dark:text-amber-400/80 -mt-0.5">
+                  Báo Ân Cổ Tự • Pháp Ấn
                 </span>
               </div>
             </Link>
-            
-            {/* Menu Links */}
-            <nav className="hidden md:flex space-x-8 text-sm font-semibold text-neutral/80 dark:text-stone-300">
-              <a href="#" className="text-primary border-b-2 border-primary pb-1">Home</a>
-              <a href="#about" className="hover:text-primary transition pb-1">About Temple</a>
-              <a href="#activities" className="hover:text-primary transition pb-1">Activities</a>
-              <a href="#news" className="hover:text-primary transition pb-1">News</a>
-              <a href="#events" className="hover:text-primary transition pb-1">Events</a>
-              <a href="#gallery" className="hover:text-primary transition pb-1">Gallery</a>
+
+            {/* Editorial Navigation Links */}
+            <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-stone-700 dark:text-stone-300">
+              <Link
+                href="/"
+                className="text-amber-800 dark:text-amber-400 font-semibold border-b-2 border-amber-600/80 pb-1"
+              >
+                Trang Chủ
+              </Link>
+              <a
+                href="#heritage"
+                className="hover:text-amber-800 dark:hover:text-amber-400 transition-colors pb-1"
+              >
+                Đạo Phong & Sứ Mệnh
+              </a>
+              <a
+                href="#events"
+                className="hover:text-amber-800 dark:hover:text-amber-400 transition-colors pb-1"
+              >
+                Lịch Pháp Sự
+              </a>
+              <a
+                href="#news"
+                className="hover:text-amber-800 dark:hover:text-amber-400 transition-colors pb-1"
+              >
+                Tin Tức & Thông Báo
+              </a>
             </nav>
 
-            {/* Auth Button */}
-            <div className="flex items-center gap-4">
+            {/* Action Area */}
+            <div className="flex items-center gap-3 sm:gap-4">
               {user ? (
                 <Link
                   href={role === 'USER' ? '/phat-tu' : '/dashboard'}
-                  className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-primary/95 transition"
+                  className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-800 to-amber-900 hover:from-amber-700 hover:to-amber-800 text-white px-5 sm:px-6 py-2.5 text-xs sm:text-sm font-semibold shadow-md shadow-amber-900/20 hover:shadow-lg hover:shadow-amber-900/30 transition-all duration-300 active:scale-95"
                 >
-                  Trang cá nhân
+                  <span>Trang cá nhân</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               ) : (
                 <Link
                   href="/auth/login"
-                  className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-primary/95 transition"
+                  className="inline-flex items-center gap-2 rounded-full bg-stone-900 dark:bg-amber-500 hover:bg-amber-900 dark:hover:bg-amber-400 text-white dark:text-stone-950 px-5 sm:px-6 py-2.5 text-xs sm:text-sm font-semibold shadow-md transition-all duration-300 active:scale-95"
                 >
-                  Login/Register
+                  <span>Đăng Nhập / Ghi Sớ</span>
                 </Link>
               )}
             </div>
@@ -185,279 +233,350 @@ export default async function HomePage() {
         </div>
       </header>
 
-      {/* Hero Banner Section */}
-      <section className="relative h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden">
-        {/* Background Image overlayed with slow zoom animation and gradient */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat animate-hero-bg"
-          style={{ 
+      {/* HERO SANCTUARY SECTION */}
+      <section className="relative min-h-[85vh] lg:min-h-[760px] flex items-center justify-center overflow-hidden">
+        {/* Editorial Background Image with Depth & Overlay */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 animate-hero-bg"
+          style={{
             backgroundImage: "url('/images/banner.jpg')",
           }}
         >
-          <div className="absolute inset-0 bg-black/45 dark:bg-black/60 backdrop-brightness-95"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/55 to-[#0c0a09] dark:to-[#0c0a09]" />
         </div>
+
+        {/* Subtle Warm Atmospheric Glow */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-amber-500/15 rounded-full blur-[120px] pointer-events-none" />
 
         {/* Hero Content */}
-        <div className="relative z-10 mx-auto max-w-5xl px-6 lg:px-8 text-center text-white space-y-8">
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-tight animate-fade-in-up drop-shadow-md">
-            Nơi Tìm Thấy Sự Bình An Giữa<br />Lòng Đời
+        <div className="relative z-10 mx-auto max-w-5xl px-6 lg:px-8 py-20 text-center text-white space-y-8">
+          {/* Spiritual Eyebrow */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-amber-300 text-xs font-medium tracking-wider uppercase">
+            <Sun className="h-3.5 w-3.5 text-amber-400" />
+            <span>Chốn Tổ Thiền Môn • Bình An Gia Đạo</span>
+          </div>
+
+          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.12] drop-shadow-lg max-w-4xl mx-auto">
+            Nơi Tìm Thấy Sự Bình An <br className="hidden sm:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-100 to-amber-300">
+              Giữa Lòng Đời
+            </span>
           </h1>
-          
-          <p className="mx-auto max-w-3xl text-sm sm:text-base lg:text-lg text-stone-200/90 leading-relaxed font-light animate-fade-in-up-delay-1">
-            Chào mừng quý Phật tử và thiện hữu xa gần ghé thăm Chùa Báo Ân – điểm tựa tâm linh cho tâm hồn xao động.
+
+          <p className="mx-auto max-w-2xl text-base sm:text-lg text-stone-200/90 leading-relaxed font-light">
+            Chào mừng quý Phật tử và thiện hữu xa gần bước vào chốn thanh tịnh Chùa Báo Ân — nơi
+            gửi gắm tâm nguyện cầu an gia đạo, siêu độ hương linh và thắp sáng ngọn đèn chánh niệm.
           </p>
 
-          <div className="pt-4 flex flex-wrap gap-4 justify-center animate-fade-in-up-delay-2">
+          {/* Primary & Secondary Call to Actions */}
+          <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
             <Link
-              href="/auth/register"
-              className="rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-white hover:bg-primary/90 hover:scale-105 hover:shadow-xl hover:shadow-primary/40 active:scale-95 transition-all duration-300 shadow-lg"
+              href={user ? (role === 'USER' ? '/phat-tu' : '/dashboard') : '/auth/register'}
+              className="inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 hover:from-amber-500 hover:to-amber-700 text-white px-8 py-4 text-sm font-bold shadow-xl shadow-amber-950/40 hover:shadow-amber-600/30 hover:scale-105 active:scale-95 transition-all duration-300"
             >
-              Khám Phá Chùa
+              <span>Dâng Sớ Cầu An - Cầu Siêu</span>
+              <ArrowRight className="h-4 w-4" />
             </Link>
             <a
-              href="#activities"
-              className="rounded-full border border-white/80 bg-white/5 backdrop-blur-sm px-8 py-3.5 text-sm font-semibold text-white hover:bg-white hover:text-stone-900 hover:scale-105 active:scale-95 transition-all duration-300"
+              href="#heritage"
+              className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-md px-7 py-4 text-sm font-semibold text-white hover:bg-white hover:text-stone-900 hover:border-white hover:scale-105 active:scale-95 transition-all duration-300"
             >
-              Hoạt Động Phật Sự
+              <span>Đạo Phong & Sứ Mệnh</span>
             </a>
           </div>
-        </div>
 
-        {/* Scroll down indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
-          <a href="#activities" className="text-white/70 hover:text-white transition-colors duration-300 block p-2">
-            <ChevronDown className="h-7 w-7" />
-          </a>
+          {/* Key Sanctuary Highlights Bar */}
+          <div className="pt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto text-left">
+            <div className="p-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center gap-3.5">
+              <div className="p-2.5 rounded-lg bg-amber-500/20 text-amber-300">
+                <Clock className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-stone-300 font-medium">Giờ Viếng Chùa</p>
+                <p className="text-sm font-bold text-white">04:30 – 21:00 Hàng Ngày</p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center gap-3.5">
+              <div className="p-2.5 rounded-lg bg-amber-500/20 text-amber-300">
+                <BookOpen className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-stone-300 font-medium">Đăng Ký Khấn Nguyện</p>
+                <p className="text-sm font-bold text-white">Sớ Trực Tuyến 24/7</p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center gap-3.5">
+              <div className="p-2.5 rounded-lg bg-amber-500/20 text-amber-300">
+                <Heart className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-stone-300 font-medium">Lễ Cầu Siêu & Cầu An</p>
+                <p className="text-sm font-bold text-white">Duyệt Sớ Minh Bạch</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Lịch Sử & Sứ Mệnh Section */}
-      <section id="about" className="py-24 bg-background">
+      {/* SECTION 1: HERITAGE & MISSION (ASYMMETRIC EDITORIAL BENTO GRID) */}
+      <section id="heritage" className="py-24 sm:py-32 relative">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 space-y-16">
-          
-          {/* Họa tiết hoa sen phân cách */}
-          <div className="flex items-center justify-center gap-4">
-            <div className="h-px bg-stone-300 dark:bg-stone-850 w-24"></div>
-            <Compass className="h-5 w-5 text-primary" />
-            <div className="h-px bg-stone-300 dark:bg-stone-850 w-24"></div>
-          </div>
-
-          {/* Heading */}
-          <div className="text-center">
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-neutral dark:text-white">
-              Lịch Sử & Sứ Mệnh
+          {/* Editorial Header */}
+          <div className="max-w-2xl space-y-4">
+            <div className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-amber-800 dark:text-amber-400">
+              <Compass className="h-4 w-4" />
+              <span>Đạo Phong • Kế Thừa Di Sản</span>
+            </div>
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-stone-900 dark:text-white leading-tight">
+              Duy trì mạch nguồn từ bi & trí tuệ qua các thế hệ
             </h2>
           </div>
 
-          {/* Grid 3 Cards */}
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Card 1 */}
-            <div className="group bg-card-bg/30 dark:bg-[#1f1a18] p-8 rounded-2xl border border-stone-200/40 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:shadow-amber-500/20 dark:hover:shadow-amber-500/15 hover:border-amber-400/80 dark:hover:border-amber-500/60 hover:bg-amber-50/50 dark:hover:bg-[#2c221a] hover:-translate-y-2 transition-all duration-500 ease-out space-y-6 cursor-pointer">
-              <div className="text-primary group-hover:scale-110 group-hover:text-amber-600 transition-transform duration-300">
-                <HomeIcon className="h-8 w-8" />
-              </div>
-              <h3 className="font-serif text-xl font-bold text-neutral dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">Kế Thừa Di Sản</h3>
-              <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed">
-                Gìn giữ những giá trị tâm linh quý báu từ ngàn xưa, kết nối hiện tại với dòng chảy văn hóa Phật giáo Việt Nam trường tồn qua các thế hệ.
-              </p>
-            </div>
-
-            {/* Card 2 */}
-            <div className="group bg-card-bg/30 dark:bg-[#1f1a18] p-8 rounded-2xl border border-stone-200/40 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:shadow-amber-500/20 dark:hover:shadow-amber-500/15 hover:border-amber-400/80 dark:hover:border-amber-500/60 hover:bg-amber-50/50 dark:hover:bg-[#2c221a] hover:-translate-y-2 transition-all duration-500 ease-out space-y-6 cursor-pointer">
-              <div className="text-primary group-hover:scale-110 group-hover:text-amber-600 transition-transform duration-300">
-                <Heart className="h-8 w-8" />
-              </div>
-              <h3 className="font-serif text-xl font-bold text-neutral dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">Gieo Mầm Từ Bi</h3>
-              <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed">
-                Thực hành hạnh nguyện cứu khổ ban vui, lan tỏa lòng nhân ái và sự thấu cảm đến cộng đồng qua các hoạt động thiện nguyện thiết thực.
-              </p>
-            </div>
-
-            {/* Card 3 */}
-            <div className="group bg-card-bg/30 dark:bg-[#1f1a18] p-8 rounded-2xl border border-stone-200/40 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:shadow-amber-500/20 dark:hover:shadow-amber-500/15 hover:border-amber-400/80 dark:hover:border-amber-500/60 hover:bg-amber-50/50 dark:hover:bg-[#2c221a] hover:-translate-y-2 transition-all duration-500 ease-out space-y-6 cursor-pointer">
-              <div className="text-primary group-hover:scale-110 group-hover:text-amber-600 transition-transform duration-300">
-                <Sparkles className="h-8 w-8" />
-              </div>
-              <h3 className="font-serif text-xl font-bold text-neutral dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">Kiến Tạo Tương Lai</h3>
-              <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed">
-                Hướng đến sự giải thoát và an lạc trong tâm hồn thông qua việc giáo dục Phật pháp và rèn luyện chánh niệm cho mọi lứa tuổi.
-              </p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* Hoạt Động Hàng Ngày Section */}
-      <section id="activities" className="hidden py-24 bg-card-bg/25 dark:bg-[#15110f]">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 space-y-12">
-          
-          <div className="flex justify-between items-end">
-            <div className="space-y-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-primary">Thực hành & Tu tập</span>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-neutral dark:text-white">
-                Hoạt Động Hàng Ngày
-              </h2>
-            </div>
-            <a href="#" className="text-xs font-semibold text-neutral hover:text-primary underline transition">
-              Tất cả hoạt động
-            </a>
-          </div>
-
-          {/* Grid 6 ảnh hoạt động */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {activities.map((act, index) => (
-              <div 
-                key={index} 
-                className="group relative overflow-hidden rounded-2xl bg-white dark:bg-[#1c1816] border border-stone-200/60 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500"
-              >
-                {/* Image container */}
-                <div className="aspect-[4/3] w-full overflow-hidden bg-stone-100 dark:bg-stone-800">
-                  <img
-                    src={act.img}
-                    alt={act.title}
-                    className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                  />
+          {/* Asymmetric Bento Grid (2-col + 1-col layout) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+            {/* Featured Tile (col-span-7) */}
+            <div className="lg:col-span-7 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-900/10 via-stone-100 to-amber-900/5 dark:from-stone-900 dark:via-[#161311] dark:to-amber-950/20 border border-amber-900/15 dark:border-stone-800 p-8 sm:p-12 flex flex-col justify-between space-y-8 hover:border-amber-700/40 dark:hover:border-amber-500/40 transition-all duration-500">
+              <div className="absolute -top-16 -right-16 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="space-y-6 relative z-10">
+                <div className="w-12 h-12 rounded-2xl bg-amber-800/10 dark:bg-amber-500/10 flex items-center justify-center text-amber-800 dark:text-amber-400 group-hover:scale-110 transition-transform duration-500">
+                  <Compass className="h-6 w-6" />
                 </div>
-                {/* Metadata */}
-                <div className="p-6 space-y-2">
-                  <h4 className="font-serif text-lg font-bold text-neutral dark:text-white">
-                    {act.title}
-                  </h4>
-                  <p className="text-stone-600 dark:text-stone-400 text-sm">
-                    {act.desc}
+                <h3 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 dark:text-white leading-snug">
+                  Kế Thừa Di Sản & Cung Kính Pháp Sớ
+                </h3>
+                <p className="text-stone-600 dark:text-stone-300 text-sm sm:text-base leading-relaxed max-w-2xl">
+                  Chùa Báo Ân là chốn cổ tự linh thiêng lưu giữ truyền thống cúng lễ, dâng sớ cầu an
+                  – cầu siêu chuẩn mực. Mọi lá sớ đăng ký của quý Phật tử đều được kiểm duyệt trang
+                  nghiêm, in ấn phôi sớ chuẩn chánh điện và xướng danh cầu nguyện trước Tam Bảo.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-amber-900/10 dark:border-stone-800 flex items-center justify-between">
+                <span className="text-xs font-semibold text-amber-900 dark:text-amber-400">
+                  Quy chuẩn phôi sớ chữ Hán & Việt chuẩn xác
+                </span>
+                <span className="text-xs font-serif italic text-stone-500">Báo Ân Pháp Ấn</span>
+              </div>
+            </div>
+
+            {/* Supporting Tiles Column (col-span-5 stack) */}
+            <div className="lg:col-span-5 grid grid-cols-1 gap-6 sm:gap-8">
+              {/* Tile 2 */}
+              <div className="group rounded-3xl bg-white dark:bg-[#151210] border border-stone-200/80 dark:border-stone-800/80 p-8 flex flex-col justify-between space-y-6 hover:shadow-xl hover:border-amber-600/40 dark:hover:border-amber-500/40 transition-all duration-500">
+                <div className="w-11 h-11 rounded-xl bg-amber-800/10 dark:bg-amber-500/10 flex items-center justify-center text-amber-800 dark:text-amber-400 group-hover:scale-110 transition-transform">
+                  <Heart className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-serif text-xl font-bold text-stone-900 dark:text-white mb-2">
+                    Gieo Mầm Từ Bi & Thiện Nguyện
+                  </h3>
+                  <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed">
+                    Thực hành hạnh nguyện cứu khổ ban vui, chia sẻ sẻ chia với những hoàn cảnh khó
+                    khăn qua các hoạt động từ thiện và phóng sinh định kỳ.
                   </p>
                 </div>
               </div>
-            ))}
-          </div>
 
+              {/* Tile 3 */}
+              <div className="group rounded-3xl bg-white dark:bg-[#151210] border border-stone-200/80 dark:border-stone-800/80 p-8 flex flex-col justify-between space-y-6 hover:shadow-xl hover:border-amber-600/40 dark:hover:border-amber-500/40 transition-all duration-500">
+                <div className="w-11 h-11 rounded-xl bg-amber-800/10 dark:bg-amber-500/10 flex items-center justify-center text-amber-800 dark:text-amber-400 group-hover:scale-110 transition-transform">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-serif text-xl font-bold text-stone-900 dark:text-white mb-2">
+                    Tu Học Chánh Niệm
+                  </h3>
+                  <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed">
+                    Các khóa tu Bát Quan Trai và ngày an lạc được tổ chức thường xuyên nhằm hướng
+                    dẫn cư sĩ ứng dụng lời Phật dạy vào đời sống thường nhật.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Sự Kiện Sắp Tới Section */}
-      <section id="events" className="py-24 bg-background">
+      {/* SECTION 2: UPCOMING EVENTS & TIMELINE */}
+      <section id="events" className="py-24 bg-stone-100/60 dark:bg-[#12100e] border-y border-stone-200/70 dark:border-stone-850">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 space-y-16">
-          
-          <div className="text-center">
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-neutral dark:text-white">
-              Sự Kiện Sắp Tới
-            </h2>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-3">
+              <span className="text-xs font-bold uppercase tracking-widest text-amber-800 dark:text-amber-400">
+                Lịch Pháp Sự & Khóa Tu
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-stone-900 dark:text-white">
+                Sự Kiện Phật Sự Sắp Diễn Ra
+              </h2>
+            </div>
+            <p className="text-sm text-stone-600 dark:text-stone-400 max-w-md">
+              Kính mời quý Phật tử sắp xếp thời gian quang lâm tham dự các thời khóa hành lễ trang
+              nghiêm tại bổn tự.
+            </p>
           </div>
 
-          {/* Timeline Layout */}
-          <div className="relative max-w-3xl mx-auto">
-            {/* Trục dọc timeline ở giữa */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-0.5 bg-stone-300 dark:bg-stone-800 h-full"></div>
-
+          {/* Modern Timeline Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {upcomingEvents.map((evt, idx) => {
-              const isEven = idx % 2 === 0
-              const formattedDate = evt.scheduled_date.includes('-') 
-                ? formatVietnamEventDate(evt.scheduled_date) 
+              const formattedDate = evt.scheduled_date.includes('-')
+                ? formatVietnamEventDate(evt.scheduled_date)
                 : evt.scheduled_date
 
               return (
-                <div key={evt.id} className="group relative grid grid-cols-2 gap-8 items-center mb-12 last:mb-0">
-                  {isEven ? (
-                    <>
-                      {/* Cột trái: Ngày tháng */}
-                      <div className="text-right pr-4">
-                        <span className="font-serif text-lg sm:text-xl font-bold text-neutral dark:text-stone-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                          {formattedDate}
-                        </span>
-                      </div>
-                      {/* Chấm giữa */}
-                      <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background z-10 group-hover:scale-150 group-hover:bg-amber-500 group-hover:shadow-lg group-hover:shadow-amber-500/50 transition-all duration-300"></div>
-                      {/* Cột phải: Card nội dung */}
-                      <div className="bg-white dark:bg-[#1c1816] p-6 rounded-2xl border border-stone-250/50 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:shadow-amber-500/25 dark:hover:shadow-amber-500/15 hover:border-amber-400 dark:hover:border-amber-500/80 hover:bg-amber-50/60 dark:hover:bg-[#2a2019] hover:-translate-y-1.5 transition-all duration-500 ease-out ml-4 cursor-pointer">
-                        <h4 className="font-serif text-base font-bold text-neutral dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors mb-2">{evt.title}</h4>
-                        {evt.description && (
-                          <p className="text-stone-600 dark:text-stone-400 text-xs leading-relaxed">
-                            {evt.description}
-                          </p>
-                        )}
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      {/* Cột trái: Card nội dung */}
-                      <div className="bg-white dark:bg-[#1c1816] p-6 rounded-2xl border border-stone-250/50 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:shadow-amber-500/25 dark:hover:shadow-amber-500/15 hover:border-amber-400 dark:hover:border-amber-500/80 hover:bg-amber-50/60 dark:hover:bg-[#2a2019] hover:-translate-y-1.5 transition-all duration-500 ease-out mr-4 text-right cursor-pointer">
-                        <h4 className="font-serif text-base font-bold text-neutral dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors mb-2">{evt.title}</h4>
-                        {evt.description && (
-                          <p className="text-stone-600 dark:text-stone-400 text-xs leading-relaxed">
-                            {evt.description}
-                          </p>
-                        )}
-                      </div>
-                      {/* Chấm giữa */}
-                      <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background z-10 group-hover:scale-150 group-hover:bg-amber-500 group-hover:shadow-lg group-hover:shadow-amber-500/50 transition-all duration-300"></div>
-                      {/* Cột phải: Ngày tháng */}
-                      <div className="pl-4">
-                        <span className="font-serif text-lg sm:text-xl font-bold text-neutral dark:text-stone-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                          {formattedDate}
-                        </span>
-                      </div>
-                    </>
-                  )}
+                <div
+                  key={evt.id}
+                  className="group relative bg-white dark:bg-[#1a1614] rounded-2xl p-7 border border-stone-200/80 dark:border-stone-800/80 shadow-sm hover:shadow-xl hover:border-amber-600/50 dark:hover:border-amber-500/50 hover:-translate-y-1.5 transition-all duration-500 flex flex-col justify-between space-y-6"
+                >
+                  <div className="space-y-4">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-500/20 text-amber-800 dark:text-amber-300 text-xs font-bold">
+                      <Calendar className="h-3.5 w-3.5" />
+                      <span>{formattedDate}</span>
+                    </div>
+                    <h3 className="font-serif text-xl font-bold text-stone-900 dark:text-white group-hover:text-amber-800 dark:group-hover:text-amber-400 transition-colors leading-snug">
+                      {evt.title}
+                    </h3>
+                    {evt.description && (
+                      <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed line-clamp-3">
+                        {evt.description}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="pt-4 border-t border-stone-100 dark:border-stone-800/60 flex items-center justify-between text-xs font-semibold text-stone-500 dark:text-stone-400">
+                    <span>Tại Chánh Điện Chùa Báo Ân</span>
+                    <span className="text-amber-700 dark:text-amber-400 group-hover:translate-x-1 transition-transform inline-flex items-center gap-0.5">
+                      Chi tiết <ChevronRight className="h-3.5 w-3.5" />
+                    </span>
+                  </div>
                 </div>
               )
             })}
           </div>
-
         </div>
       </section>
 
-      {/* Tin Tức & Thông Báo Section */}
-      <section id="news" className="py-24 bg-card-bg/25 dark:bg-[#15110f]">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 space-y-12">
-          
-          <div className="text-center">
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-neutral dark:text-white">
-              Tin Tức & Thông Báo
-            </h2>
+      {/* SECTION 3: PUBLISHED NEWS & NOTICE BOARD */}
+      <section id="news" className="py-24 sm:py-32">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 space-y-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-3">
+              <span className="text-xs font-bold uppercase tracking-widest text-amber-800 dark:text-amber-400">
+                Bản Tin & Pháp Thoại
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-stone-900 dark:text-white">
+                Tin Tức & Thông Báo Phật Sự
+              </h2>
+            </div>
+            <Link
+              href="/auth/register"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-800 dark:text-amber-400 hover:underline"
+            >
+              <span>Xem tất cả bài viết</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
 
-          {/* Grid 3 Card tin tức */}
-          <div className="grid md:grid-cols-3 gap-8">
+          {/* Editorial 3-Column Card Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {news.map((item, index) => (
-              <Link key={index} href={`/tin-tuc/${item.id}`} className="space-y-4 cursor-pointer group block">
-                {/* Image */}
-                <div className="aspect-[1.5] w-full rounded-2xl overflow-hidden shadow-sm">
-                  <img 
-                    src={item.img} 
+              <Link
+                key={index}
+                href={`/tin-tuc/${item.id}`}
+                className="group flex flex-col bg-white dark:bg-[#151210] rounded-2xl border border-stone-200/80 dark:border-stone-800/80 overflow-hidden shadow-sm hover:shadow-2xl hover:border-amber-600/40 dark:hover:border-amber-500/40 hover:-translate-y-1.5 transition-all duration-500"
+              >
+                <div className="aspect-[16/10] w-full overflow-hidden relative bg-stone-100 dark:bg-stone-800">
+                  <img
+                    src={item.img}
                     alt={item.title}
-                    className="object-cover w-full h-full transition duration-500 group-hover:scale-105"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
+                  <div className="absolute top-3 left-3 px-3 py-1 rounded-lg bg-stone-900/80 backdrop-blur-md text-amber-300 text-[10px] font-bold tracking-wider uppercase">
+                    {item.category}
+                  </div>
                 </div>
-                {/* Metadata */}
-                <div className="space-y-2">
-                  <span className="text-[10px] font-bold text-primary tracking-wider block uppercase">{item.category}</span>
-                  <h4 className="font-serif text-lg font-bold text-neutral dark:text-white group-hover:text-primary transition leading-snug">
-                    {item.title}
-                  </h4>
-                  <p className="text-stone-600 dark:text-stone-400 text-xs leading-relaxed line-clamp-2">
-                    {item.desc}
-                  </p>
+
+                <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between space-y-4">
+                  <div className="space-y-2">
+                    <div className="text-[11px] text-stone-400 font-medium">{item.created_at}</div>
+                    <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-white group-hover:text-amber-800 dark:group-hover:text-amber-400 transition-colors leading-snug line-clamp-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-stone-600 dark:text-stone-400 text-xs sm:text-sm leading-relaxed line-clamp-2">
+                      {item.desc}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 border-t border-stone-100 dark:border-stone-800/80 flex items-center justify-between text-xs font-semibold text-amber-800 dark:text-amber-400">
+                    <span>Đọc toàn bộ bài viết</span>
+                    <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
-
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-stone-250/60 dark:border-stone-850 bg-card-bg/20 dark:bg-[#0c0a09] py-12">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-stone-500 dark:text-stone-400">
-          <div className="space-y-2 text-center md:text-left">
-            <p className="font-serif text-sm font-bold text-primary">Chùa Báo Ân</p>
-            <p>Địa chỉ: 53 Lê Bình, Phường Tân Sơn Nhất, TP. Hồ Chí Minh</p>
-            <p>Số điện thoại: 0901234567</p>
+      {/* SECTION 4: SANCTUARY CALL TO ACTION BANNER */}
+      <section className="py-20 bg-gradient-to-br from-stone-900 via-[#181412] to-amber-950 text-white relative overflow-hidden border-t border-amber-500/20">
+        <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="mx-auto max-w-5xl px-6 lg:px-8 text-center relative z-10 space-y-8">
+          <div className="space-y-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-amber-400">
+              Đăng Ký Sớ Khấn Nguyện Trực Tuyến
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
+              Gửi Trọn Tâm Nguyện Đến Tam Bảo
+            </h2>
+            <p className="mx-auto max-w-2xl text-stone-300 text-sm sm:text-base leading-relaxed">
+              Quý Phật tử có thể dễ dàng điền thông tin gia quyến cầu an hoặc hương linh cầu siêu
+              trực tuyến. Nhà chùa sẽ tiếp nhận, khám ấn và tuyên sớ trong các thời khóa tụng niệm.
+            </p>
           </div>
-          <div className="flex flex-col items-center md:items-end gap-2">
-            <p>© 2026 Chùa Báo Ân. Bảo lưu mọi quyền.</p>
-            <Link href="/auth/login" className="hover:text-primary transition flex items-center gap-1 font-semibold">
-              Cổng quản trị Ban Trị Sự →
+
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/auth/register"
+              className="inline-flex items-center gap-2 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 px-8 py-4 text-sm font-bold shadow-lg hover:shadow-amber-500/30 hover:scale-105 active:scale-95 transition-all duration-300"
+            >
+              <span>Đăng Ký Cầu An & Cầu Siêu Ngay</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/auth/login"
+              className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 hover:bg-white/15 px-8 py-4 text-sm font-semibold text-white transition-all duration-300"
+            >
+              <span>Phật Tử Đã Có Tài Khoản</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* SANCTUARY EDITORIAL FOOTER */}
+      <footer className="border-t border-stone-200 dark:border-stone-850 bg-white dark:bg-[#0c0a09] py-14">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <PagodaLogo className="h-9 w-9" />
+              <span className="font-serif text-lg font-bold text-stone-900 dark:text-white">
+                Chùa Báo Ân • Bổn Tự Pháp Ấn
+              </span>
+            </div>
+            <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md leading-relaxed">
+              Địa chỉ: 53 Lê Bình, Phường Tân Sơn Nhất, Quận Tân Bình, TP. Hồ Chí Minh <br />
+              Điện thoại liên hệ hành chính phật sự: 0901.234.567
+            </p>
+          </div>
+
+          <div className="flex flex-col md:items-end gap-3 text-xs text-stone-500 dark:text-stone-400">
+            <p>© 2026 Chùa Báo Ân. Tất cả các quyền được bảo lưu trang nghiêm.</p>
+            <Link
+              href="/auth/login"
+              className="text-amber-800 dark:text-amber-400 hover:underline font-semibold flex items-center gap-1"
+            >
+              <span>Cổng Quản Trị Ban Trị Sự & Tăng Ni</span>
+              <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
         </div>

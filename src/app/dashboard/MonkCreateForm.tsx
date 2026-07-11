@@ -331,7 +331,17 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
                         </div>
                       )}
 
-                      <div className="sm:col-span-2 flex justify-end pt-5">
+                      <div className="sm:col-span-2 flex justify-end items-center gap-2 pt-5">
+                        {index === targets.length - 1 && (
+                          <button
+                            type="button"
+                            onClick={handleAddTarget}
+                            className="inline-flex items-center gap-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-amber-200/60 transition"
+                            title="Thêm dòng mới"
+                          >
+                            <Plus className="h-3.5 w-3.5" /> Thêm
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={() => handleRemoveTarget(index)}
@@ -343,6 +353,18 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
                       </div>
                     </div>
                   ))}
+
+                  {/* Nút cộng (+) ở hàng cuối cùng tiện lợi thêm tên mới không cần cuộn lên */}
+                  <div className="pt-1 flex justify-center sm:justify-start">
+                    <button
+                      type="button"
+                      onClick={handleAddTarget}
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-amber-50 dark:bg-amber-950/30 border border-amber-600/30 text-amber-800 dark:text-amber-400 hover:bg-amber-100/50 dark:hover:bg-amber-900/40 px-4 py-2.5 rounded-xl text-xs font-bold transition shadow-sm"
+                    >
+                      <Plus className="h-4 w-4" />
+                      {formType === 'CAU_SIEU' ? '+ Thêm hương linh tiếp theo' : '+ Thêm người cầu an tiếp theo'}
+                    </button>
+                  </div>
                 </div>
               </div>
 

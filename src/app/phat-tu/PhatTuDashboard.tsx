@@ -514,16 +514,29 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                 <div className="space-y-3">
                   {targets.map((target, index) => (
                     <div key={index} className="bg-stone-50 dark:bg-stone-900/40 p-4 rounded-xl border border-stone-200/60 dark:border-stone-800/40 space-y-3 relative">
-                      {targets.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeTargetRow(index)}
-                          className="absolute top-2 right-2 text-stone-400 hover:text-red-500 font-bold text-xs"
-                          title="Xoá dòng"
-                        >
-                          ✕
-                        </button>
-                      )}
+                      <div className="absolute top-2 right-2 flex items-center gap-1.5">
+                        {index === targets.length - 1 && (
+                          <button
+                            type="button"
+                            onClick={addTargetRow}
+                            className="inline-flex items-center gap-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 px-2.5 py-1 rounded-lg text-[11px] font-bold hover:bg-amber-200/60 transition shadow-sm"
+                            title="Thêm người tiếp theo"
+                          >
+                            <Plus className="h-3.5 w-3.5" />
+                            Thêm
+                          </button>
+                        )}
+                        {targets.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeTargetRow(index)}
+                            className="text-stone-400 hover:text-red-500 font-bold text-xs p-1"
+                            title="Xoá dòng"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
                       
                       <div className="grid sm:grid-cols-2 gap-3">
                         <div>
@@ -586,6 +599,18 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                       </div>
                     </div>
                   ))}
+
+                  {/* Nút cộng (+) ở hàng cuối cùng tiện lợi thêm tên mới không cần cuộn lên */}
+                  <div className="pt-1 flex justify-center sm:justify-start">
+                    <button
+                      type="button"
+                      onClick={addTargetRow}
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-amber-50 dark:bg-amber-950/30 border border-amber-600/30 text-amber-800 dark:text-amber-400 hover:bg-amber-100/50 dark:hover:bg-amber-900/40 px-4 py-2.5 rounded-xl text-xs font-bold transition shadow-sm"
+                    >
+                      <Plus className="h-4 w-4" />
+                      {formType === 'CAU_SIEU' ? '+ Thêm hương linh tiếp theo' : '+ Thêm người cầu an tiếp theo'}
+                    </button>
+                  </div>
                 </div>
               </div>
 

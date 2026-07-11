@@ -45,7 +45,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
   const [isPrinting, setIsPrinting] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('')
-  const [printMode, setPrintMode] = useState<'READING' | 'POSTER'>('READING')
+  const [printMode, setPrintMode] = useState<'READING' | 'POSTER' | 'PHUNG_VI'>('READING')
 
   const selectedTemplateUrl = templates.find(t => t.id === selectedTemplateId)?.file_url
 
@@ -203,11 +203,12 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               <label className="text-sm font-semibold text-stone-700 dark:text-stone-300">Chế độ in:</label>
               <select
                 value={printMode}
-                onChange={(e) => setPrintMode(e.target.value as 'READING' | 'POSTER')}
+                onChange={(e) => setPrintMode(e.target.value as 'READING' | 'POSTER' | 'PHUNG_VI')}
                 className="rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-1.5 text-sm text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 font-semibold"
               >
                 <option value="READING">Mẫu Quý Thầy Đọc (A4 Dọc Chuẩn)</option>
                 <option value="POSTER">Mẫu Dán Chánh Điện (Bảng Biểu)</option>
+                <option value="PHUNG_VI">Mẫu Linh Vị (Phụng Vì - Tọa Vị)</option>
               </select>
             </div>
 
@@ -254,7 +255,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
 
           {/* Vùng in ấn sớ */}
           <div className="so-print-layout print:m-0 print:p-0">
-            {printMode === 'POSTER' ? (() => {
+            {printMode === 'POSTER' || printMode === 'PHUNG_VI' ? (() => {
               // Gom TẤT CẢ các cột từ tất cả các sớ được chọn (selectedForms) để xếp kề bên nhau trên cùng trang
               const MAX_LINES_PER_COL = 13
               const MAX_COLS_PER_PAGE = 4
@@ -302,7 +303,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                   {pageCols.map((col, colIdx) => (
                     <div
                       key={colIdx}
-                      className={`flex flex-col items-center flex-1 max-w-[265px] px-5 relative ${
+                      className={`flex flex-col items-center justify-between flex-1 max-w-[265px] px-5 relative ${
                         colIdx < pageCols.length - 1
                           ? 'border-r-2 border-dashed border-stone-400 print:border-stone-500'
                           : ''
@@ -320,16 +321,55 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                         </>
                       )}
 
-                      <div className="text-[64px] font-bold leading-none mb-6 text-black text-center tracking-tight">
-                        {col.shortCode}
-                      </div>
-                      <div className="flex flex-col gap-3 w-full">
-                        {col.names.map((name, nIdx) => (
-                          <div key={nIdx} className="text-xl font-bold text-center text-black uppercase leading-tight">
-                            {name}
+                      {printMode === 'PHUNG_VI' ? (
+                        <>
+                          {/* Đỉnh bài vị: PHỤNG VÌ */}
+                          <div className="flex flex-col items-center mb-6 text-center w-full">
+                            <div className="text-[11px] font-serif italic text-stone-500 mb-1">
+                              Nam Mô Tiếp Dẫn Đạo Sư A Di Đà Phật
+                            </div>
+                            <div className="text-3xl font-serif font-bold text-amber-950 uppercase tracking-widest border-b-2 border-amber-900/40 pb-2 w-full">
+                              PHỤNG VÌ
+                            </div>
                           </div>
-                        ))}
-                      </div>
+
+                          {/* Ở giữa: Tên các hương linh */}
+                          <div className="flex-1 flex flex-col justify-center gap-4 my-auto w-full py-2">
+                            {col.names.map((name, nIdx) => (
+                              <div
+                                key={nIdx}
+                                className="text-xl font-serif font-bold text-center text-stone-900 uppercase leading-snug"
+                              >
+                                {name}
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Cuối trang/cột: TỌA VỊ */}
+                          <div className="mt-auto pt-4 border-t-2 border-amber-900/40 w-full text-center">
+                            <div className="text-2xl font-serif font-bold text-amber-950 uppercase tracking-widest">
+                              TỌA VỊ
+                            </div>
+                            <span className="text-[10px] italic text-stone-500 mt-1 block">
+                              Chùa Báo Ân • Linh Vị
+                            </span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {/* Chế độ Dán Chánh Điện POSTER */}
+                          <div className="text-[64px] font-bold leading-none mb-6 text-black text-center tracking-tight">
+                            {col.shortCode}
+                          </div>
+                          <div className="flex flex-col gap-3 w-full my-auto">
+                            {col.names.map((name, nIdx) => (
+                              <div key={nIdx} className="text-xl font-bold text-center text-black uppercase leading-tight">
+                                {name}
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -346,9 +386,9 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                   className="so-page-block bg-white text-stone-900 p-8 print:p-0 w-full max-w-[210mm] mx-auto break-after-page"
                   style={{ pageBreakAfter: 'always', page: 'so-portrait-page' as any }}
                 >
-                  {/* Khung Sớ A4 Dọc Chuẩn */}
+                  {/* Khung Sớ A4 Dọc Chuẩn gom vừa khít 1 trang A4 */}
                   <div
-                    className="relative w-full min-h-[280mm] border-2 border-amber-900/40 rounded-xl p-10 print:p-8 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:border-amber-900/40 print:shadow-none"
+                    className="relative w-full h-[270mm] max-h-[270mm] print:h-[268mm] print:max-h-[268mm] overflow-hidden border-2 border-amber-900/40 rounded-xl p-8 print:p-6 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:border-amber-900/40 print:shadow-none"
                     style={{
                       backgroundImage: selectedTemplateUrl ? `url(${selectedTemplateUrl})` : 'none',
                       backgroundSize: 'cover',
@@ -356,7 +396,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                     }}
                   >
                     {/* Phần trên sớ: Header & Thông tin Trai Chủ */}
-                    <div className="space-y-6">
+                    <div className="space-y-4 overflow-hidden">
                       {/* Header sớ */}
                       <div className="flex items-start justify-between border-b-2 border-amber-900/30 pb-5">
                         {/* Ấn đỏ chùa */}
@@ -487,22 +527,22 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                       </div>
                     </div>
 
-                    {/* Lời nguyện & Chữ ký phía dưới sớ */}
-                    <div className="mt-8 pt-6 border-t border-amber-900/20 space-y-4">
-                      <p className="font-serif italic text-center text-sm text-stone-700 leading-relaxed px-4">
+                    {/* Lời nguyện & Chữ ký phía dưới sớ gọn gàng trong 1 trang A4 */}
+                    <div className="mt-3 pt-3 border-t border-amber-900/20 space-y-2 shrink-0">
+                      <p className="font-serif italic text-center text-xs text-stone-700 leading-normal px-4">
                         {form.form_type === 'CAU_AN'
                           ? 'Đệ tử chúng đẳng thành tâm khấu bái, nguyện cầu Tam Bảo chứng minh, gia quyến khang ninh khương thái cát tường, sở cầu như ý, sở nguyện tòng tâm.'
                           : 'Đệ tử chúng đẳng thành tâm khấu bái, nguyện cầu Tiếp Dẫn Đạo Sư A Di Đà Phật phóng quang tiếp độ chư hương linh trút bỏ trần duyên, siêu sinh tịnh độ.'}
                       </p>
 
-                      <div className="flex justify-between items-end text-center text-xs text-stone-600 pt-2">
+                      <div className="flex justify-between items-end text-center text-xs text-stone-600 pt-1">
                         <div>
                           <p className="font-semibold text-stone-800">Trai Chủ Khấn Nguyện</p>
-                          <p className="mt-6 italic">(Đã đăng ký trực tuyến)</p>
+                          <p className="mt-4 italic">(Đã đăng ký trực tuyến)</p>
                         </div>
                         <div>
-                          <p className="font-serif font-bold text-stone-900 text-sm">Chùa Báo Ân - Bổn Tự Khâm Nguyện</p>
-                          <p className="mt-6 font-semibold text-amber-900">Khám Ấn Duyệt Sớ</p>
+                          <p className="font-serif font-bold text-stone-900 text-sm">Chùa Báo Ân • Bổn Tự Khâm Nguyện</p>
+                          <p className="mt-4 font-semibold text-amber-900">Khám Ấn Duyệt Sớ</p>
                         </div>
                       </div>
                     </div>

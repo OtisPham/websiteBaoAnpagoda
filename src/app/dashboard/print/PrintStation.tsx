@@ -303,19 +303,23 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                   {pageCols.map((col, colIdx) => (
                     <div
                       key={colIdx}
-                      className={`flex flex-col items-center justify-between flex-1 max-w-[265px] px-5 relative ${
-                        colIdx < pageCols.length - 1
-                          ? 'border-r-2 border-dashed border-stone-400 print:border-stone-500'
-                          : ''
+                      className={`flex flex-col items-center justify-between flex-1 max-w-[265px] px-5 py-6 relative border-t-2 border-b-2 border-l-2 border-dashed border-stone-400 print:border-stone-500 ${
+                        colIdx === pageCols.length - 1 ? 'border-r-2' : ''
                       }`}
                     >
-                      {/* Biểu tượng canh cắt ✂ ở đầu và cuối đường nét đứt */}
-                      {colIdx < pageCols.length - 1 && (
+                      {/* Biểu tượng cái kéo canh cắt ở các góc đường nét đứt */}
+                      <span className="absolute -top-3.5 -left-2.5 text-xs text-stone-500 print:text-stone-600 select-none">
+                        ✂
+                      </span>
+                      <span className="absolute -bottom-3.5 -left-2.5 text-xs text-stone-500 print:text-stone-600 select-none rotate-180">
+                        ✂
+                      </span>
+                      {colIdx === pageCols.length - 1 && (
                         <>
-                          <span className="absolute -top-4 -right-2.5 text-xs text-stone-500 print:text-stone-600 select-none">
+                          <span className="absolute -top-3.5 -right-2.5 text-xs text-stone-500 print:text-stone-600 select-none">
                             ✂
                           </span>
-                          <span className="absolute -bottom-4 -right-2.5 text-xs text-stone-500 print:text-stone-600 select-none rotate-180">
+                          <span className="absolute -bottom-3.5 -right-2.5 text-xs text-stone-500 print:text-stone-600 select-none rotate-180">
                             ✂
                           </span>
                         </>

@@ -348,19 +348,22 @@ export default function PostsDashboardClient({
       {/* HEADER BAR & ROLE BADGE */}
       <div className="bg-white dark:bg-[#1c1816] border border-stone-200 dark:border-stone-800 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="font-serif text-2xl font-bold text-stone-900 dark:text-stone-100">
+          <span className="inline-block text-[11px] font-bold uppercase tracking-widest text-[#8B4513] dark:text-amber-400 mb-1">
+            Biên Tập & Phê Duyệt
+          </span>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
               Quản Lý Bài Viết & Tin Tức
             </h1>
             {isMonk ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#8B4513]/10 text-[#8B4513] dark:text-amber-400 border border-[#8B4513]/30">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#8B4513]/10 text-[#8B4513] dark:bg-amber-950/40 dark:text-amber-400 border border-[#8B4513]/30">
                 <ShieldCheck className="h-3.5 w-3.5" />
-                Quyền Ban Trị Sự / Quý Thầy
+                <span>Quyền Ban Trị Sự / Quý Thầy Tăng Ni</span>
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30">
                 <User className="h-3.5 w-3.5" />
-                Tình Nguyện Viên (Tác Giả)
+                <span>Tình Nguyện Viên (Tác Giả)</span>
               </span>
             )}
           </div>
@@ -373,25 +376,25 @@ export default function PostsDashboardClient({
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <button
             onClick={() => setActiveTab('LIST')}
-            className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 ${
+            className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 active:scale-[0.98] flex items-center justify-center gap-2 ${
               activeTab === 'LIST'
                 ? 'bg-[#8B4513] text-white shadow-md'
                 : 'bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300 hover:bg-stone-200'
             }`}
           >
             <FileText className="h-4 w-4" />
-            Danh Sách Bài ({posts.length})
+            <span>Danh Sách Bài ({posts.length})</span>
           </button>
           <button
             onClick={handleStartNewPost}
-            className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 ${
+            className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 active:scale-[0.98] flex items-center justify-center gap-2 ${
               activeTab === 'EDITOR' && !editingPostId
                 ? 'bg-[#8B4513] text-white shadow-md'
                 : 'border-2 border-[#8B4513] text-[#8B4513] dark:text-amber-400 hover:bg-[#8B4513]/10'
             }`}
           >
             <Plus className="h-4 w-4" />
-            Soạn Bài Mới
+            <span>Soạn Bài Mới</span>
           </button>
         </div>
       </div>

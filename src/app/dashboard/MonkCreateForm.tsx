@@ -111,21 +111,33 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-xl text-sm font-medium transition shadow-sm"
+        className="flex items-center gap-2 bg-[#8B4513] hover:bg-[#72380f] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 shadow-sm active:scale-[0.98]"
       >
         <FileText className="h-4 w-4" />
-        Tạo Sớ Mới (Tăng Ni)
+        <span>Tạo Sớ Mới (Tăng Ni)</span>
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white dark:bg-[#1c1816] w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-xl border border-stone-200 dark:border-stone-800 p-6 sm:p-8">
-            <div className="flex justify-between items-center border-b border-stone-100 dark:border-stone-800 pb-4 mb-6">
-              <h2 className="font-serif text-2xl font-bold text-stone-900 dark:text-stone-100">
-                Tạo Sớ Thủ Công
-              </h2>
-              <button onClick={() => setIsOpen(false)} className="text-stone-400 hover:text-stone-600 transition">
-                <X className="h-6 w-6" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#1c1816] w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl border border-stone-200/80 dark:border-stone-800/80 p-6 sm:p-8">
+            <div className="flex justify-between items-start border-b border-stone-200/60 dark:border-stone-800/60 pb-5 mb-6">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[#8B4513] dark:text-amber-400">
+                  Nghi Lễ & Pháp Sự
+                </span>
+                <h2 className="font-serif text-2xl font-bold text-stone-900 dark:text-stone-100 mt-0.5">
+                  Tạo Sớ Cầu An / Cầu Siêu Thủ Công
+                </h2>
+                <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                  Dành cho Quý Thầy ghi nhận trực tiếp tại chùa cho Phật tử hoặc gia chủ đến đăng ký.
+                </p>
+              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1.5 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-stone-100 dark:hover:bg-stone-800 transition-all duration-150"
+                title="Đóng cửa sổ"
+              >
+                <X className="h-5 w-5" />
               </button>
             </div>
 

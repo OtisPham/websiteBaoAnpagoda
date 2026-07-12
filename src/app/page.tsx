@@ -236,7 +236,7 @@ export default async function HomePage() {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 animate-hero-bg"
           style={{
-            backgroundImage: "url('/images/banner.jpg')",
+            backgroundImage: "url('/images/avatarofficial.png')",
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/55 to-[#0c0a09] dark:to-[#0c0a09]" />

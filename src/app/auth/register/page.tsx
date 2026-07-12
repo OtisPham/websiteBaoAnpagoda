@@ -52,7 +52,7 @@ function RegisterContent() {
       <div className="hidden lg:flex lg:col-span-7 relative overflow-hidden bg-gradient-to-br from-stone-950 via-[#181412] to-amber-950 p-14 flex-col justify-between border-r border-amber-900/20">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-luminosity scale-105"
-          style={{ backgroundImage: "url('/images/banner.jpg')" }}
+          style={{ backgroundImage: "url('/images/avatarofficial.png')" }}
         />
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/15 rounded-full blur-[140px] pointer-events-none" />
 

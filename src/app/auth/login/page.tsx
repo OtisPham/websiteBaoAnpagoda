@@ -57,7 +57,7 @@ function LoginContent() {
         {/* Background texture & atmospheric glow */}
         <div
           className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-luminosity scale-105"
-          style={{ backgroundImage: "url('/images/banner.jpg')" }}
+          style={{ backgroundImage: "url('/images/avatarofficial.png')" }}
         />
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/15 rounded-full blur-[140px] pointer-events-none" />
 

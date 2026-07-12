@@ -1,17 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fdf7f2; /* Màu kem nhạt ấm cúng, đúng chuẩn thiết kế */
-  --foreground: #3d2c23; /* Màu Neutral nâu đen trầm */
+  --background: #f6faf3; /* Nền kem ngọc bích nhạt dịu mát phối từ #E6F2DD */
+  --foreground: #1c2b27; /* Màu Neutral xám ngọc lục bảo sậm trầm mặc */
   
-  --primary: #8b4513; /* Màu Primary nâu đỏ sậm */
-  --secondary: #a0522d; /* Màu Secondary nâu đất ấm */
-  --tertiary: #d4a017; /* Màu Vàng đồng sang trọng */
-  --neutral: #3d2c23;
+  --primary: #659287; /* #659287 - Deep Sage / Jade Forest */
+  --secondary: #88BDA4; /* #88BDA4 - Serene Celadon */
+  --tertiary: #B1D3B9; /* #B1D3B9 - Soft Sage / Misty Tea Leaf */
+  --neutral: #1c2b27;
   
-  --card-bg: #fbf1e8; /* Màu nền card kem trầm dịu nhẹ */
-  --accent: #8b4513;
+  --card-bg: #ebf5e4; /* Màu nền card trên tone #E6F2DD */
+  --accent: #659287;
   --accent-foreground: #ffffff;
+
+  --jade-primary: #659287;
+  --jade-celadon: #88BDA4;
+  --jade-soft: #B1D3B9;
+  --jade-pale: #E6F2DD;
 }
 
 @theme inline {
@@ -24,6 +29,11 @@
   --color-card-bg: var(--card-bg);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+
+  --color-jade-primary: #659287;
+  --color-jade-celadon: #88BDA4;
+  --color-jade-soft: #B1D3B9;
+  --color-jade-pale: #E6F2DD;
   
   --font-sans: var(--font-geist-sans), Inter, sans-serif;
   --font-serif: var(--font-playfair), "Playfair Display", Georgia, serif;
@@ -31,12 +41,12 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #191412; /* Màu gỗ mun trầm tối */
-    --foreground: #f5ede6;
-    --primary: #c67945;
-    --secondary: #d98859;
-    --tertiary: #e5b83b;
-    --card-bg: #271f1b;
+    --background: #0f1614; /* Nền xanh ngọc bích sẫm tối cao cấp */
+    --foreground: #e6f2dd; /* #E6F2DD chữ sáng dịu */
+    --primary: #88bda4; /* #88BDA4 nổi bật trên dark mode */
+    --secondary: #659287; /* #659287 */
+    --tertiary: #b1d3b9; /* #B1D3B9 */
+    --card-bg: #16201c;
   }
 }
 
@@ -101,7 +111,7 @@ body {
   animation: spin-slow 20s linear infinite;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar với tone xanh ngọc nhạt */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -110,11 +120,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 69, 19, 0.2);
+  background: rgba(101, 146, 135, 0.3);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 69, 19, 0.4);
+  background: rgba(101, 146, 135, 0.6);
 }
 
 /* Stunning Hero & Page Animations */

@@ -47,52 +47,52 @@ function RegisterContent() {
   }
 
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-[#faf8f5] dark:bg-[#0c0a09] text-stone-900 dark:text-stone-100 selection:bg-amber-600/20">
-      {/* Left Column: Sanctuary Visual & Philosophy (Hidden on mobile, 7 cols on desktop) */}
-      <div className="hidden lg:flex lg:col-span-7 relative overflow-hidden bg-gradient-to-br from-stone-950 via-[#181412] to-amber-950 p-14 flex-col justify-between border-r border-amber-900/20">
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-[#f6faf3] dark:bg-[#0f1614] text-[#1c2b27] dark:text-[#E6F2DD] selection:bg-[#88BDA4]/30">
+      {/* Left Column: Sanctuary Visual & Philosophy */}
+      <div className="hidden lg:flex lg:col-span-7 relative overflow-hidden bg-gradient-to-br from-[#172421] via-[#1f312c] to-[#243732] p-14 flex-col justify-between border-r border-[#659287]/30">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-luminosity scale-105"
           style={{ backgroundImage: "url('/images/avatarofficial.png')" }}
         />
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/15 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#88BDA4]/15 rounded-full blur-[140px] pointer-events-none" />
 
         <div className="relative z-10 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3.5 group">
             <PagodaLogo className="h-11 w-11 transition-transform duration-500 group-hover:scale-105" />
             <div>
-              <span className="font-serif text-xl font-bold tracking-wide text-amber-100 block">
+              <span className="font-serif text-xl font-bold tracking-wide text-[#E6F2DD] block">
                 Chùa Báo Ân
               </span>
-              <span className="text-[10px] tracking-[0.24em] uppercase font-semibold text-amber-400/80 block">
+              <span className="text-[10px] tracking-[0.24em] uppercase font-semibold text-[#88BDA4] block">
                 Bổn Tự Pháp Ấn
               </span>
             </div>
           </Link>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-amber-300 text-xs font-medium">
-            <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[#88BDA4] text-xs font-medium">
+            <Sparkles className="h-3.5 w-3.5 text-[#88BDA4]" />
             <span>Chốn Tổ Thiền Môn</span>
           </div>
         </div>
 
         <div className="relative z-10 max-w-xl space-y-6">
-          <div className="inline-block px-3.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-bold uppercase tracking-widest">
+          <div className="inline-block px-3.5 py-1 rounded-lg bg-[#88BDA4]/15 border border-[#88BDA4]/30 text-[#88BDA4] text-xs font-bold uppercase tracking-widest">
             Tạo Tài Khoản Phật Tử
           </div>
           <h1 className="font-serif text-4xl xl:text-5xl font-bold text-white leading-[1.2]">
             Hương linh siêu thoát • <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-100 to-amber-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E6F2DD] via-[#B1D3B9] to-[#88BDA4]">
               Gia đạo trường an
             </span>
           </h1>
-          <p className="text-stone-300 text-sm xl:text-base leading-relaxed font-light">
+          <p className="text-[#E6F2DD]/85 text-sm xl:text-base leading-relaxed font-light">
             Tạo tài khoản Phật tử để kết nối cùng Chùa Báo Ân, cập nhật tin tức phật sự, thông báo
             khóa tu và quản lý thông tin phật tử tiện lợi.
           </p>
         </div>
 
-        <div className="relative z-10 pt-8 border-t border-white/10 flex items-center justify-between text-xs text-stone-400">
+        <div className="relative z-10 pt-8 border-t border-white/10 flex items-center justify-between text-xs text-[#B1D3B9]">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-amber-400" />
+            <ShieldCheck className="h-4 w-4 text-[#88BDA4]" />
             <span>Thông tin được bảo mật trang nghiêm tuyệt đối</span>
           </div>
           <span>© 2026 Chùa Báo Ân</span>
@@ -102,30 +102,30 @@ function RegisterContent() {
       {/* Right Column: Editorial Register Form Card */}
       <div className="lg:col-span-5 flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-14 relative">
         <div className="mx-auto w-full max-w-md space-y-8">
-          <div className="lg:hidden flex items-center justify-between pb-4 border-b border-stone-200 dark:border-stone-800">
+          <div className="lg:hidden flex items-center justify-between pb-4 border-b border-[#B1D3B9]/40 dark:border-[#659287]/30">
             <Link href="/" className="flex items-center gap-2.5">
               <PagodaLogo className="h-9 w-9" />
-              <span className="font-serif text-lg font-bold text-stone-900 dark:text-white">
+              <span className="font-serif text-lg font-bold text-[#1c2b27] dark:text-white">
                 Chùa Báo Ân
               </span>
             </Link>
             <Link
               href="/"
-              className="text-xs font-semibold text-amber-800 dark:text-amber-400 inline-flex items-center gap-1"
+              className="text-xs font-semibold text-[#659287] dark:text-[#88BDA4] inline-flex items-center gap-1"
             >
               <ArrowLeft className="h-3 w-3" /> Trang chủ
             </Link>
           </div>
 
           <div className="space-y-2">
-            <h2 className="font-serif text-3xl font-bold tracking-tight text-stone-950 dark:text-white">
+            <h2 className="font-serif text-3xl font-bold tracking-tight text-[#1c2b27] dark:text-white">
               Đăng Ký Tài Khoản
             </h2>
-            <p className="text-sm text-stone-600 dark:text-stone-400">
+            <p className="text-sm text-[#1c2b27]/75 dark:text-[#E6F2DD]/75">
               Đã có tài khoản Phật tử?{' '}
               <Link
                 href="/auth/login"
-                className="font-semibold text-amber-700 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 underline underline-offset-4 transition"
+                className="font-semibold text-[#659287] hover:text-[#52786e] dark:text-[#88BDA4] dark:hover:text-[#B1D3B9] underline underline-offset-4 transition"
               >
                 Đăng nhập ngay
               </Link>
@@ -142,12 +142,12 @@ function RegisterContent() {
             <div className="space-y-1.5">
               <label
                 htmlFor="fullName"
-                className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300"
+                className="block text-xs font-bold uppercase tracking-wider text-[#1c2b27] dark:text-[#E6F2DD]"
               >
-                Họ và Tên Phật Tử <span className="text-amber-600 dark:text-amber-400">*</span>
+                Họ và Tên Phật Tử <span className="text-[#659287] dark:text-[#88BDA4]">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#659287]">
                   <User className="h-4 w-4" />
                 </div>
                 <input
@@ -156,7 +156,7 @@ function RegisterContent() {
                   type="text"
                   required
                   placeholder="Diệu Pháp / Nguyễn Văn A"
-                  className="block w-full rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-[#161311] pl-10 pr-4 py-3 text-sm text-stone-900 dark:text-white placeholder-stone-400 focus:border-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition"
+                  className="block w-full rounded-xl border border-[#88BDA4]/50 dark:border-[#659287]/40 bg-white dark:bg-[#16201c] pl-10 pr-4 py-3 text-sm text-[#1c2b27] dark:text-white placeholder-[#659287]/60 focus:border-[#659287] focus:outline-none focus:ring-2 focus:ring-[#88BDA4]/30 transition"
                 />
               </div>
             </div>
@@ -164,12 +164,12 @@ function RegisterContent() {
             <div className="space-y-1.5">
               <label
                 htmlFor="phone"
-                className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300"
+                className="block text-xs font-bold uppercase tracking-wider text-[#1c2b27] dark:text-[#E6F2DD]"
               >
                 Số điện thoại liên lạc
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#659287]">
                   <Phone className="h-4 w-4" />
                 </div>
                 <input
@@ -177,7 +177,7 @@ function RegisterContent() {
                   name="phone"
                   type="tel"
                   placeholder="0901234567"
-                  className="block w-full rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-[#161311] pl-10 pr-4 py-3 text-sm text-stone-900 dark:text-white placeholder-stone-400 focus:border-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition"
+                  className="block w-full rounded-xl border border-[#88BDA4]/50 dark:border-[#659287]/40 bg-white dark:bg-[#16201c] pl-10 pr-4 py-3 text-sm text-[#1c2b27] dark:text-white placeholder-[#659287]/60 focus:border-[#659287] focus:outline-none focus:ring-2 focus:ring-[#88BDA4]/30 transition"
                 />
               </div>
             </div>
@@ -185,12 +185,12 @@ function RegisterContent() {
             <div className="space-y-1.5">
               <label
                 htmlFor="email"
-                className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300"
+                className="block text-xs font-bold uppercase tracking-wider text-[#1c2b27] dark:text-[#E6F2DD]"
               >
-                Địa chỉ Email <span className="text-amber-600 dark:text-amber-400">*</span>
+                Địa chỉ Email <span className="text-[#659287] dark:text-[#88BDA4]">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#659287]">
                   <Mail className="h-4 w-4" />
                 </div>
                 <input
@@ -199,7 +199,7 @@ function RegisterContent() {
                   type="email"
                   required
                   placeholder="phattu@example.com"
-                  className="block w-full rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-[#161311] pl-10 pr-4 py-3 text-sm text-stone-900 dark:text-white placeholder-stone-400 focus:border-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition"
+                  className="block w-full rounded-xl border border-[#88BDA4]/50 dark:border-[#659287]/40 bg-white dark:bg-[#16201c] pl-10 pr-4 py-3 text-sm text-[#1c2b27] dark:text-white placeholder-[#659287]/60 focus:border-[#659287] focus:outline-none focus:ring-2 focus:ring-[#88BDA4]/30 transition"
                 />
               </div>
             </div>
@@ -207,12 +207,12 @@ function RegisterContent() {
             <div className="space-y-1.5">
               <label
                 htmlFor="password"
-                className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300"
+                className="block text-xs font-bold uppercase tracking-wider text-[#1c2b27] dark:text-[#E6F2DD]"
               >
-                Mật khẩu <span className="text-amber-600 dark:text-amber-400">*</span>
+                Mật khẩu <span className="text-[#659287] dark:text-[#88BDA4]">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#659287]">
                   <Lock className="h-4 w-4" />
                 </div>
                 <input
@@ -221,13 +221,12 @@ function RegisterContent() {
                   type={showPassword ? 'text' : 'password'}
                   required
                   placeholder="Tối thiểu 6 ký tự"
-                  className="block w-full rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-[#161311] pl-10 pr-12 py-3 text-sm text-stone-900 dark:text-white placeholder-stone-400 focus:border-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition"
+                  className="block w-full rounded-xl border border-[#88BDA4]/50 dark:border-[#659287]/40 bg-white dark:bg-[#16201c] pl-10 pr-12 py-3 text-sm text-[#1c2b27] dark:text-white placeholder-[#659287]/60 focus:border-[#659287] focus:outline-none focus:ring-2 focus:ring-[#88BDA4]/30 transition"
                 />
-                {/* Toggle Password Visibility Button */}
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-amber-700 dark:hover:text-amber-400 transition"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#659287] hover:text-[#1c2b27] dark:hover:text-[#E6F2DD] transition"
                   title={showPassword ? 'Ẩn mật khẩu' : 'Xem mật khẩu'}
                 >
                   {showPassword ? (
@@ -243,7 +242,7 @@ function RegisterContent() {
               <button
                 type="submit"
                 disabled={isPending}
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-700 via-amber-800 to-amber-900 hover:from-amber-600 hover:to-amber-800 px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-amber-950/25 hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 disabled:opacity-60"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#659287] to-[#4e746a] hover:from-[#578177] hover:to-[#43645b] px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#1c2b27]/25 hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 disabled:opacity-60"
               >
                 {isPending ? (
                   <>
@@ -257,10 +256,10 @@ function RegisterContent() {
             </div>
           </form>
 
-          <div className="pt-6 border-t border-stone-200 dark:border-stone-800/80 flex items-center justify-between text-xs font-medium text-stone-500 dark:text-stone-400">
+          <div className="pt-6 border-t border-[#B1D3B9]/40 dark:border-[#659287]/30 flex items-center justify-between text-xs font-medium text-[#1c2b27]/70 dark:text-[#E6F2DD]/70">
             <Link
               href="/"
-              className="hover:text-amber-800 dark:hover:text-amber-400 transition inline-flex items-center gap-1.5"
+              className="hover:text-[#659287] dark:hover:text-[#88BDA4] transition inline-flex items-center gap-1.5"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Quay lại Trang Chủ Chùa Báo Ân</span>
@@ -277,8 +276,8 @@ export default function RegisterPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-[#faf8f5] dark:bg-[#0c0a09]">
-          <div className="text-sm font-serif italic text-stone-500">Đang tải trang đăng ký...</div>
+        <div className="flex min-h-screen items-center justify-center bg-[#f6faf3] dark:bg-[#0f1614]">
+          <div className="text-sm font-serif italic text-[#659287]">Đang tải trang đăng ký...</div>
         </div>
       }
     >

@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6faf3; /* Nền kem ngọc bích nhạt dịu mát phối từ #E6F2DD */
-  --foreground: #1c2b27; /* Màu Neutral xám ngọc lục bảo sậm trầm mặc */
+  --background: #f4f9fc; /* Nền sáng ngọc bích biển nhạt sang trọng */
+  --foreground: #093C5D; /* #093C5D Deep Sapphire Blue làm màu chữ chính */
   
-  --primary: #659287; /* #659287 - Deep Sage / Jade Forest */
-  --secondary: #88BDA4; /* #88BDA4 - Serene Celadon */
-  --tertiary: #B1D3B9; /* #B1D3B9 - Soft Sage / Misty Tea Leaf */
-  --neutral: #1c2b27;
+  --primary: #093C5D; /* #093C5D - Deep Sapphire / Navy Blue */
+  --secondary: #3B7597; /* #3B7597 - Steel Ocean Blue */
+  --tertiary: #6FD1D7; /* #6FD1D7 - Aqua Turquoise */
+  --neutral: #093C5D;
   
-  --card-bg: #ebf5e4; /* Màu nền card trên tone #E6F2DD */
-  --accent: #659287;
-  --accent-foreground: #ffffff;
+  --card-bg: #e8f4fa; /* Màu nền card tinh tế trên tone cyan nhạt */
+  --accent: #5DF8D8; /* #5DF8D8 - Luminous Mint Cyan */
+  --accent-foreground: #093C5D;
 
-  --jade-primary: #659287;
-  --jade-celadon: #88BDA4;
-  --jade-soft: #B1D3B9;
-  --jade-pale: #E6F2DD;
+  --ocean-deep: #093C5D;
+  --ocean-steel: #3B7597;
+  --ocean-aqua: #6FD1D7;
+  --ocean-mint: #5DF8D8;
 }
 
 @theme inline {
@@ -30,10 +30,10 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
 
-  --color-jade-primary: #659287;
-  --color-jade-celadon: #88BDA4;
-  --color-jade-soft: #B1D3B9;
-  --color-jade-pale: #E6F2DD;
+  --color-ocean-deep: #093C5D;
+  --color-ocean-steel: #3B7597;
+  --color-ocean-aqua: #6FD1D7;
+  --color-ocean-mint: #5DF8D8;
   
   --font-sans: var(--font-geist-sans), Inter, sans-serif;
   --font-serif: var(--font-playfair), "Playfair Display", Georgia, serif;
@@ -41,12 +41,12 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0f1614; /* Nền xanh ngọc bích sẫm tối cao cấp */
-    --foreground: #e6f2dd; /* #E6F2DD chữ sáng dịu */
-    --primary: #88bda4; /* #88BDA4 nổi bật trên dark mode */
-    --secondary: #659287; /* #659287 */
-    --tertiary: #b1d3b9; /* #B1D3B9 */
-    --card-bg: #16201c;
+    --background: #051420; /* Nền xanh lam thẳm tối cao cấp (#093C5D sắc tối) */
+    --foreground: #e8f7fd; /* Chữ sáng dịu */
+    --primary: #6FD1D7; /* #6FD1D7 nổi bật trên nền tối */
+    --secondary: #3B7597; /* #3B7597 */
+    --tertiary: #5DF8D8; /* #5DF8D8 */
+    --card-bg: #092134;
   }
 }
 
@@ -111,7 +111,7 @@ body {
   animation: spin-slow 20s linear infinite;
 }
 
-/* Custom scrollbar với tone xanh ngọc nhạt */
+/* Custom scrollbar với tone cyan biển nhạt */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -120,11 +120,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(101, 146, 135, 0.3);
+  background: rgba(59, 117, 151, 0.35);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(101, 146, 135, 0.6);
+  background: rgba(59, 117, 151, 0.65);
 }
 
 /* Stunning Hero & Page Animations */

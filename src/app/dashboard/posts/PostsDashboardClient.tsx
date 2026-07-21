@@ -99,17 +99,55 @@ export default function PostsDashboardClient({
     setActiveTab('EDITOR')
   }
 
-  // Xử lý upload ảnh bìa (chuyển sang base64 data url hoặc URL thật)
-  const handleThumbnailUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Helper: Nén và thu nhỏ ảnh trực tiếp trên trình duyệt (Canvas) để giảm dung lượng Base64 dưới 200KB (tránh lỗi HTTP 413 Payload Too Large)
+  const compressImage = (file: File, maxWidth = 1200, quality = 0.82): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        const img = new Image()
+        img.onload = () => {
+          let width = img.width
+          let height = img.height
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width)
+            width = maxWidth
+          }
+          const canvas = document.createElement('canvas')
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext('2d')
+          if (!ctx) {
+            resolve(event.target?.result as string)
+            return
+          }
+          ctx.drawImage(img, 0, 0, width, height)
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', quality)
+          resolve(compressedDataUrl)
+        }
+        img.onerror = () => resolve(event.target?.result as string)
+        img.src = event.target?.result as string
+      }
+      reader.onerror = () => reject(new Error('Lỗi đọc file hình ảnh'))
+      reader.readAsDataURL(file)
+    })
+  }
+
+  // Xử lý upload ảnh bìa (Nén ảnh tối ưu tự động trước khi lấy Data URL để không bị lỗi 413 Payload Too Large)
+  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        setThumbnailUrl(reader.result)
+    try {
+      const compressedUrl = await compressImage(file, 1200, 0.82)
+      setThumbnailUrl(compressedUrl)
+    } catch (err) {
+      console.error('Lỗi nén ảnh bìa:', err)
+      // Fallback
+      const reader = new FileReader()
+      reader.onload = () => {
+        if (typeof reader.result === 'string') setThumbnailUrl(reader.result)
       }
+      reader.readAsDataURL(file)
     }
-    reader.readAsDataURL(file)
   }
 
   // TỰ ĐỘNG ĐỌC VÀ TRÍCH XUẤT NỘI DUNG TỪ FILE WORD (.DOCX / .TXT)
@@ -193,24 +231,23 @@ export default function PostsDashboardClient({
     }
   }
 
-  // Tải danh sách hình ảnh (2-3 ảnh) vào thẻ đính kèm bài viết (không chèn chuỗi mã dài vào nội dung thô)
-  const handleInlineImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Tải danh sách hình ảnh (2-3 ảnh) vào thẻ đính kèm bài viết (Tự động nén ảnh tối ưu dung lượng)
+  const handleInlineImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
     if (files.length === 0) return
 
-    files.forEach(file => {
-      const reader = new FileReader()
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          setAttachedImages(prev => [
-            ...prev,
-            { name: file.name, url: reader.result as string }
-          ])
-        }
+    for (const file of files) {
+      try {
+        const compressedUrl = await compressImage(file, 1000, 0.8)
+        setAttachedImages(prev => [
+          ...prev,
+          { name: file.name, url: compressedUrl }
+        ])
+      } catch (err) {
+        console.error('Lỗi nén ảnh đính kèm:', err)
       }
-      reader.readAsDataURL(file)
-    })
-    setSuccessMsg(`Đã đính kèm ${files.length} hình ảnh thành công!`)
+    }
+    setSuccessMsg(`Đã đính kèm và tối ưu ${files.length} hình ảnh thành công!`)
   }
 
   // Chèn thẻ ảnh sạch sẽ vào vị trí con trỏ khi bấm nút Chèn từ danh sách ảnh đính kèm

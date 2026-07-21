@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4f9fc; /* Nền sáng ngọc bích biển nhạt sang trọng */
-  --foreground: #093C5D; /* #093C5D Deep Sapphire Blue làm màu chữ chính */
+  --background: #EEF5F7; /* Nền xanh sương mai lam nhạt thanh tịnh */
+  --foreground: #0D3A4B; /* #0D3A4B Xanh lam chàm sâu làm màu chữ chính */
   
-  --primary: #093C5D; /* #093C5D - Deep Sapphire / Navy Blue */
-  --secondary: #3B7597; /* #3B7597 - Steel Ocean Blue */
-  --tertiary: #6FD1D7; /* #6FD1D7 - Aqua Turquoise */
-  --neutral: #093C5D;
+  --primary: #0D3A4B; /* #0D3A4B - Deep Temple Indigo */
+  --secondary: #2B697D; /* #2B697D - Steel Teal Blue */
+  --tertiary: #5DA8A8; /* #5DA8A8 - Aqua Sage */
+  --neutral: #0D3A4B;
   
-  --card-bg: #e8f4fa; /* Màu nền card tinh tế trên tone cyan nhạt */
-  --accent: #5DF8D8; /* #5DF8D8 - Luminous Mint Cyan */
-  --accent-foreground: #093C5D;
+  --card-bg: #F6FAFA; /* Màu nền card trắng lam ngọc tinh tế */
+  --accent: #D69F4C; /* #D69F4C - Vàng Đồng Thiền (Warm Temple Bronze) */
+  --accent-foreground: #0D3A4B;
 
-  --ocean-deep: #093C5D;
-  --ocean-steel: #3B7597;
-  --ocean-aqua: #6FD1D7;
-  --ocean-mint: #5DF8D8;
+  --ocean-deep: #0D3A4B;
+  --ocean-steel: #2B697D;
+  --ocean-aqua: #5DA8A8;
+  --ocean-mint: #D69F4C;
 }
 
 @theme inline {
@@ -30,10 +30,10 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
 
-  --color-ocean-deep: #093C5D;
-  --color-ocean-steel: #3B7597;
-  --color-ocean-aqua: #6FD1D7;
-  --color-ocean-mint: #5DF8D8;
+  --color-ocean-deep: #0D3A4B;
+  --color-ocean-steel: #2B697D;
+  --color-ocean-aqua: #5DA8A8;
+  --color-ocean-mint: #D69F4C;
   
   --font-sans: var(--font-geist-sans), Inter, sans-serif;
   --font-serif: var(--font-playfair), "Playfair Display", Georgia, serif;
@@ -41,12 +41,12 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #051420; /* Nền xanh lam thẳm tối cao cấp (#093C5D sắc tối) */
-    --foreground: #e8f7fd; /* Chữ sáng dịu */
-    --primary: #6FD1D7; /* #6FD1D7 nổi bật trên nền tối */
-    --secondary: #3B7597; /* #3B7597 */
-    --tertiary: #5DF8D8; /* #5DF8D8 */
-    --card-bg: #092134;
+    --background: #081B24; /* Nền tối xanh chàm thiền sâu cao cấp */
+    --foreground: #EEF5F7; /* Chữ sáng lam sương mai dịu mắt */
+    --primary: #D69F4C; /* Vàng đồng ấm áp nổi bật trên nền tối */
+    --secondary: #5DA8A8; /* #5DA8A8 */
+    --tertiary: #2B697D; /* #2B697D */
+    --card-bg: #0D2834;
   }
 }
 
@@ -63,9 +63,17 @@ body {
 }
 
 @media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-sizing: border-box !important;
+  }
+
   body {
     background-color: #ffffff !important;
     color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   
   .no-print {
@@ -76,25 +84,41 @@ body {
     display: block !important;
   }
   
+  /* Lề mặc định an toàn cho máy in thực tế (tránh vùng Hard Margin 4-5mm) */
   @page {
-    margin: 10mm 15mm;
+    size: A4 portrait;
+    margin: 12mm 15mm;
   }
   
+  /* Khổ A4 Ngang dán chánh điện (Landscape A4: 297mm x 210mm, vùng in 277mm x 190mm) */
   @page so-page {
     size: A4 landscape;
     margin: 10mm;
   }
 
+  /* Khổ A4 Dọc chuẩn sớ (Portrait A4: 210mm x 297mm, vùng in 180mm x 273mm) */
   @page so-portrait-page {
     size: A4 portrait;
     margin: 12mm 15mm;
   }
 
+  /* Vùng in biên lai K80 (Quầy công đức - Rộng 80mm chuẩn máy in nhiệt) */
   .receipt-print-area {
-    width: 80mm;
-    max-width: 80mm;
-    padding: 2mm;
-    margin: 0 auto;
+    width: 80mm !important;
+    max-width: 80mm !important;
+    padding: 2mm !important;
+    margin: 0 auto !important;
+  }
+
+  /* Kiểm soát chống chia cắt trang hoặc ép xuống trang mới chuẩn xác */
+  .break-after-page {
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+  
+  .break-inside-avoid {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 }
 
@@ -120,11 +144,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(59, 117, 151, 0.35);
+  background: rgba(43, 105, 125, 0.35);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(59, 117, 151, 0.65);
+  background: rgba(43, 105, 125, 0.65);
 }
 
 /* Stunning Hero & Page Animations */

@@ -297,7 +297,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               return pages.map((pageCols, pageIdx) => (
                 <div
                   key={`poster-page-${pageIdx}`}
-                  className="so-page-block bg-white text-black p-8 print:p-6 w-full print:border-none print:shadow-none print:m-0 break-after-page flex justify-center min-h-[50vh]"
+                  className="so-page-block bg-white text-black p-8 print:p-4 w-full print:w-[277mm] print:max-w-[277mm] print:h-[190mm] print:max-h-[190mm] print:border-none print:shadow-none print:m-0 break-after-page flex justify-center min-h-[50vh] print:min-h-0 overflow-hidden"
                   style={{ pageBreakAfter: 'always', page: 'so-page' as any }}
                 >
                   {pageCols.map((col, colIdx) => (
@@ -387,12 +387,12 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               return (
                 <div
                   key={form.id}
-                  className="so-page-block bg-white text-stone-900 p-8 print:p-0 w-full max-w-[210mm] mx-auto break-after-page"
+                  className="so-page-block bg-white text-stone-900 p-8 print:p-0 w-full max-w-[210mm] print:w-[180mm] print:max-w-[180mm] mx-auto break-after-page"
                   style={{ pageBreakAfter: 'always', page: 'so-portrait-page' as any }}
                 >
                   {/* Khung Sớ A4 Dọc Chuẩn gom vừa khít 1 trang A4 */}
                   <div
-                    className="relative w-full h-[270mm] max-h-[270mm] print:h-[268mm] print:max-h-[268mm] overflow-hidden border-2 border-amber-900/40 rounded-xl p-8 print:p-6 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:border-amber-900/40 print:shadow-none"
+                    className="relative w-full h-[270mm] max-h-[270mm] print:h-[273mm] print:max-h-[273mm] print:w-full overflow-hidden border-2 border-amber-900/40 print:border-amber-900/60 rounded-xl p-8 print:p-6 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:shadow-none"
                     style={{
                       backgroundImage: selectedTemplateUrl ? `url(${selectedTemplateUrl})` : 'none',
                       backgroundSize: 'cover',

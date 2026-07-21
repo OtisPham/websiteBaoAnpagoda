@@ -62,18 +62,32 @@ body {
   font-family: var(--font-serif), serif;
 }
 
+/* Áp dụng font Times New Roman chuẩn in ấn thiền môn cho toàn bộ khối trang in và xem trước bản in */
+.so-page-block,
+.so-page-block *,
+.receipt-print-area,
+.receipt-print-area *,
+.receipt-preview,
+.receipt-preview *,
+.print-font-times,
+.print-font-times * {
+  font-family: "Times New Roman", Times, serif !important;
+}
+
 @media print {
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     box-sizing: border-box !important;
+    font-family: "Times New Roman", Times, serif !important;
   }
 
-  body {
+  body, html {
     background-color: #ffffff !important;
     color: #000000 !important;
     margin: 0 !important;
     padding: 0 !important;
+    font-family: "Times New Roman", Times, serif !important;
   }
   
   .no-print {

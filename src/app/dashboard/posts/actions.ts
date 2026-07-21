@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+import { createClient as createSupabaseAdminClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
 
 export type PostStatus = 'DRAFT' | 'PENDING_APPROVAL' | 'PUBLISHED' | 'REJECTED'
@@ -31,6 +32,16 @@ export interface SavePostInput {
   status: PostStatus
 }
 
+// Helper: Lấy Admin Client để xử lý các nghiệp vụ kiểm duyệt và xuất bản cho Quý Thầy / Admin (bypass RLS)
+function getAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !serviceKey) {
+    return null
+  }
+  return createSupabaseAdminClient(url, serviceKey)
+}
+
 // Lấy danh sách bài viết theo đúng quyền truy cập (VOLUNTEER chỉ xem bài của mình, MONK/ADMIN xem tất cả)
 export async function fetchPosts(): Promise<{ posts: PostData[]; currentUserId: string; currentUserRole: string; error?: string }> {
   const supabase = await createClient()
@@ -40,7 +51,7 @@ export async function fetchPosts(): Promise<{ posts: PostData[]; currentUserId: 
     return { posts: [], currentUserId: '', currentUserRole: '', error: 'Bạn chưa đăng nhập' }
   }
 
-  // Lấy role của user
+  // Lấy role của user từ bảng users
   const { data: profile } = await supabase
     .from('users')
     .select('role, full_name')
@@ -48,14 +59,16 @@ export async function fetchPosts(): Promise<{ posts: PostData[]; currentUserId: 
     .single()
 
   const role = profile?.role || 'VOLUNTEER'
+  const isPrivileged = ['MONK', 'ADMIN', 'MASTER'].includes(role.toUpperCase())
+  const db = isPrivileged && getAdminClient() ? getAdminClient()! : supabase
 
-  let query = supabase
+  let query = db
     .from('posts')
     .select('*')
     .order('created_at', { ascending: false })
 
   // Nếu là VOLUNTEER, chỉ xem bài do chính mình tạo
-  if (role === 'VOLUNTEER') {
+  if (!isPrivileged) {
     query = query.eq('author_id', user.id)
   }
 
@@ -73,7 +86,7 @@ export async function fetchPosts(): Promise<{ posts: PostData[]; currentUserId: 
   let userMap = new Map<string, { full_name: string; role: string }>()
 
   if (authorIds.length > 0) {
-    const { data: usersData } = await supabase
+    const { data: usersData } = await db
       .from('users')
       .select('id, full_name, role')
       .in('id', authorIds)
@@ -98,7 +111,7 @@ export async function fetchPosts(): Promise<{ posts: PostData[]; currentUserId: 
   }
 }
 
-// Tạo hoặc cập nhật bài viết (Chỉ gửi các cột chuẩn trong bảng posts: title, content, thumbnail_url, category, author_id, status, created_at)
+// Tạo hoặc cập nhật bài viết (Chỉ gửi các cột chuẩn hoặc tự động fallback nếu schema chưa migrate đủ cột)
 export async function savePost(input: SavePostInput): Promise<{ success: boolean; error?: string; post?: PostData }> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -114,10 +127,12 @@ export async function savePost(input: SavePostInput): Promise<{ success: boolean
     .single()
 
   const role = profile?.role || 'VOLUNTEER'
+  const isPrivileged = ['MONK', 'ADMIN', 'MASTER'].includes(role.toUpperCase())
+  const db = isPrivileged && getAdminClient() ? getAdminClient()! : supabase
 
   // Ràng buộc bảo mật: VOLUNTEER không bao giờ được phép trực tiếp đặt status là 'PUBLISHED'
   let targetStatus = input.status
-  if (role === 'VOLUNTEER' && targetStatus === 'PUBLISHED') {
+  if (!isPrivileged && targetStatus === 'PUBLISHED') {
     targetStatus = 'PENDING_APPROVAL'
   }
 
@@ -134,21 +149,22 @@ export async function savePost(input: SavePostInput): Promise<{ success: boolean
       fullPayload.approved_by = user.id
     }
 
-    let { data, error } = await supabase
+    let { data, error } = await db
       .from('posts')
       .update(fullPayload)
       .eq('id', input.id)
       .select('*')
       .single()
 
-    // TỰ ĐỘNG KHẮC PHỤC LỖI THIẾU CỘT TRONG SCHEMA (như category, approved_by...)
-    if (error && (error.message.includes('column') || error.message.includes('schema'))) {
+    // TỰ ĐỘNG KHẮC PHỤC LỖI THIẾU CỘT TRONG SCHEMA (như category, thumbnail_url, approved_by...)
+    if (error) {
+      console.warn('Cập nhật payload đầy đủ gặp lỗi schema/cột, fallback sang payload chuẩn cơ bản:', error.message)
       const safePayload: Record<string, any> = {
         title: input.title,
         content: input.content,
         status: targetStatus
       }
-      const fallbackRes = await supabase
+      const fallbackRes = await db
         .from('posts')
         .update(safePayload)
         .eq('id', input.id)
@@ -185,21 +201,22 @@ export async function savePost(input: SavePostInput): Promise<{ success: boolean
       created_at: new Date().toISOString()
     }
 
-    let { data, error } = await supabase
+    let { data, error } = await db
       .from('posts')
       .insert(fullPayload)
       .select('*')
       .single()
 
-    // TỰ ĐỘNG KHẮC PHỤC LỖI THIẾU CỘT TRONG SCHEMA (như category, approved_by...)
-    if (error && (error.message.includes('column') || error.message.includes('schema'))) {
+    // TỰ ĐỘNG KHẮC PHỤC LỖI THIẾU CỘT TRONG SCHEMA (như category, thumbnail_url, approved_by...)
+    if (error) {
+      console.warn('Tạo mới payload đầy đủ gặp lỗi schema/cột, fallback sang payload chuẩn cơ bản:', error.message)
       const safePayload: Record<string, any> = {
         title: input.title,
         content: input.content,
         author_id: user.id,
         status: targetStatus
       }
-      const fallbackRes = await supabase
+      const fallbackRes = await db
         .from('posts')
         .insert(safePayload)
         .select('*')
@@ -248,9 +265,11 @@ export async function reviewPost(params: {
     .single()
 
   const role = profile?.role
-  if (!role || !['MONK', 'ADMIN', 'MASTER'].includes(role)) {
+  if (!role || !['MONK', 'ADMIN', 'MASTER'].includes(role.toUpperCase())) {
     return { success: false, error: 'Chỉ Quý Thầy (MONK) hoặc Quản trị viên mới có quyền duyệt bài' }
   }
+
+  const db = getAdminClient() || supabase
 
   const updateData: Record<string, any> = {}
 
@@ -265,18 +284,18 @@ export async function reviewPost(params: {
     updateData.status = 'REJECTED'
   }
 
-  let { error } = await supabase
+  let { error } = await db
     .from('posts')
     .update(updateData)
     .eq('id', params.id)
 
-  if (error && (error.message.includes('column') || error.message.includes('schema'))) {
+  if (error) {
     const safeData: Record<string, any> = {
       status: params.action === 'APPROVE' ? 'PUBLISHED' : 'REJECTED'
     }
     if (params.editedTitle) safeData.title = params.editedTitle
     if (params.editedContent) safeData.content = params.editedContent
-    const fallbackRes = await supabase.from('posts').update(safeData).eq('id', params.id)
+    const fallbackRes = await db.from('posts').update(safeData).eq('id', params.id)
     error = fallbackRes.error
   }
 
@@ -299,7 +318,17 @@ export async function deletePost(id: string): Promise<{ success: boolean; error?
     return { success: false, error: 'Bạn chưa đăng nhập' }
   }
 
-  const { error } = await supabase
+  const { data: profile } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  const role = profile?.role || 'VOLUNTEER'
+  const isPrivileged = ['MONK', 'ADMIN', 'MASTER'].includes(role.toUpperCase())
+  const db = isPrivileged && getAdminClient() ? getAdminClient()! : supabase
+
+  const { error } = await db
     .from('posts')
     .delete()
     .eq('id', id)

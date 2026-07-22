@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import PizZip from 'pizzip'
 import { PostData, PostStatus, savePost, reviewPost, deletePost } from './actions'
+import { renderArticleContent } from '@/components/ArticleRenderer'
 
 interface PostsDashboardClientProps {
   initialPosts: PostData[]
@@ -47,6 +48,7 @@ export default function PostsDashboardClient({
   const [authorName, setAuthorName] = useState<string>(authorFullName)
   const [currentStatus, setCurrentStatus] = useState<PostStatus>('DRAFT')
   const [rejectionReason, setRejectionReason] = useState<string>('')
+  const [editorSubTab, setEditorSubTab] = useState<'EDIT' | 'PREVIEW'>('EDIT')
 
   // UI Feedback states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
@@ -81,6 +83,7 @@ export default function PostsDashboardClient({
     setRejectionReason('')
     setErrorMsg('')
     setSuccessMsg('')
+    setEditorSubTab('EDIT')
     setActiveTab('EDITOR')
   }
 
@@ -96,6 +99,7 @@ export default function PostsDashboardClient({
     setRejectionReason(post.rejection_reason || '')
     setErrorMsg('')
     setSuccessMsg('')
+    setEditorSubTab('EDIT')
     setActiveTab('EDITOR')
   }
 
@@ -228,6 +232,25 @@ export default function PostsDashboardClient({
         insertion +
         content.substring(start)
       setContent(newText)
+      setTimeout(() => {
+        textarea.focus()
+        const cursorPos = suffix ? start + prefix.length : start + insertion.length
+        textarea.setSelectionRange(cursorPos, cursorPos)
+      }, 0)
+    }
+  }
+
+  // Xử lý phím tắt Ctrl+B / Ctrl+I (hoặc Cmd+B / Cmd+I trên macOS) để in đậm / in nghiêng
+  const handleEditorKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (isVolunteerLocked) return
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key.toLowerCase() === 'b') {
+        e.preventDefault()
+        insertFormatting('**', '**')
+      } else if (e.key.toLowerCase() === 'i') {
+        e.preventDefault()
+        insertFormatting('_', '_')
+      }
     }
   }
 
@@ -841,72 +864,118 @@ export default function PostsDashboardClient({
 
               {/* RICH TEXT EDITOR CARD */}
               <div className="bg-white dark:bg-[#1c1816] rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm overflow-hidden">
-                {/* Formatting Toolbar */}
-                {!isVolunteerLocked && (
-                  <div className="p-3 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex flex-wrap items-center gap-1">
+                {/* Tabs Soạn thảo vs Xem trước */}
+                <div className="bg-stone-100 dark:bg-stone-900/80 px-4 py-2 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => insertFormatting('##')}
-                      className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs font-bold flex items-center gap-1"
-                      title="Tiêu đề H2"
+                      onClick={() => setEditorSubTab('EDIT')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                        editorSubTab === 'EDIT'
+                          ? 'bg-white dark:bg-[#1c1816] text-[#8B4513] dark:text-amber-400 shadow-sm border border-stone-200 dark:border-stone-800'
+                          : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+                      }`}
                     >
-                      <Heading2 className="h-4 w-4" /> H2
+                      <Edit3 className="h-3.5 w-3.5" />
+                      Soạn Thảo (Ctrl+B / Ctrl+I)
                     </button>
                     <button
                       type="button"
-                      onClick={() => insertFormatting('###')}
-                      className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs font-bold flex items-center gap-1"
-                      title="Tiêu đề H3"
+                      onClick={() => setEditorSubTab('PREVIEW')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                        editorSubTab === 'PREVIEW'
+                          ? 'bg-white dark:bg-[#1c1816] text-[#8B4513] dark:text-amber-400 shadow-sm border border-stone-200 dark:border-stone-800'
+                          : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+                      }`}
                     >
-                      <Heading3 className="h-4 w-4" /> H3
-                    </button>
-                    <div className="h-4 w-[1px] bg-stone-300 dark:bg-stone-700 mx-1" />
-                    <button
-                      type="button"
-                      onClick={() => insertFormatting('**', '**')}
-                      className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300"
-                      title="Quét chọn chữ rồi bấm để In đậm"
-                    >
-                      <Bold className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => insertFormatting('_', '_')}
-                      className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300"
-                      title="Quét chọn chữ rồi bấm để In nghiêng"
-                    >
-                      <Italic className="h-4 w-4" />
-                    </button>
-                    <div className="h-4 w-[1px] bg-stone-300 dark:bg-stone-700 mx-1" />
-                    <button
-                      type="button"
-                      onClick={() => insertFormatting('-')}
-                      className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300"
-                      title="Danh sách"
-                    >
-                      <List className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => insertFormatting('>')}
-                      className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300"
-                      title="Quét chọn đoạn văn rồi bấm để tạo Trích dẫn"
-                    >
-                      <Quote className="h-4 w-4" />
+                      <Eye className="h-3.5 w-3.5" />
+                      Xem Trước Bài Viết
                     </button>
                   </div>
-                )}
+                  <span className="text-[11px] text-stone-500 hidden sm:inline">
+                    Mẹo: Quét chọn ký tự rồi nhấn <kbd className="px-1 py-0.5 bg-stone-200 dark:bg-stone-800 rounded border border-stone-300 dark:border-stone-700 font-mono">Ctrl+B</kbd> để in đậm, <kbd className="px-1 py-0.5 bg-stone-200 dark:bg-stone-800 rounded border border-stone-300 dark:border-stone-700 font-mono">Ctrl+I</kbd> để in nghiêng
+                  </span>
+                </div>
 
-                {/* Content Textarea / Rich Area */}
-                <textarea
-                  ref={contentRef}
-                  disabled={isVolunteerLocked}
-                  rows={15}
-                  value={content}
-                  onChange={e => setContent(e.target.value)}
-                  placeholder="Nhập nội dung chi tiết bài viết ở đây... (Bạn có thể quét chọn chữ rồi bấm nút in đậm/in nghiêng trên thanh công cụ)"
-                  className="w-full p-6 bg-transparent text-stone-900 dark:text-stone-100 text-base leading-relaxed focus:outline-none resize-y min-h-[350px]"
-                />
+                {editorSubTab === 'EDIT' ? (
+                  <>
+                    {/* Formatting Toolbar */}
+                    {!isVolunteerLocked && (
+                      <div className="p-3 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex flex-wrap items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => insertFormatting('##')}
+                          className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs font-bold flex items-center gap-1"
+                          title="Tiêu đề H2"
+                        >
+                          <Heading2 className="h-4 w-4" /> H2
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => insertFormatting('###')}
+                          className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs font-bold flex items-center gap-1"
+                          title="Tiêu đề H3"
+                        >
+                          <Heading3 className="h-4 w-4" /> H3
+                        </button>
+                        <div className="h-4 w-[1px] bg-stone-300 dark:bg-stone-700 mx-1" />
+                        <button
+                          type="button"
+                          onClick={() => insertFormatting('**', '**')}
+                          className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300"
+                          title="Quét chọn chữ rồi bấm hoặc nhấn Ctrl+B để In đậm"
+                        >
+                          <Bold className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => insertFormatting('_', '_')}
+                          className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300"
+                          title="Quét chọn chữ rồi bấm hoặc nhấn Ctrl+I để In nghiêng"
+                        >
+                          <Italic className="h-4 w-4" />
+                        </button>
+                        <div className="h-4 w-[1px] bg-stone-300 dark:bg-stone-700 mx-1" />
+                        <button
+                          type="button"
+                          onClick={() => insertFormatting('-')}
+                          className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300"
+                          title="Danh sách"
+                        >
+                          <List className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => insertFormatting('>')}
+                          className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300"
+                          title="Quét chọn đoạn văn rồi bấm để tạo Trích dẫn"
+                        >
+                          <Quote className="h-4 w-4" />
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Content Textarea / Rich Area */}
+                    <textarea
+                      ref={contentRef}
+                      disabled={isVolunteerLocked}
+                      rows={15}
+                      value={content}
+                      onChange={e => setContent(e.target.value)}
+                      onKeyDown={handleEditorKeyDown}
+                      placeholder="Nhập nội dung chi tiết bài viết ở đây... (Quét chọn ký tự rồi nhấn Ctrl+B để in đậm, Ctrl+I để in nghiêng)"
+                      className="w-full p-6 bg-transparent text-stone-900 dark:text-stone-100 text-base leading-relaxed focus:outline-none resize-y min-h-[350px]"
+                    />
+                  </>
+                ) : (
+                  <div className="p-6 min-h-[350px] font-serif text-stone-800 dark:text-stone-200 leading-relaxed space-y-4 bg-white dark:bg-[#1c1816]">
+                    {content.trim() ? (
+                      renderArticleContent(content)
+                    ) : (
+                      <p className="text-stone-400 italic text-center py-12">Chưa có nội dung để hiển thị xem trước.</p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 

@@ -3,80 +3,10 @@ import Link from 'next/link'
 import { ArrowLeft, Calendar, User, Clock } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import PagodaLogo from '@/components/PagodaLogo'
+import { renderArticleContent } from '@/components/ArticleRenderer'
 
 export const dynamic = 'force-dynamic'
 
-// Hàm chuyển đổi nội dung markdown đơn giản sang HTML/JSX trang nhã
-function renderArticleContent(content: string) {
-  if (!content) return null
-
-  const lines = content.split('\n')
-  return lines.map((line, idx) => {
-    const trimmed = line.trim()
-    if (!trimmed) return <div key={idx} className="h-4" />
-
-    // Ảnh markdown: ![alt](url)
-    const imgMatch = trimmed.match(/^!\[(.*?)\]\((.*?)\)$/)
-    if (imgMatch) {
-      return (
-        <div key={idx} className="my-8 rounded-2xl overflow-hidden shadow-lg border border-stone-200 dark:border-stone-800">
-          <img
-            src={imgMatch[2]}
-            alt={imgMatch[1] || 'Hình ảnh bài viết'}
-            className="w-full max-h-[600px] object-cover mx-auto"
-          />
-          {imgMatch[1] && (
-            <p className="text-center text-xs text-stone-500 dark:text-stone-400 py-2.5 bg-stone-50 dark:bg-stone-900/50 italic">
-              {imgMatch[1]}
-            </p>
-          )}
-        </div>
-      )
-    }
-
-    // Tiêu đề H2
-    if (trimmed.startsWith('## ')) {
-      return (
-        <h2 key={idx} className="font-serif text-2xl font-bold text-stone-900 dark:text-amber-400 mt-8 mb-4">
-          {trimmed.replace(/^##\s+/, '')}
-        </h2>
-      )
-    }
-
-    // Tiêu đề H3
-    if (trimmed.startsWith('### ')) {
-      return (
-        <h3 key={idx} className="font-serif text-xl font-bold text-stone-800 dark:text-stone-200 mt-6 mb-3">
-          {trimmed.replace(/^###\s+/, '')}
-        </h3>
-      )
-    }
-
-    // Trích dẫn blockquote
-    if (trimmed.startsWith('> ')) {
-      return (
-        <blockquote key={idx} className="border-l-4 border-[#8B4513] bg-amber-50/50 dark:bg-amber-950/20 px-5 py-4 my-6 rounded-r-xl italic text-stone-700 dark:text-stone-300">
-          {trimmed.replace(/^>\s+/, '')}
-        </blockquote>
-      )
-    }
-
-    // Danh sách
-    if (trimmed.startsWith('- ')) {
-      return (
-        <li key={idx} className="ml-6 list-disc text-stone-700 dark:text-stone-300 leading-relaxed my-1">
-          {trimmed.replace(/^-\s+/, '')}
-        </li>
-      )
-    }
-
-    return (
-      <p key={idx} className="text-stone-700 dark:text-stone-300 leading-8 text-base md:text-lg my-3">
-        {trimmed}
-      </p>
-    )
-  })
-}
 
 export default async function ArticleDetailPage({ params }: { params: Promise<{ id: string }> | { id: string } }) {
   const resolvedParams = await Promise.resolve(params)

@@ -201,32 +201,48 @@ export default function PostsDashboardClient({
   }
 
   // Chèn định dạng có hỗ trợ quét chọn/bôi đen từ ngữ (Highlight selection formatting)
+  // Chèn định dạng có hỗ trợ quét chọn/bôi đen từ ngữ (Highlight selection formatting)
   const insertFormatting = (prefix: string, suffix: string = '') => {
     if (isVolunteerLocked) return
     const textarea = contentRef.current
     if (!textarea) {
-      setContent(prev => `${prev}\n${prefix} `)
+      setContent(prev => `${prev}\n${prefix}`)
       return
     }
 
     const start = textarea.selectionStart
     const end = textarea.selectionEnd
+    const isBlockPrefix = prefix.trim() === '>' || prefix.trim() === '##' || prefix.trim() === '###' || prefix.trim() === '-'
 
     if (start !== end) {
       // Có bôi đen đoạn văn/chữ -> bọc định dạng xung quanh chữ được quét chọn
       const selectedText = content.substring(start, end)
-      const newText =
-        content.substring(0, start) +
-        prefix + selectedText + suffix +
-        content.substring(end)
+      let newText: string
+      if (isBlockPrefix && !suffix) {
+        // Nếu là khối (Quote, Heading, List), chèn prefix vào đầu mỗi dòng được bôi đen
+        const lines = selectedText.split('\n')
+        const formatted = lines.map(line => `${prefix}${line.replace(/^(>|##|###|-)\s*/, '')}`).join('\n')
+        newText = content.substring(0, start) + formatted + content.substring(end)
+      } else {
+        newText =
+          content.substring(0, start) +
+          prefix + selectedText + suffix +
+          content.substring(end)
+      }
       setContent(newText)
       setTimeout(() => {
         textarea.focus()
-        textarea.setSelectionRange(start + prefix.length, end + prefix.length)
+        textarea.setSelectionRange(start + prefix.length, end + (isBlockPrefix && !suffix ? prefix.length * selectedText.split('\n').length : prefix.length))
       }, 0)
     } else {
       // Không bôi đen -> chèn tại vị trí con trỏ
-      const insertion = prefix.endsWith(' ') ? `\n${prefix}` : `${prefix}${suffix}`
+      const isAtLineStart = start === 0 || content.charAt(start - 1) === '\n'
+      let insertion: string
+      if (isBlockPrefix && !suffix) {
+        insertion = isAtLineStart ? prefix : `\n${prefix}`
+      } else {
+        insertion = `${prefix}${suffix}`
+      }
       const newText =
         content.substring(0, start) +
         insertion +
@@ -904,7 +920,7 @@ export default function PostsDashboardClient({
                       <div className="p-3 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 flex flex-wrap items-center gap-1">
                         <button
                           type="button"
-                          onClick={() => insertFormatting('##')}
+                          onClick={() => insertFormatting('## ')}
                           className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs font-bold flex items-center gap-1"
                           title="Tiêu đề H2"
                         >
@@ -912,7 +928,7 @@ export default function PostsDashboardClient({
                         </button>
                         <button
                           type="button"
-                          onClick={() => insertFormatting('###')}
+                          onClick={() => insertFormatting('### ')}
                           className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs font-bold flex items-center gap-1"
                           title="Tiêu đề H3"
                         >
@@ -938,7 +954,7 @@ export default function PostsDashboardClient({
                         <div className="h-4 w-[1px] bg-stone-300 dark:bg-stone-700 mx-1" />
                         <button
                           type="button"
-                          onClick={() => insertFormatting('-')}
+                          onClick={() => insertFormatting('- ')}
                           className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300"
                           title="Danh sách"
                         >
@@ -946,7 +962,7 @@ export default function PostsDashboardClient({
                         </button>
                         <button
                           type="button"
-                          onClick={() => insertFormatting('>')}
+                          onClick={() => insertFormatting('> ')}
                           className="p-2 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300"
                           title="Quét chọn đoạn văn rồi bấm để tạo Trích dẫn"
                         >

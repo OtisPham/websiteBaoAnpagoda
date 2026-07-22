@@ -44,7 +44,7 @@ export function parseInlineFormatting(text: string): React.ReactNode[] {
   return result.length > 0 ? result : [text]
 }
 
-// Hàm chuyển đổi nội dung markdown sang HTML/JSX trang nhã (hỗ trợ đầy đủ khối và inline)
+// Hàm chuyển đổi nội dung markdown sang HTML/JSX trang nhã (hỗ trợ đầy đủ khối và inline, nhận diện cả khi có/không có dấu cách sau ký tự định dạng)
 export function renderArticleContent(content: string): React.ReactNode {
   if (!content) return null
 
@@ -72,38 +72,44 @@ export function renderArticleContent(content: string): React.ReactNode {
       )
     }
 
-    // Tiêu đề H2
-    if (trimmed.startsWith('## ')) {
-      return (
-        <h2 key={idx} className="font-serif text-2xl font-bold text-stone-900 dark:text-amber-400 mt-8 mb-4">
-          {parseInlineFormatting(trimmed.replace(/^##\s+/, ''))}
-        </h2>
-      )
-    }
-
-    // Tiêu đề H3
-    if (trimmed.startsWith('### ')) {
+    // Tiêu đề H3 (Kiểm tra H3 trước H2 để không bị nhận nhầm)
+    if (trimmed.startsWith('###')) {
       return (
         <h3 key={idx} className="font-serif text-xl font-bold text-stone-800 dark:text-stone-200 mt-6 mb-3">
-          {parseInlineFormatting(trimmed.replace(/^###\s+/, ''))}
+          {parseInlineFormatting(trimmed.replace(/^###\s*/, ''))}
         </h3>
       )
     }
 
-    // Trích dẫn blockquote
-    if (trimmed.startsWith('> ')) {
+    // Tiêu đề H2
+    if (trimmed.startsWith('##')) {
       return (
-        <blockquote key={idx} className="border-l-4 border-[#8B4513] bg-amber-50/50 dark:bg-amber-950/20 px-5 py-4 my-6 rounded-r-xl italic text-stone-700 dark:text-stone-300">
-          {parseInlineFormatting(trimmed.replace(/^>\s+/, ''))}
+        <h2 key={idx} className="font-serif text-2xl font-bold text-stone-900 dark:text-amber-400 mt-8 mb-4">
+          {parseInlineFormatting(trimmed.replace(/^##\s*/, ''))}
+        </h2>
+      )
+    }
+
+    // Trích dẫn blockquote (Nhận diện cả >, &gt;, hoặc khi gõ không có dấu cách sau >)
+    if (trimmed.startsWith('>') || trimmed.startsWith('&gt;')) {
+      const quoteText = trimmed.replace(/^(>|&gt;)\s*/, '')
+      return (
+        <blockquote key={idx} className="relative border-l-4 border-[#8B4513] bg-amber-50/80 dark:bg-amber-950/30 px-6 py-5 my-6 rounded-r-2xl italic text-stone-800 dark:text-stone-200 shadow-sm overflow-hidden">
+          <span className="absolute top-2 right-4 font-serif text-6xl text-[#8B4513]/10 dark:text-amber-400/10 select-none pointer-events-none">
+            &ldquo;
+          </span>
+          <div className="relative z-10 leading-relaxed">
+            {parseInlineFormatting(quoteText)}
+          </div>
         </blockquote>
       )
     }
 
     // Danh sách
-    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+    if (trimmed.startsWith('- ') || trimmed.startsWith('* ') || (trimmed.startsWith('-') && trimmed.length > 1 && trimmed[1] !== '-')) {
       return (
         <li key={idx} className="ml-6 list-disc text-stone-700 dark:text-stone-300 leading-relaxed my-1">
-          {parseInlineFormatting(trimmed.replace(/^[-*]\s+/, ''))}
+          {parseInlineFormatting(trimmed.replace(/^[-*]\s*/, ''))}
         </li>
       )
     }

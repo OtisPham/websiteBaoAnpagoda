@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     // Render using the data provided
     const outputBuffer = await renderDocxTemplate(templateBuffer, data)
 
-    return new NextResponse(outputBuffer, {
+    return new NextResponse(outputBuffer as any, {
       status: 200,
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

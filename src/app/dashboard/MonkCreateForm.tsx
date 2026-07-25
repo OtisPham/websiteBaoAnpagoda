@@ -8,12 +8,16 @@ interface MonkCreateFormProps {
   events: any[]
 }
 
+const currentYear = new Date().getFullYear()
+const YEAR_OPTIONS = Array.from({ length: 150 }, (_, i) => currentYear - i)
+
 export default function MonkCreateForm({ events }: MonkCreateFormProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [formType, setFormType] = useState<'CAU_AN' | 'CAU_SIEU'>('CAU_AN')
   const [eventId, setEventId] = useState('')
   const [isDelegated, setIsDelegated] = useState(false)
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('')
+  const [scheduledDate, setScheduledDate] = useState('')
   const [note, setNote] = useState('')
   const [formCode, setFormCode] = useState('')
   const [traiChuName, setTraiChuName] = useState('')
@@ -72,10 +76,10 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
     const formData = new FormData()
     formData.append('formType', formType)
     formData.append('eventId', eventId)
-    if (selectedEvent) {
-      formData.append('scheduledDate', selectedEvent.scheduled_date)
+    if (eventId) {
+      formData.append('scheduledDate', scheduledDate || (selectedEvent?.scheduled_date || new Date().toISOString().split('T')[0]))
     } else {
-      formData.append('scheduledDate', new Date().toISOString().split('T')[0])
+      formData.append('scheduledDate', scheduledDate || new Date().toISOString().split('T')[0])
     }
     formData.append('isDelegated', isDelegated.toString())
     if (!isDelegated && selectedTimeSlot) {
@@ -195,7 +199,12 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
                   </label>
                   <select
                     value={eventId}
-                    onChange={(e) => setEventId(e.target.value)}
+                    onChange={(e) => {
+                      setEventId(e.target.value)
+                      const evt = events.find(ev => ev.id === e.target.value)
+                      if (evt) setScheduledDate(evt.scheduled_date)
+                      else setScheduledDate('')
+                    }}
                     className="w-full bg-white dark:bg-[#12100e] border border-stone-200 dark:border-stone-800 rounded-xl px-4 py-2.5 outline-none focus:border-amber-500 transition"
                   >
                     <option value="">-- Chọn sự kiện {formType === 'CAU_SIEU' && '(Tùy chọn)'} --</option>
@@ -225,18 +234,33 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
                     </div>
 
                     {!isDelegated && (
-                      <select
-                        value={selectedTimeSlot}
-                        onChange={(e) => setSelectedTimeSlot(e.target.value)}
-                        className="w-full bg-white dark:bg-[#12100e] border border-stone-200 dark:border-stone-800 rounded-xl px-4 py-2.5 outline-none focus:border-amber-500 transition"
-                      >
-                        <option value="">-- Chọn khung giờ --</option>
-                        {selectedEvent.time_slots?.map((slot: any, idx: number) => (
-                          <option key={idx} value={slot.time}>
-                            {slot.time} (Sức chứa: {slot.max_capacity} sớ)
-                          </option>
-                        ))}
-                      </select>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-[11px] font-semibold text-stone-500 uppercase mb-1">Ngày làm lễ</label>
+                          <input
+                            type="date"
+                            value={scheduledDate}
+                            onChange={(e) => setScheduledDate(e.target.value)}
+                            required={!isDelegated}
+                            className="w-full bg-white dark:bg-[#12100e] border border-stone-200 dark:border-stone-800 rounded-xl px-4 py-2.5 outline-none focus:border-amber-500 transition"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-semibold text-stone-500 uppercase mb-1">Ca cúng</label>
+                          <select
+                            value={selectedTimeSlot}
+                            onChange={(e) => setSelectedTimeSlot(e.target.value)}
+                            className="w-full bg-white dark:bg-[#12100e] border border-stone-200 dark:border-stone-800 rounded-xl px-4 py-2.5 outline-none focus:border-amber-500 transition"
+                          >
+                            <option value="">-- Chọn khung giờ --</option>
+                            {selectedEvent.time_slots?.map((slot: any, idx: number) => (
+                              <option key={idx} value={slot.time}>
+                                {slot.time} (Sức chứa: {slot.max_capacity} sớ)
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
                     )}
                   </div>
                 )}

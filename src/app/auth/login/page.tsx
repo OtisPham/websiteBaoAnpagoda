@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react'
-import { login } from './actions'
+import { login } from '../actions'
 
 const THEME = {
   bgLight: '#EEF5F7',

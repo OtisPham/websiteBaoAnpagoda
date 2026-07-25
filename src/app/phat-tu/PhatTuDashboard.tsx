@@ -507,22 +507,36 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                 </p>
 
                 {!isDelegated && (
-                  <div className="pt-2">
-                    <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 uppercase tracking-wider">
-                      Chọn ca cúng cụ thể
-                    </label>
-                    <select
-                      value={selectedTimeSlot}
-                      onChange={(e) => setSelectedTimeSlot(e.target.value)}
-                      required={!isDelegated}
-                      className="mt-1 block w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 focus:outline-none sm:text-sm"
-                    >
-                      {availableSlots.map((s, index) => (
-                        <option key={index} value={s.time} className="bg-white dark:bg-[#1c1816]">
-                          Khung giờ: {s.time} (Tối đa {s.max_capacity} sớ)
-                        </option>
-                      ))}
-                    </select>
+                  <div className="pt-2 grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 uppercase tracking-wider mb-1">
+                        Ngày làm lễ
+                      </label>
+                      <input
+                        type="date"
+                        value={scheduledDate}
+                        onChange={(e) => setScheduledDate(e.target.value)}
+                        required={!isDelegated}
+                        className="block w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 focus:outline-none sm:text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 uppercase tracking-wider mb-1">
+                        Chọn ca cúng cụ thể
+                      </label>
+                      <select
+                        value={selectedTimeSlot}
+                        onChange={(e) => setSelectedTimeSlot(e.target.value)}
+                        required={!isDelegated}
+                        className="block w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 focus:outline-none sm:text-sm"
+                      >
+                        {availableSlots.map((s, index) => (
+                          <option key={index} value={s.time} className="bg-white dark:bg-[#1c1816]">
+                            Khung giờ: {s.time} (Tối đa {s.max_capacity} sớ)
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 )}
               </div>

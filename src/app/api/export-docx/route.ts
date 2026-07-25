@@ -6,8 +6,8 @@ import fs from 'fs'
 export async function POST(request: Request) {
   try {
     const data = await request.json()
-    // Read the template from the project root
-    const templatePath = path.join(process.cwd(), 'CauSieutemplate.docx')
+    // Read the template from the public/templates folder
+    const templatePath = path.join(process.cwd(), 'public', 'templates', 'CauSieutemplate.docx')
     
     if (!fs.existsSync(templatePath)) {
       return NextResponse.json({ error: 'Template file not found' }, { status: 404 })

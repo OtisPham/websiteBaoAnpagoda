@@ -194,7 +194,7 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
                   >
                     <option value="">-- Chọn sự kiện {formType === 'CAU_SIEU' && '(Tùy chọn)'} --</option>
                     {events.map((ev) => (
-                      <option key={ev.id} value={ev.id}>{ev.name}</option>
+                      <option key={ev.id} value={ev.id}>{ev.title}</option>
                     ))}
                   </select>
                 </div>

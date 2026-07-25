@@ -1,15 +1,9 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from 'react-native';
+'use client'
+import React, { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react'
+import { signup } from './actions'
 
 const THEME = {
   bgLight: '#EEF5F7',
@@ -17,189 +11,139 @@ const THEME = {
   darkTeal: '#2B697D',
   accentTeal: '#5DA8A8',
   white: '#FFFFFF',
-};
-
-export default function RegisterScreen({ navigation }: any) {
-  const [fullName, setFullName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
-      >
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.backButton}>← Quay lại</Text>
-          </TouchableOpacity>
-        </View>
-
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          <Text style={styles.title}>Đăng Ký Tài Khoản</Text>
-          <View style={styles.subtitleContainer}>
-            <Text style={styles.subtitle}>Đã có tài khoản Phật tử? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text style={styles.linkText}>Đăng nhập ngay</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>HỌ VÀ TÊN PHẬT TỬ *</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Diệu Pháp / Nguyễn Văn A"
-              placeholderTextColor="#94a3b8"
-              value={fullName}
-              onChangeText={setFullName}
-            />
-          </View>
-
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>SỐ ĐIỆN THOẠI</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="0901234567"
-              placeholderTextColor="#94a3b8"
-              value={phone}
-              onChangeText={setPhone}
-              keyboardType="phone-pad"
-            />
-          </View>
-
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>ĐỊA CHỈ EMAIL *</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="phattu@example.com"
-              placeholderTextColor="#94a3b8"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </View>
-
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>MẬT KHẨU *</Text>
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={styles.passwordInput}
-                placeholder="Tối thiểu 6 ký tự"
-                placeholderTextColor="#94a3b8"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showPassword}
-              />
-              <TouchableOpacity 
-                style={styles.eyeButton}
-                onPress={() => setShowPassword(!showPassword)}
-              >
-                <Text style={styles.eyeText}>{showPassword ? 'Ẩn' : 'Hiện'}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <TouchableOpacity style={styles.submitButton}>
-            <Text style={styles.submitButtonText}>Đăng Ký Tài Khoản</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: THEME.bgLight,
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  header: {
-    padding: 20,
-  },
-  backButton: {
-    color: THEME.darkTeal,
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  scrollContent: {
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: THEME.textPrimary,
-    marginBottom: 8,
-  },
-  subtitleContainer: {
-    flexDirection: 'row',
-    marginBottom: 32,
-  },
-  subtitle: {
-    color: THEME.textPrimary,
-    opacity: 0.8,
-  },
-  linkText: {
-    color: THEME.darkTeal,
-    fontWeight: 'bold',
-    textDecorationLine: 'underline',
-  },
-  formGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: THEME.textPrimary,
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: THEME.white,
-    borderWidth: 1,
-    borderColor: 'rgba(43, 105, 125, 0.3)',
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: THEME.textPrimary,
-  },
-  passwordContainer: {
-    flexDirection: 'row',
-    backgroundColor: THEME.white,
-    borderWidth: 1,
-    borderColor: 'rgba(43, 105, 125, 0.3)',
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  passwordInput: {
-    flex: 1,
-    padding: 16,
-    fontSize: 16,
-    color: THEME.textPrimary,
-  },
-  eyeButton: {
-    padding: 16,
-  },
-  eyeText: {
-    color: THEME.darkTeal,
-    fontWeight: '600',
-  },
-  submitButton: {
-    backgroundColor: THEME.textPrimary,
-    padding: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  submitButtonText: {
-    color: THEME.white,
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-});
+export default function RegisterScreen() {
+  const [fullName, setFullName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    const formData = new FormData()
+    formData.append('email', email)
+    formData.append('password', password)
+    formData.append('fullName', fullName)
+    formData.append('phone', phone)
+    
+    try {
+      const res = await signup(formData)
+      if (res?.error) {
+        setError(res.error)
+      } else {
+        router.push('/dashboard')
+      }
+    } catch (err) {
+      setError('Đã có lỗi xảy ra')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-[#EEF5F7] flex flex-col font-sans">
+      <div className="p-5 sm:p-8">
+        <button onClick={() => router.back()} className="flex items-center gap-2 text-[#2B697D] font-semibold text-sm hover:opacity-80 transition">
+          <ArrowLeft className="w-4 h-4" /> Quay lại
+        </button>
+      </div>
+
+      <div className="flex-1 flex flex-col justify-center px-6 sm:px-8 max-w-md mx-auto w-full pb-20">
+        <h1 className="text-3xl font-bold text-[#0D3A4B] mb-2">Đăng Ký Tài Khoản</h1>
+        <div className="flex gap-1 mb-8 text-sm">
+          <span className="text-[#0D3A4B]/80">Đã có tài khoản Phật tử?</span>
+          <Link href="/auth/login" className="text-[#2B697D] font-bold hover:underline">
+            Đăng nhập ngay
+          </Link>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 text-red-600 p-3 rounded-xl mb-6 text-sm border border-red-100">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleRegister} className="space-y-5">
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-[#0D3A4B] uppercase tracking-wide">
+              HỌ VÀ TÊN PHẬT TỬ *
+            </label>
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Diệu Pháp / Nguyễn Văn A"
+              required
+              className="w-full bg-white border border-[#2B697D]/30 rounded-xl p-4 text-base text-[#0D3A4B] placeholder-slate-400 focus:outline-none focus:border-[#5DA8A8] focus:ring-1 focus:ring-[#5DA8A8] transition"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-[#0D3A4B] uppercase tracking-wide">
+              SỐ ĐIỆN THOẠI
+            </label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="0901234567"
+              className="w-full bg-white border border-[#2B697D]/30 rounded-xl p-4 text-base text-[#0D3A4B] placeholder-slate-400 focus:outline-none focus:border-[#5DA8A8] focus:ring-1 focus:ring-[#5DA8A8] transition"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-[#0D3A4B] uppercase tracking-wide">
+              ĐỊA CHỈ EMAIL *
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="phattu@example.com"
+              required
+              className="w-full bg-white border border-[#2B697D]/30 rounded-xl p-4 text-base text-[#0D3A4B] placeholder-slate-400 focus:outline-none focus:border-[#5DA8A8] focus:ring-1 focus:ring-[#5DA8A8] transition"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-[#0D3A4B] uppercase tracking-wide">
+              MẬT KHẨU *
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Tối thiểu 6 ký tự"
+                required
+                className="w-full bg-white border border-[#2B697D]/30 rounded-xl p-4 pr-12 text-base text-[#0D3A4B] placeholder-slate-400 focus:outline-none focus:border-[#5DA8A8] focus:ring-1 focus:ring-[#5DA8A8] transition"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#2B697D] hover:opacity-80 transition"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-[#0D3A4B] text-white font-bold text-base p-4 rounded-xl mt-4 hover:bg-[#0D3A4B]/90 transition shadow-lg shadow-[#0D3A4B]/20 disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Đang xử lý...' : 'Đăng Ký Tài Khoản'}
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}

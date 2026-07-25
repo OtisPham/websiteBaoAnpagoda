@@ -1,14 +1,7 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  ImageBackground,
-  TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
-} from 'react-native';
+import React from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { Calendar, ChevronRight, BookOpen, Heart, Bell } from 'lucide-react'
 
 const THEME = {
   bgLight: '#EEF5F7',
@@ -17,441 +10,176 @@ const THEME = {
   accentTeal: '#5DA8A8',
   darkTeal: '#2B697D',
   white: '#FFFFFF',
-};
-
-export default function HomeScreen({ navigation }: any) {
-  return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={THEME.bgLight} />
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.logoContainer}>
-          <View style={styles.logoPlaceholder} />
-          <View>
-            <Text style={styles.headerTitle}>Chùa Báo Ân</Text>
-            <Text style={styles.headerSubtitle}>BÁO ÂN CỔ TỰ • PHÁP ẤN</Text>
-          </View>
-        </View>
-        <TouchableOpacity
-          style={styles.headerButton}
-          onPress={() => navigation.navigate('Login')}
-        >
-          <Text style={styles.headerButtonText}>Đăng Nhập</Text>
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Hero Section */}
-        <ImageBackground
-          source={{ uri: 'https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?auto=format&fit=crop&w=800&q=80' }}
-          style={styles.heroBackground}
-          imageStyle={{ opacity: 0.8 }}
-        >
-          <View style={styles.heroOverlay}>
-            <View style={styles.eyebrowContainer}>
-              <Text style={styles.eyebrowText}>CHỐN TỔ THIỀN MÔN • BÌNH AN GIA ĐẠO</Text>
-            </View>
-            
-            <Text style={styles.heroTitle}>Nơi Tìm Thấy Sự Bình An</Text>
-            <Text style={styles.heroTitleHighlight}>Giữa Lòng Đời</Text>
-            
-            <Text style={styles.heroDescription}>
-              Chào mừng quý Phật tử và thiện hữu xa gần bước vào chốn thanh tịnh Chùa Báo Ân — điểm
-              tựa tâm linh ấm cúng, nơi lắng nghe pháp thoại và tìm về chánh niệm vững vàng.
-            </Text>
-
-            <TouchableOpacity style={styles.primaryButton}>
-              <Text style={styles.primaryButtonText}>Lịch Pháp Sự & Khóa Tu</Text>
-            </TouchableOpacity>
-          </View>
-        </ImageBackground>
-
-        {/* Highlights */}
-        <View style={styles.highlightsContainer}>
-          <HighlightCard 
-            title="Tu Học Chánh Niệm" 
-            desc="Khóa Tu Tỉnh Thức Định Kỳ" 
-          />
-          <HighlightCard 
-            title="Hoằng Pháp Lợi Sinh" 
-            desc="Pháp Thoại & Kế Thừa Di Sản" 
-          />
-          <HighlightCard 
-            title="Từ Bi Thiện Nguyện" 
-            desc="Lan Tỏa Yêu Thương" 
-          />
-        </View>
-
-        {/* Lịch Pháp Sự */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionSubtitle}>LỊCH PHÁP SỰ & KHÓA TU</Text>
-          <Text style={styles.sectionTitle}>Sự Kiện Sắp Diễn Ra</Text>
-          
-          <EventCard 
-            date="15 Tháng 4, Giáp Thìn"
-            title="Đại Lễ Phật Đản PL.2570"
-            desc="Kỷ niệm ngày Đức Thế Tôn đản sinh với nghi thức tắm Phật trang nghiêm và đàn lễ cầu nguyện quốc thái dân an."
-          />
-          <EventCard 
-            date="Chủ Nhật Hàng Tuần"
-            title="Khóa Tu Tỉnh Thức Một Ngày An Lạc"
-            desc="Thời gian tu tập thanh tịnh dành cho quý cư sĩ Phật tử, thiền tọa chánh niệm và lắng nghe pháp thoại."
-          />
-        </View>
-
-        {/* Tin Tức & Thông Báo */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionSubtitle}>BẢN TIN & PHÁP THOẠI</Text>
-          <Text style={styles.sectionTitle}>Tin Tức & Thông Báo Phật Sự</Text>
-
-          <NewsCard 
-            category="THÔNG BÁO PHẬT SỰ"
-            date="2026-07-10"
-            title="Thông báo lịch tu tập và thời khóa hành lễ định kỳ dịp Đại lễ"
-            desc="Chùa Báo Ân trân trọng kính báo đến toàn thể thiện nam tín nữ phật tử xa gần lịch trình khóa lễ và các buổi giảng pháp thoại..."
-            image="https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?auto=format&fit=crop&w=400&q=80"
-          />
-          <NewsCard 
-            category="PHÁP THOẠI"
-            date="2026-07-08"
-            title="Hạnh phúc đích thực đến từ tâm xả ly và bình an nội tại"
-            desc="Chia sẻ sâu sắc từ chốn thiền môn về nghệ thuật sống chánh niệm giữa những biến động của đời sống thường nhật..."
-            image="https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80"
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
 }
 
-const HighlightCard = ({ title, desc }: { title: string, desc: string }) => (
-  <View style={styles.highlightCard}>
-    <View style={styles.iconPlaceholder} />
-    <View>
-      <Text style={styles.highlightTitle}>{title}</Text>
-      <Text style={styles.highlightDesc}>{desc}</Text>
-    </View>
-  </View>
-);
+export default function HomeScreen() {
+  return (
+    <div className="min-h-screen bg-[#EEF5F7] font-sans text-[#0D3A4B]">
+      {/* Header */}
+      <header className="flex justify-between items-center px-4 py-3 bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-[#D69F4C] flex items-center justify-center text-white font-serif font-bold text-xl">
+            BA
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-[#0D3A4B] leading-tight">Chùa Báo Ân</h1>
+            <p className="text-[10px] text-[#2B697D] font-semibold tracking-widest">BÁO ÂN CỔ TỰ • PHÁP ẤN</p>
+          </div>
+        </div>
+        <Link
+          href="/auth/login"
+          className="bg-[#0D3A4B] text-white px-4 py-2 rounded-full text-xs font-semibold hover:bg-[#0D3A4B]/90 transition"
+        >
+          Đăng Nhập
+        </Link>
+      </header>
 
-const EventCard = ({ date, title, desc }: { date: string, title: string, desc: string }) => (
-  <View style={styles.eventCard}>
-    <View style={styles.dateBadge}>
-      <Text style={styles.dateText}>{date}</Text>
-    </View>
-    <Text style={styles.eventTitle}>{title}</Text>
-    <Text style={styles.eventDesc} numberOfLines={3}>{desc}</Text>
-    <View style={styles.eventFooter}>
-      <Text style={styles.eventFooterText}>Tại Chánh Điện Chùa Báo Ân</Text>
-      <Text style={styles.eventLink}>Chi tiết →</Text>
-    </View>
-  </View>
-);
+      {/* Hero Section */}
+      <section className="relative h-[450px] flex items-center justify-center bg-[#0D3A4B]">
+        <div 
+          className="absolute inset-0 bg-black/60 z-10"
+          style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?auto=format&fit=crop&w=1200&q=80)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.4 }}
+        />
+        <div className="relative z-20 flex flex-col items-center text-center px-6 max-w-2xl">
+          <div className="bg-white/10 px-4 py-1.5 rounded-full border border-[#5DA8A8] mb-6 backdrop-blur-sm">
+            <span className="text-[#D69F4C] text-[10px] font-bold tracking-widest">
+              CHỐN TỔ THIỀN MÔN • BÌNH AN GIA ĐẠO
+            </span>
+          </div>
+          
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-2 leading-tight">
+            Nơi Tìm Thấy Sự Bình An
+          </h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-[#D69F4C] mb-6">
+            Giữa Lòng Đời
+          </h2>
+          
+          <p className="text-[#e8f7fd] text-sm md:text-base leading-relaxed mb-8">
+            Chào mừng quý Phật tử và thiện hữu xa gần bước vào chốn thanh tịnh Chùa Báo Ân — điểm tựa tâm linh ấm cúng, nơi lắng nghe pháp thoại và tìm về chánh niệm vững vàng.
+          </p>
 
-const NewsCard = ({ category, date, title, desc, image }: { category: string, date: string, title: string, desc: string, image: string }) => (
-  <View style={styles.newsCard}>
-    <ImageBackground source={{ uri: image }} style={styles.newsImageContainer} imageStyle={styles.newsImage}>
-      <View style={styles.newsCategoryBadge}>
-        <Text style={styles.newsCategoryText}>{category}</Text>
-      </View>
-    </ImageBackground>
-    <View style={styles.newsContent}>
-      <Text style={styles.newsDate}>{date}</Text>
-      <Text style={styles.newsTitle}>{title}</Text>
-      <Text style={styles.newsDesc} numberOfLines={2}>{desc}</Text>
-      <View style={styles.newsFooter}>
-        <Text style={styles.newsLink}>Đọc toàn bộ bài viết →</Text>
-      </View>
-    </View>
-  </View>
-);
+          <Link href="#events" className="bg-[#2B697D] text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-[#2B697D]/90 transition shadow-lg">
+            Lịch Pháp Sự & Khóa Tu
+          </Link>
+        </div>
+      </section>
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: THEME.bgLight,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: THEME.white,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
-  },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  logoPlaceholder: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: THEME.accentGold,
-    marginRight: 10,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: THEME.textPrimary,
-  },
-  headerSubtitle: {
-    fontSize: 10,
-    color: THEME.darkTeal,
-    fontWeight: '600',
-    letterSpacing: 1,
-  },
-  headerButton: {
-    backgroundColor: THEME.textPrimary,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  headerButtonText: {
-    color: THEME.white,
-    fontWeight: '600',
-    fontSize: 12,
-  },
-  heroBackground: {
-    height: 450,
-    justifyContent: 'center',
-    backgroundColor: THEME.textPrimary,
-  },
-  heroOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(8, 27, 36, 0.65)',
-    padding: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  eyebrowContainer: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: THEME.accentTeal,
-    marginBottom: 16,
-  },
-  eyebrowText: {
-    color: THEME.accentGold,
-    fontSize: 10,
-    fontWeight: 'bold',
-    letterSpacing: 1,
-  },
-  heroTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: THEME.white,
-    textAlign: 'center',
-  },
-  heroTitleHighlight: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: THEME.accentGold,
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  heroDescription: {
-    color: '#e8f7fd',
-    textAlign: 'center',
-    fontSize: 14,
-    lineHeight: 22,
-    marginBottom: 24,
-  },
-  primaryButton: {
-    backgroundColor: THEME.darkTeal,
-    paddingHorizontal: 24,
-    paddingVertical: 14,
-    borderRadius: 25,
-  },
-  primaryButtonText: {
-    color: THEME.white,
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  highlightsContainer: {
-    padding: 16,
-    marginTop: -30,
-  },
-  highlightCard: {
-    backgroundColor: THEME.white,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  iconPlaceholder: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: 'rgba(214, 159, 76, 0.2)',
-    marginRight: 16,
-  },
-  highlightTitle: {
-    fontSize: 12,
-    color: THEME.accentTeal,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  highlightDesc: {
-    fontSize: 14,
-    color: THEME.textPrimary,
-    fontWeight: 'bold',
-  },
-  sectionContainer: {
-    padding: 24,
-    paddingTop: 16,
-    paddingBottom: 32,
-    backgroundColor: '#F6FAFA',
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(43, 105, 125, 0.1)',
-  },
-  sectionSubtitle: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: THEME.accentTeal,
-    letterSpacing: 1.5,
-    marginBottom: 8,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: THEME.textPrimary,
-    marginBottom: 24,
-  },
-  eventCard: {
-    backgroundColor: THEME.white,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(43, 105, 125, 0.15)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  dateBadge: {
-    backgroundColor: '#F6FAFA',
-    borderWidth: 1,
-    borderColor: 'rgba(93, 168, 168, 0.3)',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 8,
-    alignSelf: 'flex-start',
-    marginBottom: 12,
-  },
-  dateText: {
-    color: THEME.textPrimary,
-    fontSize: 11,
-    fontWeight: 'bold',
-  },
-  eventTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: THEME.textPrimary,
-    marginBottom: 8,
-  },
-  eventDesc: {
-    fontSize: 14,
-    color: 'rgba(13, 58, 75, 0.75)',
-    lineHeight: 20,
-    marginBottom: 16,
-  },
-  eventFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(43, 105, 125, 0.1)',
-  },
-  eventFooterText: {
-    fontSize: 11,
-    fontWeight: 'bold',
-    color: 'rgba(13, 58, 75, 0.75)',
-  },
-  eventLink: {
-    fontSize: 11,
-    fontWeight: 'bold',
-    color: THEME.accentTeal,
-  },
-  newsCard: {
-    backgroundColor: THEME.white,
-    borderRadius: 16,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(43, 105, 125, 0.15)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  newsImageContainer: {
-    height: 180,
-    width: '100%',
-    justifyContent: 'flex-start',
-    padding: 12,
-  },
-  newsImage: {
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-  },
-  newsCategoryBadge: {
-    backgroundColor: 'rgba(13, 58, 75, 0.9)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-    alignSelf: 'flex-start',
-  },
-  newsCategoryText: {
-    color: THEME.white,
-    fontSize: 10,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
-  },
-  newsContent: {
-    padding: 20,
-  },
-  newsDate: {
-    fontSize: 11,
-    fontWeight: 'bold',
-    color: THEME.accentTeal,
-    marginBottom: 6,
-  },
-  newsTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: THEME.textPrimary,
-    marginBottom: 8,
-    lineHeight: 22,
-  },
-  newsDesc: {
-    fontSize: 13,
-    color: 'rgba(13, 58, 75, 0.75)',
-    lineHeight: 18,
-    marginBottom: 16,
-  },
-  newsFooter: {
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(43, 105, 125, 0.1)',
-  },
-  newsLink: {
-    fontSize: 11,
-    fontWeight: 'bold',
-    color: THEME.accentTeal,
-  }
-});
+      {/* Highlights */}
+      <section className="px-4 -mt-8 relative z-30 max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white rounded-xl p-4 flex items-center gap-4 shadow-md border border-slate-100">
+          <div className="w-12 h-12 rounded-lg bg-[#D69F4C]/20 flex items-center justify-center text-[#D69F4C]">
+            <BookOpen className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-xs text-[#5DA8A8] font-semibold mb-1 uppercase">Tu Học Chánh Niệm</h3>
+            <p className="text-sm font-bold text-[#0D3A4B]">Khóa Tu Tỉnh Thức Định Kỳ</p>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl p-4 flex items-center gap-4 shadow-md border border-slate-100">
+          <div className="w-12 h-12 rounded-lg bg-[#D69F4C]/20 flex items-center justify-center text-[#D69F4C]">
+            <Calendar className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-xs text-[#5DA8A8] font-semibold mb-1 uppercase">Hoằng Pháp Lợi Sinh</h3>
+            <p className="text-sm font-bold text-[#0D3A4B]">Pháp Thoại & Kế Thừa Di Sản</p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl p-4 flex items-center gap-4 shadow-md border border-slate-100">
+          <div className="w-12 h-12 rounded-lg bg-[#D69F4C]/20 flex items-center justify-center text-[#D69F4C]">
+            <Heart className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-xs text-[#5DA8A8] font-semibold mb-1 uppercase">Từ Bi Thiện Nguyện</h3>
+            <p className="text-sm font-bold text-[#0D3A4B]">Lan Tỏa Yêu Thương</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Lịch Pháp Sự */}
+      <section id="events" className="py-16 px-4 max-w-5xl mx-auto">
+        <div className="mb-10">
+          <p className="text-[10px] font-bold text-[#5DA8A8] tracking-widest mb-2">LỊCH PHÁP SỰ & KHÓA TU</p>
+          <h2 className="text-2xl font-bold text-[#0D3A4B]">Sự Kiện Sắp Diễn Ra</h2>
+        </div>
+        
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="bg-white rounded-2xl p-6 border border-[#2B697D]/10 shadow-sm hover:shadow-md transition">
+            <span className="inline-block bg-[#F6FAFA] border border-[#5DA8A8]/30 px-3 py-1 rounded-lg text-xs font-bold text-[#0D3A4B] mb-4">
+              15 Tháng 4, Giáp Thìn
+            </span>
+            <h3 className="text-lg font-bold text-[#0D3A4B] mb-2">Đại Lễ Phật Đản PL.2570</h3>
+            <p className="text-sm text-[#0D3A4B]/70 leading-relaxed mb-4">
+              Kỷ niệm ngày Đức Thế Tôn đản sinh với nghi thức tắm Phật trang nghiêm và đàn lễ cầu nguyện quốc thái dân an.
+            </p>
+            <div className="pt-4 border-t border-[#2B697D]/10 flex justify-between items-center">
+              <span className="text-[11px] font-bold text-[#0D3A4B]/70">Tại Chánh Điện Chùa Báo Ân</span>
+              <a href="#" className="text-[11px] font-bold text-[#5DA8A8] flex items-center gap-1 hover:underline">Chi tiết <ChevronRight className="w-3 h-3" /></a>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 border border-[#2B697D]/10 shadow-sm hover:shadow-md transition">
+            <span className="inline-block bg-[#F6FAFA] border border-[#5DA8A8]/30 px-3 py-1 rounded-lg text-xs font-bold text-[#0D3A4B] mb-4">
+              Chủ Nhật Hàng Tuần
+            </span>
+            <h3 className="text-lg font-bold text-[#0D3A4B] mb-2">Khóa Tu Tỉnh Thức Một Ngày An Lạc</h3>
+            <p className="text-sm text-[#0D3A4B]/70 leading-relaxed mb-4">
+              Thời gian tu tập thanh tịnh dành cho quý cư sĩ Phật tử, thiền tọa chánh niệm và lắng nghe pháp thoại.
+            </p>
+            <div className="pt-4 border-t border-[#2B697D]/10 flex justify-between items-center">
+              <span className="text-[11px] font-bold text-[#0D3A4B]/70">Tại Chánh Điện Chùa Báo Ân</span>
+              <a href="#" className="text-[11px] font-bold text-[#5DA8A8] flex items-center gap-1 hover:underline">Chi tiết <ChevronRight className="w-3 h-3" /></a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Tin Tức & Thông Báo */}
+      <section className="py-16 px-4 bg-[#F6FAFA] border-t border-[#2B697D]/10">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-10">
+            <p className="text-[10px] font-bold text-[#5DA8A8] tracking-widest mb-2">BẢN TIN & PHÁP THOẠI</p>
+            <h2 className="text-2xl font-bold text-[#0D3A4B]">Tin Tức & Thông Báo Phật Sự</h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-white rounded-2xl overflow-hidden border border-[#2B697D]/10 shadow-sm hover:shadow-md transition">
+              <div className="h-48 relative bg-slate-200">
+                <img src="https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?auto=format&fit=crop&w=600&q=80" alt="News" className="w-full h-full object-cover" />
+                <div className="absolute top-4 left-4 bg-[#0D3A4B]/90 px-3 py-1 rounded-md">
+                  <span className="text-white text-[10px] font-bold tracking-wider">THÔNG BÁO PHẬT SỰ</span>
+                </div>
+              </div>
+              <div className="p-6">
+                <p className="text-[11px] font-bold text-[#5DA8A8] mb-2">2026-07-10</p>
+                <h3 className="text-base font-bold text-[#0D3A4B] mb-3 leading-snug">Thông báo lịch tu tập và thời khóa hành lễ định kỳ dịp Đại lễ</h3>
+                <p className="text-sm text-[#0D3A4B]/70 line-clamp-2 mb-4">Chùa Báo Ân trân trọng kính báo đến toàn thể thiện nam tín nữ phật tử xa gần lịch trình khóa lễ và các buổi giảng pháp thoại...</p>
+                <div className="pt-4 border-t border-[#2B697D]/10">
+                  <a href="#" className="text-[11px] font-bold text-[#5DA8A8] hover:underline">Đọc toàn bộ bài viết →</a>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl overflow-hidden border border-[#2B697D]/10 shadow-sm hover:shadow-md transition">
+              <div className="h-48 relative bg-slate-200">
+                <img src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80" alt="News" className="w-full h-full object-cover" />
+                <div className="absolute top-4 left-4 bg-[#0D3A4B]/90 px-3 py-1 rounded-md">
+                  <span className="text-white text-[10px] font-bold tracking-wider">PHÁP THOẠI</span>
+                </div>
+              </div>
+              <div className="p-6">
+                <p className="text-[11px] font-bold text-[#5DA8A8] mb-2">2026-07-08</p>
+                <h3 className="text-base font-bold text-[#0D3A4B] mb-3 leading-snug">Hạnh phúc đích thực đến từ tâm xả ly và bình an nội tại</h3>
+                <p className="text-sm text-[#0D3A4B]/70 line-clamp-2 mb-4">Chia sẻ sâu sắc từ chốn thiền môn về nghệ thuật sống chánh niệm giữa những biến động của đời sống thường nhật...</p>
+                <div className="pt-4 border-t border-[#2B697D]/10">
+                  <a href="#" className="text-[11px] font-bold text-[#5DA8A8] hover:underline">Đọc toàn bộ bài viết →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+}

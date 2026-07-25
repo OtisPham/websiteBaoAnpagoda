@@ -2,18 +2,19 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
+import { supabaseAdmin } from '@/utils/supabase/admin'
 import { TargetPersonInput } from '@/app/phat-tu/actions'
 import { autoAssignOptimalSlot } from '@/utils/so/loadBalancer'
 
 // Hàm kiểm tra xem user hiện tại có quyền Volunteer trở lên không
 async function checkAuthAndRole() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const authClient = await createClient()
+  const { data: { user } } = await authClient.auth.getUser()
   if (!user) {
     throw new Error('Chưa đăng nhập')
   }
 
-  const { data: profile } = await supabase
+  const { data: profile } = await authClient
     .from('users')
     .select('role')
     .eq('id', user.id)
@@ -24,7 +25,7 @@ async function checkAuthAndRole() {
     throw new Error('Không có quyền thực hiện thao tác này')
   }
 
-  return { supabase, user, role }
+  return { supabase: supabaseAdmin, user, role }
 }
 
 // 1. Cập nhật Trạng thái Phiếu Sớ

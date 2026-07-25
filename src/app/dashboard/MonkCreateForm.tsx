@@ -51,13 +51,13 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
     setError('')
     setSuccess('')
 
-    if (!eventId) {
+    if (formType !== 'CAU_SIEU' && !eventId) {
       setError('Vui lòng chọn sự kiện/đại lễ')
       setLoading(false)
       return
     }
 
-    if (!isDelegated && !selectedTimeSlot) {
+    if (eventId && !isDelegated && !selectedTimeSlot) {
       setError('Vui lòng chọn ca lễ hoặc ủy nhiệm cho nhà chùa')
       setLoading(false)
       return
@@ -68,6 +68,8 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
     formData.append('eventId', eventId)
     if (selectedEvent) {
       formData.append('scheduledDate', selectedEvent.scheduled_date)
+    } else {
+      formData.append('scheduledDate', new Date().toISOString().split('T')[0])
     }
     formData.append('isDelegated', isDelegated.toString())
     if (!isDelegated && selectedTimeSlot) {
@@ -182,15 +184,17 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
                 </div>
 
                 <div className="space-y-2 sm:col-span-2">
-                  <label className="text-sm font-semibold text-stone-700 dark:text-stone-300">Đại lễ / Sự kiện</label>
+                  <label className="text-sm font-semibold text-stone-700 dark:text-stone-300">
+                    Đại lễ / Sự kiện {formType === 'CAU_SIEU' && '(Không bắt buộc)'}
+                  </label>
                   <select
                     value={eventId}
                     onChange={(e) => setEventId(e.target.value)}
                     className="w-full bg-white dark:bg-[#12100e] border border-stone-200 dark:border-stone-800 rounded-xl px-4 py-2.5 outline-none focus:border-amber-500 transition"
                   >
-                    <option value="">-- Chọn sự kiện --</option>
+                    <option value="">-- Chọn sự kiện {formType === 'CAU_SIEU' && '(Tùy chọn)'} --</option>
                     {events.map((ev) => (
-                      <option key={ev.id} value={ev.id}>{ev.name} ({ev.scheduled_date})</option>
+                      <option key={ev.id} value={ev.id}>{ev.name}</option>
                     ))}
                   </select>
                 </div>

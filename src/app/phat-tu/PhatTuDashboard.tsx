@@ -77,6 +77,9 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
       if (evt.time_slots.length > 0) {
         setSelectedTimeSlot(evt.time_slots[0].time)
       }
+    } else {
+      setScheduledDate(new Date().toISOString().split('T')[0])
+      setSelectedTimeSlot('')
     }
   }
 
@@ -158,6 +161,18 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
     setIsSubmitting(true)
     setErrorMsg('')
     setSuccessMsg('')
+
+    if (formType !== 'CAU_SIEU' && !selectedEventId) {
+      setErrorMsg('Vui lòng chọn sự kiện/đại lễ')
+      setIsSubmitting(false)
+      return
+    }
+
+    if (selectedEventId && !isDelegated && !selectedTimeSlot) {
+      setErrorMsg('Vui lòng chọn ca lễ hoặc ủy nhiệm cho nhà chùa')
+      setIsSubmitting(false)
+      return
+    }
 
     // Validate danh sách người thụ lễ
     const invalidTarget = targets.some(t => !t.full_name.trim())
@@ -427,17 +442,18 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-stone-700 dark:text-stone-300">
-                    Sự Kiện Lễ Lớn <span className="text-red-500">*</span>
+                    Sự Kiện Lễ Lớn {formType === 'CAU_SIEU' && '(Không bắt buộc)'}
                   </label>
                   <select
                     value={selectedEventId}
                     onChange={(e) => handleEventChange(e.target.value)}
-                    required
+                    required={formType !== 'CAU_SIEU'}
                     className="mt-1 block w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 focus:outline-none sm:text-sm"
                   >
+                    <option value="">-- Chọn sự kiện {formType === 'CAU_SIEU' && '(Tùy chọn)'} --</option>
                     {events.map((e) => (
                       <option key={e.id} value={e.id} className="bg-white dark:bg-[#1c1816]">
-                        {e.title} ({e.scheduled_date})
+                        {e.title}
                       </option>
                     ))}
                   </select>
@@ -447,12 +463,19 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                   <label className="block text-sm font-semibold text-stone-700 dark:text-stone-300">
                     Loại sớ cúng
                   </label>
-                  <input
-                    type="text"
-                    value={formType === 'CAU_AN' ? 'Cầu An' : 'Cầu Siêu'}
-                    disabled
-                    className="mt-1 block w-full rounded-lg border border-stone-200 dark:border-stone-850 bg-stone-50 dark:bg-stone-900 px-3 py-2 text-stone-500 dark:text-stone-400 sm:text-sm cursor-not-allowed font-semibold"
-                  />
+                  <select
+                    value={formType}
+                    onChange={(e) => setFormType(e.target.value as 'CAU_AN' | 'CAU_SIEU')}
+                    disabled={!!selectedEventId}
+                    className={`mt-1 block w-full rounded-lg border px-3 py-2 sm:text-sm font-semibold ${
+                      selectedEventId 
+                        ? 'border-stone-200 dark:border-stone-850 bg-stone-50 dark:bg-stone-900 text-stone-500 dark:text-stone-400 cursor-not-allowed'
+                        : 'border-stone-300 dark:border-stone-700 bg-transparent text-stone-900 dark:text-white focus:border-amber-500'
+                    }`}
+                  >
+                    <option value="CAU_AN">Cầu An</option>
+                    <option value="CAU_SIEU">Cầu Siêu</option>
+                  </select>
                 </div>
               </div>
 

@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { FileText, Search, Edit2, Trash2, CheckCircle2, AlertTriangle, XCircle, ArrowRight, User, Calendar, Clock, RefreshCw } from 'lucide-react'
-import { updateFormStatus, updateAdminForm, softDeleteForm } from './actions'
+import { FileText, Search, Edit2, Trash2, CheckCircle2, AlertTriangle, XCircle, ArrowRight, User, Calendar, Clock, RefreshCw, History, Printer } from 'lucide-react'
+import { updateFormStatus, updateAdminForm, softDeleteForm, getFormRevisions, getPrintHistory } from './actions'
 import { TargetPersonInput } from '@/app/phat-tu/actions'
 
 interface EventData {
@@ -59,9 +59,33 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
   const [scheduledDate, setScheduledDate] = useState('')
   const [note, setNote] = useState('')
   const [targets, setTargets] = useState<TargetPersonInput[]>([])
+
+  // Modal Lịch sử Audit Log & Print History
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
+  const [historyForm, setHistoryForm] = useState<FormRecord | null>(null)
+  const [revisions, setRevisions] = useState<any[]>([])
+  const [printLogs, setPrintLogs] = useState<any[]>([])
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false)
   
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
+
+  // Load Lịch sử phiếu
+  const handleOpenHistory = async (form: FormRecord) => {
+    setHistoryForm(form)
+    setIsHistoryModalOpen(true)
+    setIsLoadingHistory(true)
+
+    const [revRes, printRes] = await Promise.all([
+      getFormRevisions(form.id),
+      getPrintHistory(form.id)
+    ])
+
+    setIsLoadingHistory(false)
+
+    if (revRes.success) setRevisions(revRes.revisions)
+    if (printRes.success) setPrintLogs(printRes.history)
+  }
 
   // Lọc dữ liệu hiển thị
   const filteredForms = forms.filter((f) => {
@@ -418,6 +442,13 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
                         <Edit2 className="h-4 w-4" />
                       </button>
                       <button
+                        onClick={() => handleOpenHistory(form)}
+                        className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 rounded text-stone-600 dark:text-stone-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                        title="Lịch sử chỉnh sửa & in ấn"
+                      >
+                        <History className="h-4 w-4" />
+                      </button>
+                      <button
                         onClick={() => handleDelete(form.id)}
                         className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 rounded text-stone-600 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400 transition"
                         title="Xoá phiếu"
@@ -635,6 +666,124 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Xem Lịch Sử Chỉnh Sửa & Nhật Ký In (Audit Log) */}
+      {isHistoryModalOpen && historyForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-[#1c1816] rounded-2xl max-w-2xl w-full border border-stone-200 dark:border-stone-850 shadow-2xl p-6 md:p-8 max-h-[85vh] overflow-y-auto space-y-6">
+            <div className="flex justify-between items-center border-b border-stone-100 dark:border-stone-850 pb-4">
+              <div>
+                <h3 className="font-serif text-xl font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                  <History className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  Lịch Sử Thay Đổi & Nhật Ký In (Mã: {historyForm.form_code})
+                </h3>
+                <p className="text-xs text-stone-500 mt-0.5">Giám sát mọi lần chỉnh sửa thông tin sớ và thời điểm in làm lễ.</p>
+              </div>
+              <button
+                onClick={() => setIsHistoryModalOpen(false)}
+                className="text-stone-400 hover:text-stone-600 font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {isLoadingHistory ? (
+              <div className="py-12 text-center text-stone-500 flex items-center justify-center gap-2">
+                <RefreshCw className="h-5 w-5 animate-spin text-amber-700" />
+                <span>Đang tải nhật ký lịch sử...</span>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Section 1: Nhật ký in sớ */}
+                <div>
+                  <h4 className="text-xs font-bold text-stone-700 dark:text-stone-300 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <Printer className="h-4 w-4 text-emerald-600" />
+                    Lịch sử In sớ ({printLogs.length} lần in)
+                  </h4>
+                  <div className="border border-stone-100 dark:border-stone-800 rounded-xl overflow-hidden">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-stone-50 dark:bg-stone-900/40 text-stone-500 font-bold">
+                        <tr>
+                          <th className="px-4 py-2.5">Thời gian in</th>
+                          <th className="px-4 py-2.5">Người thực hiện in</th>
+                          <th className="px-4 py-2.5">Lý do / Trạm in</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
+                        {printLogs.map((log) => (
+                          <tr key={log.id}>
+                            <td className="px-4 py-2 font-mono text-stone-500">
+                              {new Date(log.created_at).toLocaleString('vi-VN')}
+                            </td>
+                            <td className="px-4 py-2 font-semibold">
+                              {log.users?.full_name || 'Quản trị viên'}
+                            </td>
+                            <td className="px-4 py-2 text-stone-600 dark:text-stone-300">
+                              {log.reason || 'In sớ làm lễ'}
+                            </td>
+                          </tr>
+                        ))}
+                        {printLogs.length === 0 && (
+                          <tr>
+                            <td colSpan={3} className="text-center py-4 text-stone-400 italic">
+                              Chưa có lịch sử in ấn sớ này.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Section 2: Lịch sử sửa đổi (Form Revisions) */}
+                <div>
+                  <h4 className="text-xs font-bold text-stone-700 dark:text-stone-300 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <FileText className="h-4 w-4 text-blue-600" />
+                    Lịch sử Sửa đổi Dữ liệu ({revisions.length} bản ghi)
+                  </h4>
+                  <div className="border border-stone-100 dark:border-stone-800 rounded-xl overflow-hidden">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-stone-50 dark:bg-stone-900/40 text-stone-500 font-bold">
+                        <tr>
+                          <th className="px-4 py-2.5">Thời gian</th>
+                          <th className="px-4 py-2.5">Trường sửa</th>
+                          <th className="px-4 py-2.5">Người sửa</th>
+                          <th className="px-4 py-2.5">Giá trị Mới</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
+                        {revisions.map((rev) => (
+                          <tr key={rev.id}>
+                            <td className="px-4 py-2 font-mono text-stone-500">
+                              {new Date(rev.created_at).toLocaleString('vi-VN')}
+                            </td>
+                            <td className="px-4 py-2 font-mono font-bold text-[#8B4513]">
+                              {rev.field}
+                            </td>
+                            <td className="px-4 py-2 font-semibold">
+                              {rev.users?.full_name || 'Hệ thống'}
+                            </td>
+                            <td className="px-4 py-2 text-stone-600 dark:text-stone-300 max-w-xs truncate" title={rev.new_val}>
+                              {rev.new_val}
+                            </td>
+                          </tr>
+                        ))}
+                        {revisions.length === 0 && (
+                          <tr>
+                            <td colSpan={4} className="text-center py-4 text-stone-400 italic">
+                              Chưa có lịch sử thay đổi thông tin.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

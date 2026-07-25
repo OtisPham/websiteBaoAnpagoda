@@ -46,6 +46,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('')
   const [printMode, setPrintMode] = useState<'READING' | 'POSTER' | 'PHUNG_VI'>('READING')
+  const [isDownloadingWord, setIsDownloadingWord] = useState(false)
 
   const selectedTemplateUrl = templates.find(t => t.id === selectedTemplateId)?.file_url
 
@@ -92,6 +93,59 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
   }
 
   const selectedForms = acceptedForms.filter((f) => selectedIds.includes(f.id))
+
+  const handleDownloadWord = async () => {
+    if (selectedForms.length === 0) return
+    setIsDownloadingWord(true)
+    try {
+      for (const form of selectedForms) {
+        const traiChuTarget = form.targets.find(t => t.relation === 'TRAI_CHU')
+        const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name
+        const traiChuDharma = traiChuTarget?.dharma_name
+        
+        const payload = {
+          form_code: form.form_code,
+          form_type: form.form_type === 'CAU_AN' ? 'Sớ Phục Nguyện Cầu An' : 'Sớ Phục Nguyện Cầu Siêu',
+          owner_name: traiChuName,
+          owner_dharma: traiChuDharma || '',
+          scheduled_date: form.scheduled_date || 'Hôm nay',
+          time_slot: form.is_delegated ? 'Chùa xếp' : form.selected_time_slot,
+          targets: form.targets.filter(t => t.relation !== 'TRAI_CHU').map(t => ({
+            full_name: t.full_name,
+            dharma_name: t.dharma_name || '',
+            birth_year: t.birth_year || '',
+            death_year: t.death_year || '',
+            relation: t.relation || ''
+          }))
+        }
+
+        const res = await fetch('/api/export-docx', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+
+        if (res.ok) {
+          const blob = await res.blob()
+          const url = window.URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = `So_${form.form_code}.docx`
+          document.body.appendChild(a)
+          a.click()
+          window.URL.revokeObjectURL(url)
+          document.body.removeChild(a)
+        } else {
+          alert('Lỗi tải sớ: ' + await res.text())
+        }
+      }
+    } catch (err) {
+      console.error(err)
+      alert('Lỗi hệ thống khi tải file word.')
+    } finally {
+      setIsDownloadingWord(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -235,6 +289,14 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               >
                 <Printer className="h-4 w-4" />
                 Mở lệnh in sớ
+              </button>
+              <button
+                onClick={handleDownloadWord}
+                disabled={isDownloadingWord}
+                className="flex items-center gap-1.5 bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition text-xs"
+              >
+                <FileText className="h-4 w-4" />
+                {isDownloadingWord ? 'Đang tải...' : 'Tải sớ Word'}
               </button>
               <button
                 onClick={handleConfirmPrinted}

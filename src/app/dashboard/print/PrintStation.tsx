@@ -155,7 +155,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
           <div>
             <h1 className="font-serif text-3xl font-bold tracking-tight">Trạm Chuẩn Bị In Sớ Hàng Loạt</h1>
             <p className="text-stone-500 dark:text-stone-400 mt-1">
-              Danh sách các phiếu sớ đã duyệt tịnh tài tạ quầy, sẵn sàng để in ra sớ giấy để chư Tăng làm lễ đọc tụng.
+              Danh sách các phiếu sớ đã duyệt tịnh tài tại quầy, sẵn sàng để in ra sớ giấy để chư Tăng làm lễ đọc tụng.
             </p>
           </div>
 

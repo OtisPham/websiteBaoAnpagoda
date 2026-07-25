@@ -53,7 +53,7 @@ export default async function PrintPage() {
     `)
     .eq('status', 'Accepted')
     .is('deleted_at', null)
-    .order('created_at', { ascending: true })
+    .order('created_at', { ascending: false })
 
   // 4. Fetch danh sách phôi sớ đang kích hoạt
   const { data: templates } = await supabase

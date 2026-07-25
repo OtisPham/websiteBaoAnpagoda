@@ -46,6 +46,9 @@ interface Props {
   forms: FormRecord[]
 }
 
+const currentYear = new Date().getFullYear()
+const YEAR_OPTIONS = Array.from({ length: currentYear - 1800 + 1 }, (_, i) => currentYear - i)
+
 export default function PhatTuDashboard({ userEmail, userFullName, events, forms }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingForm, setEditingForm] = useState<FormRecord | null>(null)
@@ -588,25 +591,31 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                       <div className="grid sm:grid-cols-3 gap-3">
                         <div>
                           <label className="block text-[11px] font-semibold text-stone-500 uppercase tracking-wider">Năm sinh</label>
-                          <input
-                            type="number"
-                            placeholder="1980"
+                          <select
                             value={target.birth_year || ''}
                             onChange={(e) => updateTargetField(index, 'birth_year', e.target.value ? parseInt(e.target.value) : undefined)}
                             className="mt-1 block w-full rounded-md border border-stone-300 dark:border-stone-700 bg-transparent px-2.5 py-1.5 text-stone-900 dark:text-white sm:text-xs"
-                          />
+                          >
+                            <option value="">-- Chọn năm --</option>
+                            {YEAR_OPTIONS.map(year => (
+                              <option key={`birth-${year}`} value={year}>{year}</option>
+                            ))}
+                          </select>
                         </div>
                         {formType === 'CAU_SIEU' && (
                           <div>
                             <label className="block text-[11px] font-semibold text-stone-500 uppercase tracking-wider">Năm mất</label>
-                            <input
-                              type="number"
+                            <select
                               required={formType === 'CAU_SIEU'}
-                              placeholder="2025"
                               value={target.death_year || ''}
                               onChange={(e) => updateTargetField(index, 'death_year', e.target.value ? parseInt(e.target.value) : undefined)}
                               className="mt-1 block w-full rounded-md border border-stone-300 dark:border-stone-700 bg-transparent px-2.5 py-1.5 text-stone-900 dark:text-white sm:text-xs"
-                            />
+                            >
+                              <option value="">-- Chọn năm --</option>
+                              {YEAR_OPTIONS.map(year => (
+                                <option key={`death-${year}`} value={year}>{year}</option>
+                              ))}
+                            </select>
                           </div>
                         )}
                         <div className={formType === 'CAU_SIEU' ? 'col-span-1' : 'col-span-2'}>

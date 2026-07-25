@@ -304,23 +304,31 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
 
                       <div className="sm:col-span-2 space-y-1">
                         <label className="text-[11px] font-semibold text-stone-500 uppercase">Năm sinh</label>
-                        <input
-                          type="number"
+                        <select
                           value={target.birth_year || ''}
                           onChange={(e) => handleTargetChange(index, 'birth_year', e.target.value ? parseInt(e.target.value) : undefined)}
                           className="w-full bg-transparent border-b border-stone-200 dark:border-stone-800 py-1.5 text-sm outline-none focus:border-amber-500 transition"
-                        />
+                        >
+                          <option value="">-- Chọn năm --</option>
+                          {YEAR_OPTIONS.map(year => (
+                            <option key={`birth-${year}`} value={year}>{year}</option>
+                          ))}
+                        </select>
                       </div>
 
                       {formType === 'CAU_SIEU' ? (
                         <div className="sm:col-span-2 space-y-1">
                           <label className="text-[11px] font-semibold text-stone-500 uppercase">Năm mất</label>
-                          <input
-                            type="number"
+                          <select
                             value={target.death_year || ''}
                             onChange={(e) => handleTargetChange(index, 'death_year', e.target.value ? parseInt(e.target.value) : undefined)}
                             className="w-full bg-transparent border-b border-stone-200 dark:border-stone-800 py-1.5 text-sm outline-none focus:border-amber-500 transition"
-                          />
+                          >
+                            <option value="">-- Chọn năm --</option>
+                            {YEAR_OPTIONS.map(year => (
+                              <option key={`death-${year}`} value={year}>{year}</option>
+                            ))}
+                          </select>
                         </div>
                       ) : (
                         <div className="sm:col-span-2 space-y-1">

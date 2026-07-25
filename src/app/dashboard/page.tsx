@@ -71,7 +71,7 @@ export default async function DashboardPage() {
   const { data: formsBySlot } = await supabase
     .from('forms')
     .select('selected_time_slot, form_type')
-    .gte('scheduled_date', today)
+    .eq('scheduled_date', today)
     .is('deleted_at', null)
     .not('selected_time_slot', 'is', null)
 

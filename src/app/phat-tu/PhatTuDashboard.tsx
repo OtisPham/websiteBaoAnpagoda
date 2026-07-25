@@ -89,6 +89,12 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
   // Quản lý danh sách người thụ lễ
   const addTargetRow = () => {
     setTargets([...targets, { full_name: '', relation: '' }])
+    setTimeout(() => {
+      const modal = document.getElementById('form-modal-content')
+      if (modal) {
+        modal.scrollTo({ top: modal.scrollHeight, behavior: 'smooth' })
+      }
+    }, 50)
   }
 
   const removeTargetRow = (index: number) => {
@@ -415,7 +421,7 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
       {/* Modal đăng ký / chỉnh sửa phiếu */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-[#1c1816] rounded-2xl max-w-2xl w-full border border-stone-200 dark:border-stone-800 shadow-2xl p-6 md:p-8 max-h-[90vh] overflow-y-auto space-y-6">
+          <div id="form-modal-content" className="bg-white dark:bg-[#1c1816] rounded-2xl max-w-2xl w-full border border-stone-200 dark:border-stone-800 shadow-2xl p-6 md:p-8 max-h-[90vh] overflow-y-auto space-y-6">
             <div className="flex justify-between items-center border-b border-stone-100 dark:border-stone-800 pb-4">
               <h3 className="font-serif text-2xl font-bold text-stone-950 dark:text-white">
                 {editingForm ? 'Cập Nhật Phiếu Đăng Ký' : 'Đăng Ký Khóa Lễ Trực Tuyến'}

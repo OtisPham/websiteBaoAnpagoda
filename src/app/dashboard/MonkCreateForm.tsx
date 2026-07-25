@@ -31,6 +31,12 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
 
   const handleAddTarget = () => {
     setTargets([...targets, { full_name: '', dharma_name: '', birth_year: undefined, death_year: undefined, relation: '' }])
+    setTimeout(() => {
+      const modal = document.getElementById('monk-form-modal-content')
+      if (modal) {
+        modal.scrollTo({ top: modal.scrollHeight, behavior: 'smooth' })
+      }
+    }, 50)
   }
 
   const handleRemoveTarget = (index: number) => {
@@ -121,7 +127,7 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm">
-          <div className="bg-white dark:bg-[#1c1816] w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl border border-stone-200/80 dark:border-stone-800/80 p-6 sm:p-8">
+          <div id="monk-form-modal-content" className="bg-white dark:bg-[#1c1816] w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl border border-stone-200/80 dark:border-stone-800/80 p-6 sm:p-8">
             <div className="flex justify-between items-start border-b border-stone-200/60 dark:border-stone-800/60 pb-5 mb-6">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-widest text-[#8B4513] dark:text-amber-400">

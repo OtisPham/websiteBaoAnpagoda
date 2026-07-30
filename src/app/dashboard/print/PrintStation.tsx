@@ -447,11 +447,12 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               const actualTargets = form.targets.filter(t => t.relation !== 'TRAI_CHU')
 
               return (
-                <div
-                  key={form.id}
-                  className="so-page-block bg-white text-stone-900 p-8 print:p-0 w-full max-w-[210mm] print:w-[180mm] print:max-w-[180mm] mx-auto break-after-page"
-                  style={{ pageBreakAfter: 'always', page: 'so-portrait-page' as any }}
-                >
+                <div key={form.id}>
+                  {idx > 0 && <hr className="my-12 border-t-[3px] border-dashed border-stone-300 dark:border-stone-700 print:hidden w-full max-w-[210mm] mx-auto" />}
+                  <div
+                    className="so-page-block bg-white text-stone-900 p-8 print:p-0 w-full max-w-[210mm] print:w-[180mm] print:max-w-[180mm] mx-auto break-after-page"
+                    style={{ pageBreakAfter: 'always', page: 'so-portrait-page' as any }}
+                  >
                   {/* Khung Sớ A4 Dọc Chuẩn gom vừa khít 1 trang A4 */}
                   <div
                     className="relative w-full h-[270mm] max-h-[270mm] print:h-[273mm] print:max-h-[273mm] print:w-full overflow-hidden border-2 border-amber-900/40 print:border-amber-900/60 rounded-xl p-8 print:p-6 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:shadow-none"

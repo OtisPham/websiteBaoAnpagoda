@@ -104,14 +104,11 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
 
   // Đổi trạng thái nhanh theo State Machine
   const handleStatusChange = async (formId: string, nextStatus: string) => {
-    if (confirm(`Bạn có chắc chắn muốn chuyển phiếu này sang trạng thái [${nextStatus}]?`)) {
-      const res = await updateFormStatus(formId, nextStatus)
-      if (res.success) {
-        alert('Cập nhật trạng thái thành công')
-        window.location.reload()
-      } else {
-        alert('Lỗi: ' + res.error)
-      }
+    const res = await updateFormStatus(formId, nextStatus)
+    if (res.success) {
+      window.location.reload()
+    } else {
+      alert('Lỗi: ' + res.error)
     }
   }
 

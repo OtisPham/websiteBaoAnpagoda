@@ -98,9 +98,8 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
     if (selectedForms.length === 0) return
     setIsDownloadingWord(true)
     try {
-      // @ts-ignore
-      const html2pdfModule = await import('html2pdf.js')
-      const html2pdf = html2pdfModule.default || html2pdfModule
+      const { toJpeg } = await import('html-to-image')
+      const { jsPDF } = await import('jspdf')
       
       const elements = document.querySelectorAll('.so-page-block')
       if (elements.length === 0) {
@@ -109,24 +108,38 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
         return
       }
 
-      // Cấu hình html2pdf
-      const opt = {
-        margin:       0,
-        filename:     `Danh_Sach_So_${new Date().getTime()}.pdf`,
-        image:        { type: 'jpeg' as const, quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, allowTaint: true },
-        jsPDF:        { 
-          unit: 'mm', 
-          format: 'a4', 
-          orientation: (printMode === 'READING' ? 'portrait' : 'landscape') as 'portrait' | 'landscape'
-        }
+      const orientation = printMode === 'READING' ? 'portrait' : 'landscape'
+      const pdf = new jsPDF({
+        unit: 'mm',
+        format: 'a4',
+        orientation
+      })
+
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = pdf.internal.pageSize.getHeight()
+
+      for (let i = 0; i < elements.length; i++) {
+        const el = elements[i] as HTMLElement
+        // Render element thành Jpeg với chất lượng cao và nền trắng
+        const dataUrl = await toJpeg(el, { quality: 0.98, pixelRatio: 2, backgroundColor: '#ffffff' })
+        
+        if (i > 0) pdf.addPage()
+        
+        // Tính toán kích thước ảnh vừa khít với trang PDF A4
+        const imgProps = pdf.getImageProperties(dataUrl)
+        const ratio = Math.min(pdfWidth / imgProps.width, pdfHeight / imgProps.height)
+        
+        const scaledWidth = imgProps.width * ratio
+        const scaledHeight = imgProps.height * ratio
+        
+        // Căn giữa ảnh trên trang PDF
+        const x = (pdfWidth - scaledWidth) / 2
+        const y = (pdfHeight - scaledHeight) / 2
+        
+        pdf.addImage(dataUrl, 'JPEG', x, y, scaledWidth, scaledHeight)
       }
 
-      // Lấy toàn bộ vùng in
-      const container = document.querySelector('.so-print-layout') as HTMLElement
-      if (container) {
-        await html2pdf().set(opt).from(container).save()
-      }
+      pdf.save(`Danh_Sach_So_${new Date().getTime()}.pdf`)
 
     } catch (err: any) {
       console.error(err)

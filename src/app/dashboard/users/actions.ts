@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
+import { supabaseAdmin } from '@/utils/supabase/admin'
 
 // Interface cho thông tin người dùng
 export interface UserRecord {
@@ -40,9 +41,9 @@ async function checkAdminOrMonkAuth() {
 // 1. Lấy danh sách người dùng kèm bộ lọc và tìm kiếm
 export async function getUsers(query?: string, roleFilter?: string) {
   try {
-    const { supabase } = await checkAdminOrMonkAuth()
+    const { supabase, currentUser, currentRole } = await checkAdminOrMonkAuth()
 
-    let req = supabase
+    let req = supabaseAdmin
       .from('users')
       .select('*')
       .is('deleted_at', null)
@@ -75,7 +76,7 @@ export async function updateUserRole(targetUserId: string, newRole: 'ADMIN' | 'M
     const { supabase, currentUser, currentRole } = await checkAdminOrMonkAuth()
 
     // Lấy thông tin user cũ
-    const { data: oldUser } = await supabase
+    const { data: oldUser } = await supabaseAdmin
       .from('users')
       .select('role, full_name, email')
       .eq('id', targetUserId)
@@ -94,7 +95,7 @@ export async function updateUserRole(targetUserId: string, newRole: 'ADMIN' | 'M
     }
 
     // Cập nhật role mới
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('users')
       .update({ 
         role: newRole,
@@ -107,7 +108,7 @@ export async function updateUserRole(targetUserId: string, newRole: 'ADMIN' | 'M
     }
 
     // Ghi nhận Audit Log
-    await supabase.from('audit_logs').insert({
+    await supabaseAdmin.from('audit_logs').insert({
       user_id: currentUser.id,
       action: 'UPDATE_ROLE',
       table_name: 'users',
@@ -136,7 +137,7 @@ export async function updateUserProfile(
   try {
     const { supabase, currentUser } = await checkAdminOrMonkAuth()
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('users')
       .update({
         full_name: fullName,
@@ -150,7 +151,7 @@ export async function updateUserProfile(
     }
 
     // Ghi nhận Audit Log
-    await supabase.from('audit_logs').insert({
+    await supabaseAdmin.from('audit_logs').insert({
       user_id: currentUser.id,
       action: 'UPDATE_PROFILE',
       table_name: 'users',
@@ -181,7 +182,7 @@ export async function softDeleteUser(targetUserId: string) {
       return { success: false, error: 'Bạn không thể tự khóa tài khoản của chính mình!' }
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('users')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', targetUserId)
@@ -191,7 +192,7 @@ export async function softDeleteUser(targetUserId: string) {
     }
 
     // Ghi audit log
-    await supabase.from('audit_logs').insert({
+    await supabaseAdmin.from('audit_logs').insert({
       user_id: currentUser.id,
       action: 'DELETE_USER',
       table_name: 'users',

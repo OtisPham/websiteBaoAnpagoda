@@ -120,8 +120,22 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
 
       for (let i = 0; i < elements.length; i++) {
         const el = elements[i] as HTMLElement
+        // Cố định kích thước khi chụp để không bị vỡ/cắt chữ trên màn hình nhỏ
+        const isLandscape = printMode !== 'READING'
+        const captureWidth = isLandscape ? 1122 : 794 // 297mm or 210mm at 96dpi
+
         // Render element thành Jpeg với chất lượng cao và nền trắng
-        const dataUrl = await toJpeg(el, { quality: 0.98, pixelRatio: 2, backgroundColor: '#ffffff' })
+        const dataUrl = await toJpeg(el, { 
+          quality: 0.98, 
+          pixelRatio: 2, 
+          backgroundColor: '#ffffff',
+          style: {
+            width: `${captureWidth}px`,
+            maxWidth: 'none',
+            margin: '0',
+            transform: 'none'
+          }
+        })
         
         if (i > 0) pdf.addPage()
         

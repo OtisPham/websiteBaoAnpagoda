@@ -8,23 +8,23 @@ export function runPdfEngineSelfCheck(): { success: boolean; results: Record<str
   // Test 1: Vertical A4 (Cau An)
   const verticalCauAnHtml = renderSoHtml(mockCauAnForm, { printMode: 'VERTICAL_A4' });
   results.verticalCauAn =
-    verticalCauAnHtml.includes('Sớ Phục Nguyện Cầu An') &&
-    verticalCauAnHtml.includes('Phật Giáo Việt Nam • Bổn Tự Chùa Báo Ân') &&
-    verticalCauAnHtml.includes('Báo Ân Cổ Tự') &&
+    verticalCauAnHtml.includes('Sớ Cầu An') &&
+    verticalCauAnHtml.includes('Giáo Hội Phật Giáo Việt Nam') &&
+    verticalCauAnHtml.includes('Chùa Báo Ân') &&
     verticalCauAnHtml.includes('CA-0001') &&
     verticalCauAnHtml.includes('Nguyễn Văn An');
 
   // Test 2: Vertical A4 (Cau Sieu)
   const verticalCauSieuHtml = renderSoHtml(mockCauSieuForm, { printMode: 'VERTICAL_A4' });
   results.verticalCauSieu =
-    verticalCauSieuHtml.includes('Sớ Phục Nguyện Cầu Siêu') &&
+    verticalCauSieuHtml.includes('Sớ Cầu Siêu') &&
     verticalCauSieuHtml.includes('Nam Mô Tiếp Dẫn Đạo Sư A Di Đà Phật') &&
     verticalCauSieuHtml.includes('CS-0002');
 
   // Test 3: Horizontal Chanh Dien
   const horizontalHtml = renderSoHtml(mockFormsList, { printMode: 'HORIZONTAL_CHANH_DIEN' });
   results.horizontalChanhDien =
-    horizontalHtml.includes('64px') &&
+    horizontalHtml.includes('72px') &&
     horizontalHtml.includes('✂') &&
     horizontalHtml.includes('001') && // shortCode for CA-0001
     horizontalHtml.includes('002');   // shortCode for CS-0002

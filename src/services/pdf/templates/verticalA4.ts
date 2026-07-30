@@ -84,8 +84,8 @@ export function generateVerticalA4Template(
                 }
 
                 return `
-                  <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid #e7e5e4; padding: 4px 0; font-size: 12px;">
-                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                  <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid #e7e5e4; padding: 6px 0; font-size: 25px; line-height: 1.2;">
+                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px;">
                       <span style="font-weight: 600; color: #1c1917;">${globalNum ? `${globalNum}. ` : ''}${escapeHtml(
                   t.full_name
                 )}</span>
@@ -99,7 +99,7 @@ export function generateVerticalA4Template(
                     </div>
                     ${
                       details
-                        ? `<div style="font-size: 11px; color: #57534e; flex-shrink: 0; margin-left: 4px;">${escapeHtml(
+                        ? `<div style="font-size: 14px; color: #57534e; flex-shrink: 0; margin-left: 4px; align-self: center;">${escapeHtml(
                             details.trim()
                           )}</div>`
                         : ''
@@ -123,20 +123,18 @@ export function generateVerticalA4Template(
             <div style="display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
               
               <!-- Header Bar -->
-              <div style="display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 2px solid rgba(120, 53, 15, 0.3); padding-bottom: 16px;">
+              <div style="display: flex; align-items: flex-start; justify-content: center; border-bottom: 2px solid rgba(120, 53, 15, 0.3); padding-bottom: 16px;">
                 
-                <!-- Red Temple Seal -->
-                <div style="border: 4px double #b91c1c; color: #b91c1c; font-family: 'Times New Roman', serif; font-weight: bold; padding: 8px 12px; font-size: 12px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; line-height: 1.25; user-select: none;">
-                  Báo Ân Cổ Tự<br />Pháp Ấn
-                </div>
-
                 <!-- Main Title -->
                 <div style="text-align: center; flex: 1; padding: 0 16px;">
-                  <p style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #78716c; margin: 0 0 4px 0;">
-                    Phật Giáo Việt Nam • Bổn Tự Chùa Báo Ân
+                  <p style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #78716c; margin: 0 0 2px 0;">
+                    Giáo Hội Phật Giáo Việt Nam
                   </p>
-                  <h2 style="font-family: 'Times New Roman', serif; font-size: 26px; font-weight: bold; color: #451a03; letter-spacing: 0.025em; text-transform: uppercase; margin: 0;">
-                    ${isCauAn ? 'Sớ Phục Nguyện Cầu An' : 'Sớ Phục Nguyện Cầu Siêu'}
+                  <p style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #78716c; margin: 0 0 4px 0;">
+                    Chùa Báo Ân
+                  </p>
+                  <h2 style="font-family: 'Times New Roman', serif; font-size: 30px; font-weight: bold; color: #451a03; letter-spacing: 0.025em; text-transform: uppercase; margin: 0;">
+                    ${isCauAn ? 'Sớ Cầu An' : 'Sớ Cầu Siêu'}
                   </h2>
                   <p style="font-family: 'Times New Roman', serif; font-style: italic; font-size: 14px; color: #92400e; margin: 4px 0 0 0;">
                     ${
@@ -164,7 +162,7 @@ export function generateVerticalA4Template(
               <!-- Trai Chu Card -->
               <div style="background: rgba(120, 53, 15, 0.05); border: 1px solid rgba(120, 53, 15, 0.2); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
                 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;">
-                  <span style="font-family: 'Times New Roman', serif; font-weight: bold; font-size: 16px; color: #451a03;">
+                  <span style="font-family: 'Times New Roman', serif; font-weight: bold; font-size: 25px; line-height: 1.2; color: #451a03;">
                     Trai Chủ / Gia Chủ: <span style="color: #78350f;">${escapeHtml(
                       traiChuName
                     )}</span>

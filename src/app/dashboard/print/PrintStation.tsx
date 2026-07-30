@@ -335,7 +335,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
           <div className="so-print-layout print:m-0 print:p-0">
             {printMode === 'POSTER' || printMode === 'PHUNG_VI' ? (() => {
               // Gom TẤT CẢ các cột từ tất cả các sớ được chọn (selectedForms) để xếp kề bên nhau trên cùng trang
-              const MAX_LINES_PER_COL = 13
+              const MAX_LINES_PER_COL = 17
               const MAX_COLS_PER_PAGE = 4
 
               const allColumns: { shortCode: string; names: string[] }[] = []
@@ -375,7 +375,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               return pages.map((pageCols, pageIdx) => (
                 <div
                   key={`poster-page-${pageIdx}`}
-                  className="so-page-block bg-white text-black p-8 print:p-4 w-full print:w-[277mm] print:max-w-[277mm] print:h-[190mm] print:max-h-[190mm] print:border-none print:shadow-none print:m-0 break-after-page flex justify-center min-h-[50vh] print:min-h-0 overflow-hidden"
+                  className="so-page-block bg-white text-black p-8 print:p-2 w-full print:w-[297mm] print:max-w-[297mm] print:h-[210mm] print:max-h-[210mm] print:border-none print:shadow-none print:m-0 break-after-page flex justify-center min-h-[50vh] print:min-h-0 overflow-hidden"
                   style={{ pageBreakAfter: 'always', page: 'so-page' as any }}
                 >
                   {pageCols.map((col, colIdx) => (
@@ -416,11 +416,11 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                           </div>
 
                           {/* Ở giữa: Tên các hương linh */}
-                          <div className="flex-1 flex flex-col justify-center gap-4 my-auto w-full py-2">
+                          <div className="flex-1 flex flex-col justify-center gap-1.5 my-auto w-full py-2">
                             {col.names.map((name, nIdx) => (
                               <div
                                 key={nIdx}
-                                className="text-xl font-serif font-bold text-center text-stone-900 uppercase leading-snug"
+                                className="text-2xl font-serif font-bold text-center text-stone-900 uppercase leading-snug"
                               >
                                 {name}
                               </div>
@@ -440,12 +440,12 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                       ) : (
                         <>
                           {/* Chế độ Dán Chánh Điện POSTER */}
-                          <div className="text-[64px] font-bold leading-none mb-6 text-black text-center tracking-tight">
+                          <div className="text-[72px] font-bold leading-none mb-1 text-black text-center tracking-tight">
                             {col.shortCode}
                           </div>
-                          <div className="flex flex-col gap-3 w-full my-auto">
+                          <div className="flex flex-col gap-1 w-full my-auto">
                             {col.names.map((name, nIdx) => (
-                              <div key={nIdx} className="text-xl font-bold text-center text-black uppercase leading-tight">
+                              <div key={nIdx} className="text-[22px] font-bold text-center text-black uppercase leading-tight">
                                 {name}
                               </div>
                             ))}
@@ -466,12 +466,12 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                 <div key={form.id}>
                   {idx > 0 && <hr className="my-12 border-t-[3px] border-dashed border-stone-300 dark:border-stone-700 print:hidden w-full max-w-[210mm] mx-auto" />}
                   <div
-                    className="so-page-block bg-white text-stone-900 p-8 print:p-0 w-full max-w-[210mm] print:w-[180mm] print:max-w-[180mm] mx-auto break-after-page"
+                    className="so-page-block bg-white text-stone-900 p-8 print:p-0 w-full max-w-[210mm] print:w-full print:max-w-[210mm] mx-auto break-after-page"
                     style={{ pageBreakAfter: 'always', page: 'so-portrait-page' as any }}
                   >
                   {/* Khung Sớ A4 Dọc Chuẩn gom vừa khít 1 trang A4 */}
                   <div
-                    className="relative w-full h-[270mm] max-h-[270mm] print:h-[273mm] print:max-h-[273mm] print:w-full overflow-hidden border-2 border-amber-900/40 print:border-amber-900/60 rounded-xl p-8 print:p-6 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:shadow-none"
+                    className="relative w-full h-[270mm] max-h-[270mm] print:h-[285mm] print:max-h-[285mm] print:w-full overflow-hidden border-2 border-amber-900/40 print:border-amber-900/60 rounded-xl p-8 print:p-4 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:shadow-none"
                     style={{
                       backgroundImage: selectedTemplateUrl ? `url(${selectedTemplateUrl})` : 'none',
                       backgroundSize: 'cover',
@@ -481,22 +481,20 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                     {/* Phần trên sớ: Header & Thông tin Trai Chủ */}
                     <div className="space-y-4 overflow-hidden">
                       {/* Header sớ */}
-                      <div className="flex items-start justify-between border-b-2 border-amber-900/30 pb-5">
-                        {/* Ấn đỏ chùa */}
-                        <div className="border-4 border-double border-red-700 text-red-700 font-serif font-bold px-3 py-2 text-xs rounded uppercase tracking-wider text-center leading-snug select-none">
-                          Báo Ân Cổ Tự <br /> Pháp Ấn
-                        </div>
-
+                      <div className="flex items-start justify-center border-b-2 border-amber-900/30 pb-5">
                         {/* Tiêu đề chính */}
                         <div className="text-center flex-1 px-4">
-                          <p className="text-[11px] font-semibold uppercase tracking-widest text-stone-500 mb-1">
-                            Phật Giáo Việt Nam • Bổn Tự Chùa Báo Ân
+                          <p className="text-[11px] font-semibold uppercase tracking-widest text-stone-500 mb-0.5">
+                            Giáo Hội Phật Giáo Việt Nam
                           </p>
-                          <h2 className="font-serif text-2xl md:text-3xl font-bold text-amber-950 tracking-wide uppercase">
+                          <p className="text-[11px] font-semibold uppercase tracking-widest text-stone-500 mb-1">
+                            Chùa Báo Ân
+                          </p>
+                          <h2 className="font-serif text-3xl md:text-4xl font-bold text-amber-950 tracking-wide uppercase">
                             {form.form_type === 'CAU_AN' ? (
-                              'Sớ Phục Nguyện Cầu An'
+                              'Sớ Cầu An'
                             ) : (
-                              <>Sớ Phục Nguyện<br />Cầu Siêu</>
+                              'Sớ Cầu Siêu'
                             )}
                           </h2>
                           <p className="font-serif italic text-sm text-amber-800 mt-1">
@@ -519,16 +517,16 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                       {/* Khung Thông tin Gia Chủ / Trai Chủ */}
                       <div className="bg-amber-900/5 border border-amber-900/20 rounded-lg p-4 space-y-1.5">
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="font-serif font-bold text-base text-amber-950">
+                          <span className="font-serif font-bold text-[25px] leading-tight text-amber-950">
                             Trai Chủ: <span className="text-amber-900">{traiChuName}</span>
                             {traiChuDharma ? ` (Pháp danh: ${traiChuDharma})` : ''}
                           </span>
-                          <span className="text-xs text-stone-600">
+                          <span className="text-sm text-stone-600">
                             {form.users?.phone || ''}
                           </span>
                         </div>
                         {form.note && (
-                          <p className="text-xs text-stone-700 italic">
+                          <p className="text-sm text-stone-700 italic">
                             Lời khấn / Ghi chú: &ldquo;{form.note}&rdquo;
                           </p>
                         )}
@@ -547,8 +545,8 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             (Gia chủ cúng dường chung cho gia quyến)
                           </p>
                         ) : (() => {
-                          // Điền đầy tối đa 25 tên mỗi cột rồi mới chuyển sang cột tiếp theo
-                          const MAX_PER_COL = 25
+                          // Điền đầy tối đa 17 tên mỗi cột rồi mới chuyển sang cột tiếp theo
+                          const MAX_PER_COL = 17
                           const isCauSieu = form.form_type !== 'CAU_AN'
 
                           const cols: TargetPerson[][] = []
@@ -577,9 +575,9 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                                       return (
                                         <div
                                           key={idx}
-                                          className="flex items-baseline justify-between border-b border-stone-200/70 py-1 text-xs"
+                                          className="flex items-baseline justify-between border-b border-stone-200/70 py-1.5 text-[25px] leading-tight"
                                         >
-                                          <div className="truncate">
+                                          <div className="truncate pr-2">
                                             <span className="font-semibold text-stone-900">
                                               {globalNum}. {t.full_name}
                                             </span>
@@ -590,7 +588,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                                             )}
                                           </div>
                                           {!isCauSieu && (
-                                            <div className="text-[11px] text-stone-600 shrink-0 ml-1">
+                                            <div className="text-[14px] text-stone-600 shrink-0 ml-1 self-center">
                                               {t.birth_year ? `SN: ${t.birth_year} ` : ''}
                                               {t.relation ? `• ${t.relation}` : ''}
                                             </div>

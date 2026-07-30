@@ -34,7 +34,7 @@ export function generatePhungViToaViTemplate(
           const namesHtml = col.names
             .map(
               (name) =>
-                `<div style="font-size: 20px; font-weight: bold; font-family: 'Times New Roman', Times, serif; text-align: center; color: #1c1917; text-transform: uppercase; line-height: 1.375;">${escapeHtml(
+                `<div style="font-size: 24px; font-weight: bold; font-family: 'Times New Roman', Times, serif; text-align: center; color: #1c1917; text-transform: uppercase; line-height: 1.375;">${escapeHtml(
                   name
                 )}</div>`
             )
@@ -65,7 +65,7 @@ export function generatePhungViToaViTemplate(
               </div>
 
               <!-- Center Section: Target Names -->
-              <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; margin: auto 0; width: 100%; padding: 8px 0;">
+              <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; margin: auto 0; width: 100%; padding: 8px 0;">
                 ${namesHtml}
               </div>
 
@@ -84,7 +84,7 @@ export function generatePhungViToaViTemplate(
         .join('');
 
       return `
-        <div class="so-page-block phung-vi-page" style="page-break-after: always; width: 277mm; height: 190mm; max-width: 277mm; max-height: 190mm; margin: 0 auto; padding: 16px; background: #ffffff; color: #000000; display: flex; justify-content: center; overflow: hidden; box-sizing: border-box;">
+        <div class="so-page-block phung-vi-page" style="page-break-after: always; width: 297mm; height: 210mm; max-width: 297mm; max-height: 210mm; margin: 0 auto; padding: 8px; background: #ffffff; color: #000000; display: flex; justify-content: center; overflow: hidden; box-sizing: border-box;">
           ${colsHtml}
         </div>
       `;

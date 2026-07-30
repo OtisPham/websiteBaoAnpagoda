@@ -33,7 +33,7 @@ export function generateHorizontalTemplate(
           const namesHtml = col.names
             .map(
               (name) =>
-                `<div style="font-size: 20px; font-weight: bold; text-align: center; color: #000000; text-transform: uppercase; line-height: 1.25;">${escapeHtml(
+                `<div style="font-size: 22px; font-weight: bold; text-align: center; color: #000000; text-transform: uppercase; line-height: 1.25;">${escapeHtml(
                   name
                 )}</div>`
             )
@@ -53,13 +53,13 @@ export function generateHorizontalTemplate(
                   : ''
               }
 
-              <!-- Short Form Code Number Header (64px bold) -->
-              <div style="font-size: 64px; font-weight: bold; line-height: 1; margin-bottom: 24px; color: #000000; text-align: center; letter-spacing: -0.05em;">
+              <!-- Short Form Code Number Header (72px bold) -->
+              <div style="font-size: 72px; font-weight: bold; line-height: 1; margin-bottom: 4px; color: #000000; text-align: center; letter-spacing: -0.05em;">
                 ${escapeHtml(col.shortCode)}
               </div>
 
               <!-- Names List -->
-              <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; margin: auto 0;">
+              <div style="display: flex; flex-direction: column; gap: 4px; width: 100%; margin: auto 0;">
                 ${namesHtml}
               </div>
             </div>
@@ -68,7 +68,7 @@ export function generateHorizontalTemplate(
         .join('');
 
       return `
-        <div class="so-page-block horizontal-page" style="page-break-after: always; width: 277mm; height: 190mm; max-width: 277mm; max-height: 190mm; margin: 0 auto; padding: 16px; background: #ffffff; color: #000000; display: flex; justify-content: center; overflow: hidden; box-sizing: border-box;">
+        <div class="so-page-block horizontal-page" style="page-break-after: always; width: 297mm; height: 210mm; max-width: 297mm; max-height: 210mm; margin: 0 auto; padding: 8px; background: #ffffff; color: #000000; display: flex; justify-content: center; overflow: hidden; box-sizing: border-box;">
           ${colsHtml}
         </div>
       `;

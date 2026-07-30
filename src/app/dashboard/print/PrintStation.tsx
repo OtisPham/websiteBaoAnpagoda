@@ -493,9 +493,11 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             Phật Giáo Việt Nam • Bổn Tự Chùa Báo Ân
                           </p>
                           <h2 className="font-serif text-2xl md:text-3xl font-bold text-amber-950 tracking-wide uppercase">
-                            {form.form_type === 'CAU_AN'
-                              ? 'Sớ Phục Nguyện Cầu An'
-                              : 'Sớ Phục Nguyện Cầu Siêu'}
+                            {form.form_type === 'CAU_AN' ? (
+                              'Sớ Phục Nguyện Cầu An'
+                            ) : (
+                              <>Sớ Phục Nguyện<br />Cầu Siêu</>
+                            )}
                           </h2>
                           <p className="font-serif italic text-sm text-amber-800 mt-1">
                             {form.form_type === 'CAU_AN'
@@ -518,7 +520,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                       <div className="bg-amber-900/5 border border-amber-900/20 rounded-lg p-4 space-y-1.5">
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <span className="font-serif font-bold text-base text-amber-950">
-                            Trai Chủ / Gia Chủ: <span className="text-amber-900">{traiChuName}</span>
+                            Trai Chủ: <span className="text-amber-900">{traiChuName}</span>
                             {traiChuDharma ? ` (Pháp danh: ${traiChuDharma})` : ''}
                           </span>
                           <span className="text-xs text-stone-600">
@@ -545,20 +547,13 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             (Gia chủ cúng dường chung cho gia quyến)
                           </p>
                         ) : (() => {
-                          // Tối đa 15 tên mỗi cột, sau đó tự động chuyển sang cột kế bên kề bên nhau
+                          // Điền đầy tối đa 15 tên mỗi cột rồi mới chuyển sang cột tiếp theo
                           const MAX_PER_COL = 15
                           const isCauSieu = form.form_type !== 'CAU_AN'
 
-                          // Nếu danh sách <= 15 nhưng > 4 người, chia 2 cột cho cân đối trang sớ
-                          const numCols =
-                            actualTargets.length <= 15 && actualTargets.length > 4
-                              ? 2
-                              : Math.ceil(actualTargets.length / MAX_PER_COL)
-
-                          const itemsPerCol = Math.min(MAX_PER_COL, Math.ceil(actualTargets.length / numCols))
                           const cols: TargetPerson[][] = []
-                          for (let i = 0; i < actualTargets.length; i += itemsPerCol) {
-                            cols.push(actualTargets.slice(i, i + itemsPerCol))
+                          for (let i = 0; i < actualTargets.length; i += MAX_PER_COL) {
+                            cols.push(actualTargets.slice(i, i + MAX_PER_COL))
                           }
 
                           return (
@@ -574,7 +569,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                               }`}
                             >
                               {cols.map((colItems, colIdx) => {
-                                const startNumber = colIdx * itemsPerCol + 1
+                                const startNumber = colIdx * MAX_PER_COL + 1
                                 return (
                                   <div key={colIdx} className="space-y-1">
                                     {colItems.map((t, idx) => {

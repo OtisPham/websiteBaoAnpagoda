@@ -98,17 +98,23 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
     if (selectedForms.length === 0) return
     setIsDownloadingWord(true)
     try {
-      const html2pdf = (await import('html2pdf.js')).default
+      // @ts-ignore
+      const html2pdfModule = await import('html2pdf.js')
+      const html2pdf = html2pdfModule.default || html2pdfModule
       
       const elements = document.querySelectorAll('.so-page-block')
-      if (elements.length === 0) return
+      if (elements.length === 0) {
+        alert('Không tìm thấy nội dung để in.')
+        setIsDownloadingWord(false)
+        return
+      }
 
       // Cấu hình html2pdf
       const opt = {
         margin:       0,
         filename:     `Danh_Sach_So_${new Date().getTime()}.pdf`,
         image:        { type: 'jpeg' as const, quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
+        html2canvas:  { scale: 2, useCORS: true, allowTaint: true },
         jsPDF:        { 
           unit: 'mm', 
           format: 'a4', 
@@ -122,9 +128,9 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
         await html2pdf().set(opt).from(container).save()
       }
 
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
-      alert('Lỗi hệ thống khi tải file pdf.')
+      alert('Lỗi hệ thống khi tải file pdf: ' + (err.message || err))
     } finally {
       setIsDownloadingWord(false)
     }

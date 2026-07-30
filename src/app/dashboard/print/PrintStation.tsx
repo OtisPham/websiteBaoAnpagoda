@@ -617,7 +617,8 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                     </div>
                   </div>
                 </div>
-              )})}
+              )
+            })}
           </div>
         </div>
       )}

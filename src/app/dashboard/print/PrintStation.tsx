@@ -94,54 +94,37 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
 
   const selectedForms = acceptedForms.filter((f) => selectedIds.includes(f.id))
 
-  const handleDownloadWord = async () => {
+  const handleDownloadPdf = async () => {
     if (selectedForms.length === 0) return
     setIsDownloadingWord(true)
     try {
-      for (const form of selectedForms) {
-        const traiChuTarget = form.targets.find(t => t.relation === 'TRAI_CHU')
-        const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name
-        const traiChuDharma = traiChuTarget?.dharma_name
-        
-        const payload = {
-          form_code: form.form_code,
-          form_type: form.form_type === 'CAU_AN' ? 'Sớ Phục Nguyện Cầu An' : 'Sớ Phục Nguyện Cầu Siêu',
-          owner_name: traiChuName,
-          owner_dharma: traiChuDharma || '',
-          scheduled_date: form.scheduled_date || 'Hôm nay',
-          time_slot: form.is_delegated ? 'Chùa xếp' : form.selected_time_slot,
-          targets: form.targets.filter(t => t.relation !== 'TRAI_CHU').map(t => ({
-            full_name: t.full_name,
-            dharma_name: t.dharma_name || '',
-            birth_year: t.birth_year || '',
-            death_year: t.death_year || '',
-            relation: t.relation || ''
-          }))
-        }
+      const html2pdf = (await import('html2pdf.js')).default
+      
+      const elements = document.querySelectorAll('.so-page-block')
+      if (elements.length === 0) return
 
-        const res = await fetch('/api/export-docx', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        })
-
-        if (res.ok) {
-          const blob = await res.blob()
-          const url = window.URL.createObjectURL(blob)
-          const a = document.createElement('a')
-          a.href = url
-          a.download = `So_${form.form_code}.docx`
-          document.body.appendChild(a)
-          a.click()
-          window.URL.revokeObjectURL(url)
-          document.body.removeChild(a)
-        } else {
-          alert('Lỗi tải sớ: ' + await res.text())
+      // Cấu hình html2pdf
+      const opt = {
+        margin:       0,
+        filename:     `Danh_Sach_So_${new Date().getTime()}.pdf`,
+        image:        { type: 'jpeg' as const, quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { 
+          unit: 'mm', 
+          format: 'a4', 
+          orientation: (printMode === 'READING' ? 'portrait' : 'landscape') as 'portrait' | 'landscape'
         }
       }
+
+      // Lấy toàn bộ vùng in
+      const container = document.querySelector('.so-print-layout') as HTMLElement
+      if (container) {
+        await html2pdf().set(opt).from(container).save()
+      }
+
     } catch (err) {
       console.error(err)
-      alert('Lỗi hệ thống khi tải file word.')
+      alert('Lỗi hệ thống khi tải file pdf.')
     } finally {
       setIsDownloadingWord(false)
     }
@@ -291,12 +274,12 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                 Mở lệnh in sớ
               </button>
               <button
-                onClick={handleDownloadWord}
+                onClick={handleDownloadPdf}
                 disabled={isDownloadingWord}
                 className="flex items-center gap-1.5 bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition text-xs"
               >
                 <FileText className="h-4 w-4" />
-                {isDownloadingWord ? 'Đang tải...' : 'Tải sớ Word'}
+                {isDownloadingWord ? 'Đang tải...' : 'Tải sớ PDF'}
               </button>
               <button
                 onClick={handleConfirmPrinted}

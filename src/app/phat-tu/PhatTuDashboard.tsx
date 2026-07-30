@@ -48,6 +48,8 @@ interface Props {
 
 const currentYear = new Date().getFullYear()
 const YEAR_OPTIONS = Array.from({ length: currentYear - 1800 + 1 }, (_, i) => currentYear - i)
+const LUNAR_DAYS = Array.from({ length: 30 }, (_, i) => (i + 1).toString())
+const LUNAR_MONTHS = Array.from({ length: 12 }, (_, i) => (i + 1).toString())
 
 export default function PhatTuDashboard({ userEmail, userFullName, events, forms }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -195,7 +197,13 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
       const formData = new FormData()
       formData.append('formType', formType)
       formData.append('eventId', selectedEventId)
-      formData.append('scheduledDate', scheduledDate)
+      let finalDate = scheduledDate
+      if (formType === 'CAU_SIEU' && !selectedEventId) {
+        if (!scheduledDate || !scheduledDate.startsWith('Ngày')) {
+           finalDate = 'Ngày 15 Tháng 7'
+        }
+      }
+      formData.append('scheduledDate', finalDate)
       formData.append('isDelegated', String(isDelegated))
       formData.append('selectedTimeSlot', selectedTimeSlot)
       formData.append('note', note)
@@ -512,13 +520,36 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                       <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 uppercase tracking-wider mb-1">
                         Ngày làm lễ
                       </label>
-                      <input
-                        type="date"
-                        value={scheduledDate}
-                        onChange={(e) => setScheduledDate(e.target.value)}
-                        required={!isDelegated}
-                        className="block w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 focus:outline-none sm:text-sm"
-                      />
+                      {formType === 'CAU_SIEU' && !selectedEventId ? (
+                        <div className="flex gap-2">
+                          <select
+                            value={scheduledDate.startsWith('Ngày') ? scheduledDate.split('Ngày ')[1]?.split(' ')[0] : '15'}
+                            onChange={(e) => setScheduledDate(`Ngày ${e.target.value} Tháng ${scheduledDate.startsWith('Ngày') ? scheduledDate.split('Tháng ')[1] : '7'}`)}
+                            required={!isDelegated}
+                            className="block w-1/2 rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 focus:outline-none sm:text-sm"
+                          >
+                            <option value="" disabled>Ngày</option>
+                            {LUNAR_DAYS.map(d => <option key={d} value={d} className="bg-white dark:bg-[#1c1816]">Ngày {d}</option>)}
+                          </select>
+                          <select
+                            value={scheduledDate.startsWith('Ngày') ? scheduledDate.split('Tháng ')[1] : '7'}
+                            onChange={(e) => setScheduledDate(`Ngày ${scheduledDate.startsWith('Ngày') ? scheduledDate.split('Ngày ')[1]?.split(' ')[0] : '15'} Tháng ${e.target.value}`)}
+                            required={!isDelegated}
+                            className="block w-1/2 rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 focus:outline-none sm:text-sm"
+                          >
+                            <option value="" disabled>Tháng</option>
+                            {LUNAR_MONTHS.map(m => <option key={m} value={m} className="bg-white dark:bg-[#1c1816]">Tháng {m}</option>)}
+                          </select>
+                        </div>
+                      ) : (
+                        <input
+                          type="date"
+                          value={scheduledDate}
+                          onChange={(e) => setScheduledDate(e.target.value)}
+                          required={!isDelegated}
+                          className="block w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 focus:outline-none sm:text-sm"
+                        />
+                      )}
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 uppercase tracking-wider mb-1">

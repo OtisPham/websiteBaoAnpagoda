@@ -4,6 +4,9 @@ import { useState } from 'react'
 import { Plus, X, Trash2, CheckCircle, FileText } from 'lucide-react'
 import { createForm, TargetPersonInput } from '../phat-tu/actions'
 
+const LUNAR_DAYS = Array.from({ length: 30 }, (_, i) => (i + 1).toString())
+const LUNAR_MONTHS = Array.from({ length: 12 }, (_, i) => (i + 1).toString())
+
 interface MonkCreateFormProps {
   events: any[]
 }
@@ -79,7 +82,13 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
     if (eventId) {
       formData.append('scheduledDate', scheduledDate || (selectedEvent?.scheduled_date || new Date().toISOString().split('T')[0]))
     } else {
-      formData.append('scheduledDate', scheduledDate || new Date().toISOString().split('T')[0])
+      let finalDate = scheduledDate
+      if (formType === 'CAU_SIEU') {
+        if (!scheduledDate || !scheduledDate.startsWith('Ngày')) {
+           finalDate = 'Ngày 15 Tháng 7'
+        }
+      }
+      formData.append('scheduledDate', finalDate || new Date().toISOString().split('T')[0])
     }
     formData.append('isDelegated', isDelegated.toString())
     if (!isDelegated && selectedTimeSlot) {
@@ -237,13 +246,36 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-[11px] font-semibold text-stone-500 uppercase mb-1">Ngày làm lễ</label>
-                          <input
-                            type="date"
-                            value={scheduledDate}
-                            onChange={(e) => setScheduledDate(e.target.value)}
-                            required={!isDelegated}
-                            className="w-full bg-white dark:bg-[#12100e] border border-stone-200 dark:border-stone-800 rounded-xl px-4 py-2.5 outline-none focus:border-amber-500 transition"
-                          />
+                          {formType === 'CAU_SIEU' && !eventId ? (
+                            <div className="flex gap-2">
+                              <select
+                                value={scheduledDate.startsWith('Ngày') ? scheduledDate.split('Ngày ')[1]?.split(' ')[0] : '15'}
+                                onChange={(e) => setScheduledDate(`Ngày ${e.target.value} Tháng ${scheduledDate.startsWith('Ngày') ? scheduledDate.split('Tháng ')[1] : '7'}`)}
+                                required={!isDelegated}
+                                className="w-1/2 bg-white dark:bg-[#12100e] border border-stone-200 dark:border-stone-800 rounded-xl px-4 py-2.5 outline-none focus:border-amber-500 transition"
+                              >
+                                <option value="" disabled>Ngày</option>
+                                {LUNAR_DAYS.map(d => <option key={d} value={d} className="bg-white dark:bg-[#1c1816]">Ngày {d}</option>)}
+                              </select>
+                              <select
+                                value={scheduledDate.startsWith('Ngày') ? scheduledDate.split('Tháng ')[1] : '7'}
+                                onChange={(e) => setScheduledDate(`Ngày ${scheduledDate.startsWith('Ngày') ? scheduledDate.split('Ngày ')[1]?.split(' ')[0] : '15'} Tháng ${e.target.value}`)}
+                                required={!isDelegated}
+                                className="w-1/2 bg-white dark:bg-[#12100e] border border-stone-200 dark:border-stone-800 rounded-xl px-4 py-2.5 outline-none focus:border-amber-500 transition"
+                              >
+                                <option value="" disabled>Tháng</option>
+                                {LUNAR_MONTHS.map(m => <option key={m} value={m} className="bg-white dark:bg-[#1c1816]">Tháng {m}</option>)}
+                              </select>
+                            </div>
+                          ) : (
+                            <input
+                              type="date"
+                              value={scheduledDate}
+                              onChange={(e) => setScheduledDate(e.target.value)}
+                              required={!isDelegated}
+                              className="w-full bg-white dark:bg-[#12100e] border border-stone-200 dark:border-stone-800 rounded-xl px-4 py-2.5 outline-none focus:border-amber-500 transition"
+                            />
+                          )}
                         </div>
                         <div>
                           <label className="block text-[11px] font-semibold text-stone-500 uppercase mb-1">Ca cúng</label>

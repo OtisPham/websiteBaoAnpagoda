@@ -364,6 +364,12 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
                           type="text"
                           value={target.full_name}
                           onChange={(e) => handleTargetChange(index, 'full_name', e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              if (index === targets.length - 1) handleAddTarget()
+                            }
+                          }}
                           className="w-full bg-transparent border-b border-stone-200 dark:border-stone-800 py-1.5 text-sm outline-none focus:border-amber-500 transition"
                           placeholder="Nguyễn Văn A"
                         />
@@ -375,6 +381,12 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
                           type="text"
                           value={target.dharma_name || ''}
                           onChange={(e) => handleTargetChange(index, 'dharma_name', e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              if (index === targets.length - 1) handleAddTarget()
+                            }
+                          }}
                           className="w-full bg-transparent border-b border-stone-200 dark:border-stone-800 py-1.5 text-sm outline-none focus:border-amber-500 transition"
                         />
                       </div>
@@ -414,6 +426,12 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
                             type="text"
                             value={target.relation || ''}
                             onChange={(e) => handleTargetChange(index, 'relation', e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault()
+                                if (index === targets.length - 1) handleAddTarget()
+                              }
+                            }}
                             className="w-full bg-transparent border-b border-stone-200 dark:border-stone-800 py-1.5 text-sm outline-none focus:border-amber-500 transition"
                             placeholder="Vd: Con trai"
                           />

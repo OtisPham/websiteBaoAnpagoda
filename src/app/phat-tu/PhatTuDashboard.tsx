@@ -629,6 +629,12 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                             placeholder="Nguyễn Văn B"
                             value={target.full_name}
                             onChange={(e) => updateTargetField(index, 'full_name', e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault()
+                                if (index === targets.length - 1) addTargetRow()
+                              }
+                            }}
                             className="mt-1 block w-full rounded-md border border-stone-300 dark:border-stone-700 bg-transparent px-2.5 py-1.5 text-stone-900 dark:text-white sm:text-xs"
                           />
                         </div>
@@ -639,6 +645,12 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                             placeholder="Tự Phúc Hạnh"
                             value={target.dharma_name || ''}
                             onChange={(e) => updateTargetField(index, 'dharma_name', e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault()
+                                if (index === targets.length - 1) addTargetRow()
+                              }
+                            }}
                             className="mt-1 block w-full rounded-md border border-stone-300 dark:border-stone-700 bg-transparent px-2.5 py-1.5 text-stone-900 dark:text-white sm:text-xs"
                           />
                         </div>
@@ -681,6 +693,12 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                             placeholder="Gia chủ tự cầu, Cha, Mẹ..."
                             value={target.relation || ''}
                             onChange={(e) => updateTargetField(index, 'relation', e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault()
+                                if (index === targets.length - 1) addTargetRow()
+                              }
+                            }}
                             className="mt-1 block w-full rounded-md border border-stone-300 dark:border-stone-700 bg-transparent px-2.5 py-1.5 text-stone-900 dark:text-white sm:text-xs"
                           />
                         </div>

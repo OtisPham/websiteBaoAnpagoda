@@ -33,7 +33,7 @@ export function generateHorizontalTemplate(
           const namesHtml = col.names
             .map(
               (name) =>
-                `<div style="font-size: 22px; font-weight: bold; text-align: center; color: #000000; text-transform: uppercase; line-height: 1.25;">${escapeHtml(
+                `<div style="font-size: 20px; font-weight: bold; text-align: center; color: #000000; text-transform: uppercase; line-height: 1.25;">${escapeHtml(
                   name
                 )}</div>`
             )

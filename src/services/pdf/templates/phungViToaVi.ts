@@ -34,7 +34,7 @@ export function generatePhungViToaViTemplate(
           const namesHtml = col.names
             .map(
               (name) =>
-                `<div style="font-size: 24px; font-weight: bold; font-family: 'Times New Roman', Times, serif; text-align: center; color: #1c1917; text-transform: uppercase; line-height: 1.375;">${escapeHtml(
+                `<div style="font-size: 20px; font-weight: bold; font-family: 'Times New Roman', Times, serif; text-align: center; color: #1c1917; text-transform: uppercase; line-height: 1.375;">${escapeHtml(
                   name
                 )}</div>`
             )

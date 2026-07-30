@@ -420,7 +420,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             {col.names.map((name, nIdx) => (
                               <div
                                 key={nIdx}
-                                className="text-2xl font-serif font-bold text-center text-stone-900 uppercase leading-snug"
+                                className="text-[20px] font-serif font-bold text-center text-stone-900 uppercase leading-snug"
                               >
                                 {name}
                               </div>
@@ -445,7 +445,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                           </div>
                           <div className="flex flex-col gap-1 w-full my-auto">
                             {col.names.map((name, nIdx) => (
-                              <div key={nIdx} className="text-[22px] font-bold text-center text-black uppercase leading-tight">
+                              <div key={nIdx} className="text-[20px] font-bold text-center text-black uppercase leading-tight">
                                 {name}
                               </div>
                             ))}
@@ -575,7 +575,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                                       return (
                                         <div
                                           key={idx}
-                                          className="flex items-baseline justify-between border-b border-stone-200/70 py-1.5 text-[25px] leading-tight"
+                                          className="flex items-baseline justify-between border-b border-stone-200/70 py-1.5 text-[20px] leading-tight"
                                         >
                                           <div className="truncate pr-2">
                                             <span className="font-semibold text-stone-900">

@@ -77,8 +77,13 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
     setSelectedEventId(eventId)
     const evt = events.find(e => e.id === eventId)
     if (evt) {
-      setScheduledDate(evt.scheduled_date)
-      setFormType(evt.type === 'CAU_SIEU' ? 'CAU_SIEU' : 'CAU_AN')
+      const isCauSieu = evt.type === 'CAU_SIEU'
+      setFormType(isCauSieu ? 'CAU_SIEU' : 'CAU_AN')
+      if (isCauSieu) {
+        if (!scheduledDate || !scheduledDate.startsWith('Ngày')) setScheduledDate('Ngày 15 Tháng 7')
+      } else {
+        setScheduledDate(evt.scheduled_date)
+      }
       if (evt.time_slots.length > 0) {
         setSelectedTimeSlot(evt.time_slots[0].time)
       }
@@ -520,11 +525,11 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                       <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 uppercase tracking-wider mb-1">
                         Ngày làm lễ
                       </label>
-                      {formType === 'CAU_SIEU' && !selectedEventId ? (
+                      {formType === 'CAU_SIEU' ? (
                         <div className="flex gap-2">
                           <select
-                            value={scheduledDate.startsWith('Ngày') ? scheduledDate.split('Ngày ')[1]?.split(' ')[0] : '15'}
-                            onChange={(e) => setScheduledDate(`Ngày ${e.target.value} Tháng ${scheduledDate.startsWith('Ngày') ? scheduledDate.split('Tháng ')[1] : '7'}`)}
+                            value={scheduledDate && scheduledDate.startsWith('Ngày') ? scheduledDate.split('Ngày ')[1]?.split(' ')[0] : '15'}
+                            onChange={(e) => setScheduledDate(`Ngày ${e.target.value} Tháng ${scheduledDate && scheduledDate.startsWith('Ngày') ? scheduledDate.split('Tháng ')[1] : '7'}`)}
                             required={!isDelegated}
                             className="block w-1/2 rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 focus:outline-none sm:text-sm"
                           >
@@ -532,8 +537,8 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                             {LUNAR_DAYS.map(d => <option key={d} value={d} className="bg-white dark:bg-[#1c1816]">Ngày {d}</option>)}
                           </select>
                           <select
-                            value={scheduledDate.startsWith('Ngày') ? scheduledDate.split('Tháng ')[1] : '7'}
-                            onChange={(e) => setScheduledDate(`Ngày ${scheduledDate.startsWith('Ngày') ? scheduledDate.split('Ngày ')[1]?.split(' ')[0] : '15'} Tháng ${e.target.value}`)}
+                            value={scheduledDate && scheduledDate.startsWith('Ngày') ? scheduledDate.split('Tháng ')[1] : '7'}
+                            onChange={(e) => setScheduledDate(`Ngày ${scheduledDate && scheduledDate.startsWith('Ngày') ? scheduledDate.split('Ngày ')[1]?.split(' ')[0] : '15'} Tháng ${e.target.value}`)}
                             required={!isDelegated}
                             className="block w-1/2 rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 focus:outline-none sm:text-sm"
                           >
@@ -544,7 +549,7 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                       ) : (
                         <input
                           type="date"
-                          value={scheduledDate}
+                          value={scheduledDate && !scheduledDate.startsWith('Ngày') ? scheduledDate : ''}
                           onChange={(e) => setScheduledDate(e.target.value)}
                           required={!isDelegated}
                           className="block w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 focus:outline-none sm:text-sm"

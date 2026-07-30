@@ -547,8 +547,8 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             (Gia chủ cúng dường chung cho gia quyến)
                           </p>
                         ) : (() => {
-                          // Điền đầy tối đa 15 tên mỗi cột rồi mới chuyển sang cột tiếp theo
-                          const MAX_PER_COL = 15
+                          // Điền đầy tối đa 25 tên mỗi cột rồi mới chuyển sang cột tiếp theo
+                          const MAX_PER_COL = 25
                           const isCauSieu = form.form_type !== 'CAU_AN'
 
                           const cols: TargetPerson[][] = []
@@ -614,17 +614,6 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                           ? 'Đệ tử chúng đẳng thành tâm khấu bái, nguyện cầu Tam Bảo chứng minh, gia quyến khang ninh khương thái cát tường, sở cầu như ý, sở nguyện tòng tâm.'
                           : 'Đệ tử chúng đẳng thành tâm khấu bái, nguyện cầu Tiếp Dẫn Đạo Sư A Di Đà Phật phóng quang tiếp độ chư hương linh trút bỏ trần duyên, siêu sinh tịnh độ.'}
                       </p>
-
-                      <div className="flex justify-between items-end text-center text-xs text-stone-600 pt-1">
-                        <div>
-                          <p className="font-semibold text-stone-800">Trai Chủ Khấn Nguyện</p>
-                          <p className="mt-4 italic">(Đã đăng ký trực tuyến)</p>
-                        </div>
-                        <div>
-                          <p className="font-serif font-bold text-stone-900 text-sm">Chùa Báo Ân • Bổn Tự Khâm Nguyện</p>
-                          <p className="mt-4 font-semibold text-amber-900">Khám Ấn Duyệt Sớ</p>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>

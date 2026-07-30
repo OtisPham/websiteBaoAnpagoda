@@ -5,7 +5,7 @@ import {
   Users, Search, Shield, UserCheck, ShieldAlert, Edit, Trash2, 
   CheckCircle2, RefreshCw, X, User, Phone, Mail, Filter, Plus
 } from 'lucide-react'
-import { UserRecord, updateUserRole, updateUserProfile, softDeleteUser } from './actions'
+import { UserRecord, updateUserRole, updateUserProfile, softDeleteUser, getUsers } from './actions'
 
 interface Props {
   initialUsers: UserRecord[]
@@ -151,6 +151,20 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
     }
   }
 
+  // Refresh Users
+  const handleRefresh = async () => {
+    setIsLoading(true)
+    setFeedback(null)
+    const res = await getUsers()
+    setIsLoading(false)
+    if (res.success) {
+      setUsers(res.users)
+      setFeedback({ type: 'success', message: 'Đã làm mới dữ liệu từ hệ thống!' })
+    } else {
+      setFeedback({ type: 'error', message: res.error || 'Lỗi khi tải dữ liệu' })
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Top Header */}
@@ -196,15 +210,25 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
       {/* Filters & Search Toolbar */}
       <div className="bg-white dark:bg-[#1c1816] p-4 rounded-2xl border border-stone-200/80 dark:border-stone-800 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
         {/* Search Input */}
-        <div className="relative w-full md:w-96">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
-          <input
-            type="text"
-            placeholder="Tìm theo Tên, Email hoặc SĐT..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-900/50 text-sm focus:outline-none focus:ring-2 focus:ring-[#8B4513]/40"
-          />
+        <div className="relative w-full md:w-96 flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
+            <input
+              type="text"
+              placeholder="Tìm theo Tên, Email hoặc SĐT..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-900/50 text-sm focus:outline-none focus:ring-2 focus:ring-[#8B4513]/40"
+            />
+          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={isLoading}
+            className="p-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 hover:bg-stone-100 dark:bg-stone-900 dark:hover:bg-stone-800 text-stone-600 dark:text-stone-300 transition-colors flex items-center justify-center shrink-0"
+            title="Làm mới dữ liệu"
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin text-[#8B4513]' : ''}`} />
+          </button>
         </div>
 
         {/* Role Filters */}
@@ -288,13 +312,15 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
 
                   {/* Actions */}
                   <td className="px-6 py-4 text-right space-x-2">
-                    <button
-                      onClick={() => handleOpenRoleModal(user)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 hover:bg-amber-100 border border-amber-200 dark:border-amber-800/50 transition-colors"
-                      title="Phân quyền vai trò"
-                    >
-                      Sửa Quyền
-                    </button>
+                    {!(currentUserRole === 'MONK' && user.role === 'ADMIN') && (
+                      <button
+                        onClick={() => handleOpenRoleModal(user)}
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 hover:bg-amber-100 border border-amber-200 dark:border-amber-800/50 transition-colors"
+                        title="Phân quyền vai trò"
+                      >
+                        Sửa Quyền
+                      </button>
+                    )}
                     <button
                       onClick={() => handleOpenEdit(user)}
                       className="p-1.5 rounded-lg text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
@@ -412,7 +438,8 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
                 { id: 'MONK', title: 'Quý Thầy / Tăng Ni (MONK)', desc: 'Duyệt bài, quản lý phiếu sớ, in sớ & xếp ca cúng' },
                 { id: 'VOLUNTEER', title: 'Phụng Sự Viên (VOLUNTEER)', desc: 'Tiếp nhận công đức O2O tại quầy, lập sớ hộ & in ấn' },
                 { id: 'USER', title: 'Phật Tử (USER)', desc: 'Đăng ký sớ cá nhân, tra cứu & quản lý lịch sử cúng dường' }
-              ].map((roleOption) => (
+              ].filter(roleOption => !(currentUserRole === 'MONK' && roleOption.id === 'ADMIN'))
+              .map((roleOption) => (
                 <label
                   key={roleOption.id}
                   className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${

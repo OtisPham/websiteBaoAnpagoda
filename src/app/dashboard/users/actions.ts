@@ -72,7 +72,7 @@ export async function getUsers(query?: string, roleFilter?: string) {
 // 2. Cập nhật phân quyền Role cho người dùng
 export async function updateUserRole(targetUserId: string, newRole: 'ADMIN' | 'MONK' | 'VOLUNTEER' | 'USER') {
   try {
-    const { supabase, currentUser } = await checkAdminOrMonkAuth()
+    const { supabase, currentUser, currentRole } = await checkAdminOrMonkAuth()
 
     // Lấy thông tin user cũ
     const { data: oldUser } = await supabase
@@ -82,6 +82,16 @@ export async function updateUserRole(targetUserId: string, newRole: 'ADMIN' | 'M
       .single()
 
     const oldRole = oldUser?.role || 'Chưa xác định'
+
+    // Kiểm tra quyền của Tăng Ni
+    if (currentRole === 'MONK') {
+      if (oldRole === 'ADMIN') {
+        return { success: false, error: 'Bạn không thể thay đổi quyền của Ban Quản Trị.' }
+      }
+      if (newRole === 'ADMIN') {
+        return { success: false, error: 'Bạn không thể cấp quyền Ban Quản Trị.' }
+      }
+    }
 
     // Cập nhật role mới
     const { error } = await supabase

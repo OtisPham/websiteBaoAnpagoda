@@ -24,11 +24,9 @@ export default async function PhatTuPage() {
   const userFullName = profile?.full_name || user.user_metadata?.full_name || 'Đạo Hữu Phật Tử'
 
   // 3. Lấy danh sách sự kiện lễ sắp diễn ra (để đăng ký)
-  const today = new Date().toISOString().split('T')[0]
   const { data: events } = await supabase
     .from('events')
     .select('id, title, type, scheduled_date, time_slots')
-    .gte('scheduled_date', today)
     .is('deleted_at', null)
     .order('scheduled_date', { ascending: true })
 

@@ -101,7 +101,7 @@ export default async function DashboardPage() {
   const { data: events } = await supabase
     .from('events')
     .select('*')
-    .gte('scheduled_date', today)
+    .is('deleted_at', null)
     .order('scheduled_date', { ascending: true })
 
   return (

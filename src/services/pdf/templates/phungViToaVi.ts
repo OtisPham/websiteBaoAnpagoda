@@ -54,7 +54,7 @@ export function generatePhungViToaViTemplate(
                   : ''
               }
 
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; width: 100%; padding-bottom: 90px; position: relative;">
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; width: 100%; padding-bottom: 60px; position: relative;">
                 
                 <!-- Phung Vi Header -->
                 <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 12pt; text-align: center; width: 100%; flex-shrink: 0;">
@@ -71,8 +71,8 @@ export function generatePhungViToaViTemplate(
                   ${namesHtml}
                 </div>
 
-                <!-- Cuối trang: TỌA VỊ -->
-                <div style="position: absolute; bottom: 16px; left: 16px; right: 16px; margin-top: auto; padding-top: 16px; border-top: 2px solid rgba(120, 53, 15, 0.4); width: calc(100% - 32px); text-align: center;">
+                <!-- Toa Vi Footer -->
+                <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; padding-top: 4px; border-top: 2px solid rgba(120, 53, 15, 0.4); text-align: center;">
                   <div style="font-size: 18pt; font-family: 'Times New Roman', serif; font-weight: bold; color: #431407; text-transform: uppercase; letter-spacing: 0.1em;">
                     TỌA VỊ
                   </div>

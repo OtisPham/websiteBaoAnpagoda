@@ -1,7 +1,7 @@
 import { FormRecord, TargetPerson } from './types';
 
 export const MAX_LINES_PER_COL_VERTICAL = 28;
-export const MAX_LINES_PER_COL_HORIZONTAL = 22;
+export const MAX_LINES_PER_COL_HORIZONTAL = 24;
 export const MAX_COLS_PER_PAGE_HORIZONTAL = 4;
 
 export const FORM_CODE_WEIGHT = 4;

@@ -350,7 +350,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                 actualTargets.forEach((t) => {
                   const name = t.full_name.trim()
                   const wordCount = name.split(/\s+/).length
-                  const linesNeeded = wordCount < 5 ? 1 : 2
+                  const linesNeeded = wordCount >= 4 ? 2 : 1
 
                   if (currentLines + linesNeeded > MAX_LINES_PER_COL && currentCol.length > 0) {
                     allColumns.push({ shortCode, names: currentCol })
@@ -557,14 +557,36 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             (Gia chủ cúng dường chung cho gia quyến)
                           </p>
                         ) : (() => {
-                          // Điền đầy tối đa 17 tên mỗi cột rồi mới chuyển sang cột tiếp theo
-                          const MAX_PER_COL = 17
+                          // Điền đầy tối đa 17 dòng mỗi cột rồi mới chuyển sang cột tiếp theo
+                          const MAX_LINES_PER_COL = 17
                           const isCauSieu = form.form_type !== 'CAU_AN'
 
                           const cols: TargetPerson[][] = []
-                          for (let i = 0; i < actualTargets.length; i += MAX_PER_COL) {
-                            cols.push(actualTargets.slice(i, i + MAX_PER_COL))
+                          let currentCol: TargetPerson[] = []
+                          let currentLines = 0
+
+                          actualTargets.forEach((t) => {
+                            const name = t.full_name.trim()
+                            const wordCount = name.split(/\s+/).length
+                            // Nếu tên có 4 từ trở lên, tính là 2 dòng để giữ khoảng trống
+                            const linesNeeded = wordCount >= 4 ? 2 : 1
+
+                            if (currentLines + linesNeeded > MAX_LINES_PER_COL && currentCol.length > 0) {
+                              cols.push(currentCol)
+                              currentCol = []
+                              currentLines = 0
+                            }
+
+                            currentCol.push(t)
+                            currentLines += linesNeeded
+                          })
+
+                          if (currentCol.length > 0) {
+                            cols.push(currentCol)
                           }
+
+                          // Để đánh số thứ tự đúng, cần đếm tổng số mục trước đó
+                          let currentGlobalNum = 1;
 
                           return (
                             <div
@@ -579,11 +601,10 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                               }`}
                             >
                               {cols.map((colItems, colIdx) => {
-                                const startNumber = colIdx * MAX_PER_COL + 1
                                 return (
                                   <div key={colIdx} className="space-y-1">
                                     {colItems.map((t, idx) => {
-                                      const globalNum = startNumber + idx
+                                      const globalNum = currentGlobalNum++
                                       return (
                                         <div
                                           key={idx}

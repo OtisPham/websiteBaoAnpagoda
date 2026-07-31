@@ -36,6 +36,33 @@ export function generateVerticalA4Template(
         ? `background-image: url('${escapeAttribute(templateUrl)}'); background-size: cover; background-position: center;`
         : 'background: #fdfbf7;';
 
+      // Limit to max 17 lines per column block
+      const MAX_LINES_PER_COL = 17;
+      const chunks: TargetPerson[][] = [];
+      let currentChunk: TargetPerson[] = [];
+      let currentLines = 0;
+
+      actualTargets.forEach((t) => {
+        const name = (t.full_name || '').trim();
+        const wordCount = name ? name.split(/\s+/).length : 0;
+        const linesNeeded = wordCount >= 4 ? 2 : 1;
+
+        if (currentLines + linesNeeded > MAX_LINES_PER_COL && currentChunk.length > 0) {
+          chunks.push(currentChunk);
+          currentChunk = [];
+          currentLines = 0;
+        }
+
+        currentChunk.push(t);
+        currentLines += linesNeeded;
+      });
+
+      if (currentChunk.length > 0) {
+        chunks.push(currentChunk);
+      }
+
+      let currentGlobalNum = 1;
+
       // Targets Column Splitting using lineWeight.ts chunkSoColumns
       let targetsContentHtml = '';
       if (actualTargets.length === 0) {
@@ -44,31 +71,13 @@ export function generateVerticalA4Template(
             (Gia chủ cúng dường chung cho gia quyến)
           </p>`;
       } else {
-        const soColumns = chunkSoColumns([{ ...form, targets: actualTargets }]);
+        const gridColsCss = `display: grid; grid-template-columns: repeat(${chunks.length}, minmax(0, 1fr)); gap: 16px 12px;`;
 
-        const gridColsCss = `display: grid; grid-template-columns: repeat(${soColumns.length}, minmax(0, 1fr)); gap: 16px 12px;`;
-
-        const colsHtml = soColumns
-          .map((col) => {
-            const itemsHtml = col.lines
-              .map((line) => {
-                if (line.type === 'FORM_CODE' || line.type === 'FORM_CODE_CONTINUED') {
-                  return `
-                    <div style="font-weight: bold; color: #78350f; font-size: 12px; padding: 4px 0; border-bottom: 1px dashed rgba(120, 53, 15, 0.4); margin-bottom: 4px;">
-                      ${escapeHtml(line.text)}
-                    </div>`;
-                }
-
-                const t = actualTargets.find((item) => item.id === line.personId);
-                const personIdx = actualTargets.findIndex((item) => item.id === line.personId);
-                const globalNum = personIdx >= 0 ? personIdx + 1 : '';
-
-                if (!t) {
-                  return `
-                    <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid #e7e5e4; padding: 4px 0; font-size: 12px;">
-                      <span style="font-weight: 600; color: #1c1917;">${escapeHtml(line.text)}</span>
-                    </div>`;
-                }
+        const colsHtml = chunks
+          .map((colItems) => {
+            const itemsHtml = colItems
+              .map((t) => {
+                const globalNum = currentGlobalNum++;
 
                 let details = '';
                 if (!isCauAn) {
@@ -86,7 +95,7 @@ export function generateVerticalA4Template(
                 return `
                   <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid #e7e5e4; padding: 4px 0; font-size: 12pt; line-height: 1.2;">
                     <div style="padding-right: 8px; word-break: break-word; max-width: 75%;">
-                      <span style="font-weight: 600; color: #1c1917;">${globalNum ? `${globalNum}. ` : ''}${escapeHtml(
+                      <span style="font-weight: 600; color: #1c1917;">${globalNum}. ${escapeHtml(
                   t.full_name
                 )}</span>
                       ${

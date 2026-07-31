@@ -44,7 +44,7 @@ export function calculateNameWeight(
 ): number {
   const name = (fullName || '').trim();
   const wordCount = name ? name.split(/\s+/).length : 0;
-  const isLong = name.length >= 15 || wordCount >= 5 || !!dharmaName || !!birthYear;
+  const isLong = name.length >= 15 || wordCount >= 4 || !!dharmaName || !!birthYear;
   return isLong ? LONG_NAME_WEIGHT : SHORT_NAME_WEIGHT;
 }
 
@@ -151,7 +151,7 @@ export function chunkHorizontalColumns(
     for (const t of actualTargets) {
       const name = (t.full_name || '').trim();
       const wordCount = name ? name.split(/\s+/).length : 0;
-      const linesNeeded = wordCount >= 5 || name.length >= 15 ? LONG_NAME_WEIGHT : SHORT_NAME_WEIGHT;
+      const linesNeeded = wordCount >= 4 || name.length >= 15 ? LONG_NAME_WEIGHT : SHORT_NAME_WEIGHT;
 
       if (currentLines + linesNeeded > maxLinesPerCol && currentColNames.length > 0) {
         allColumns.push({

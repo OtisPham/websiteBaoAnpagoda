@@ -184,11 +184,11 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
         @media print {
           @page so-portrait-page {
             size: A4 portrait;
-            margin: 20mm 25mm; /* Top/Bottom 2cm, Left/Right 2.5cm */
+            margin: 0; /* Remove margin to hide headers/footers and prevent overflow */
           }
           @page so-page {
             size: A4 landscape;
-            margin: 15mm;
+            margin: 0;
           }
           .so-print-layout, .so-print-layout * {
             font-family: "Times New Roman", Times, serif !important;
@@ -417,7 +417,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                 <div
                   key={`poster-page-${pageIdx}`}
                   className="so-page-block bg-white text-black p-8 print:p-0 w-full print:w-full print:max-w-full print:h-[175mm] print:max-h-[175mm] print:border-none print:shadow-none print:m-0 break-after-page flex justify-center min-h-[50vh] print:min-h-0 overflow-hidden"
-                  style={{ pageBreakAfter: 'always', page: 'so-page' as any }}
+                  style={{ pageBreakAfter: pageIdx === pages.length - 1 ? 'auto' : 'always', page: 'so-page' as any }}
                 >
                   <table className="mx-auto border-collapse" style={{ width: 'max-content', height: '19cm', tableLayout: 'fixed' }}>
                     <tbody>
@@ -521,12 +521,12 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                 <div key={form.id}>
                   {idx > 0 && <hr className="my-12 border-t-[3px] border-dashed border-stone-300 dark:border-stone-700 print:hidden w-full max-w-[210mm] mx-auto" />}
                   <div
-                    className="so-page-block bg-white text-stone-900 p-8 print:p-0 w-full max-w-[210mm] print:w-full print:max-w-full mx-auto break-after-page"
-                    style={{ pageBreakAfter: 'always', page: 'so-portrait-page' as any }}
+                    className="so-page-block bg-white text-stone-900 p-8 print:p-0 w-full max-w-[210mm] print:w-full print:max-w-full print:h-[297mm] mx-auto break-after-page print:flex print:items-center print:justify-center"
+                    style={{ pageBreakAfter: idx === selectedForms.length - 1 ? 'auto' : 'always', page: 'so-portrait-page' as any }}
                   >
                   {/* Khung Sớ A4 Dọc Chuẩn gom vừa khít 1 trang A4 */}
                   <div
-                    className="relative w-full h-[270mm] max-h-[270mm] print:h-[250mm] print:max-h-[250mm] print:w-full overflow-hidden border-2 border-amber-900/40 print:border-amber-900/60 rounded-xl p-8 print:p-4 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:shadow-none"
+                    className="relative w-full h-[270mm] max-h-[270mm] print:h-[270mm] print:max-h-[270mm] print:w-[190mm] print:max-w-[190mm] overflow-hidden border-2 border-amber-900/40 print:border-amber-900/60 rounded-xl p-8 print:p-6 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:shadow-none"
                     style={{
                       backgroundImage: selectedTemplateUrl ? `url(${selectedTemplateUrl})` : 'none',
                       backgroundSize: 'cover',
@@ -570,9 +570,9 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                       </div>
 
                       {/* Khung Thông tin Gia Chủ / Trai Chủ */}
-                      <div className="bg-amber-900/5 border border-amber-900/20 rounded-lg p-4 space-y-1.5">
+                      <div className="bg-amber-900/5 border border-amber-900/20 rounded-lg px-4 py-2 space-y-1">
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="font-serif font-bold text-[25px] leading-tight text-amber-950">
+                          <span className="font-serif font-bold leading-tight text-amber-950" style={{ fontSize: '14pt' }}>
                             Trai Chủ: <span className="text-amber-900">{traiChuName}</span>
                             {traiChuDharma ? ` (Pháp danh: ${traiChuDharma})` : ''}
                           </span>
@@ -600,8 +600,8 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             (Gia chủ cúng dường chung cho gia quyến)
                           </p>
                         ) : (() => {
-                          // Điền đầy tối đa 13 dòng mỗi cột để tránh bị tràn chữ xuống dưới (lỗi cắt chữ)
-                          const MAX_LINES_PER_COL = 13
+                          // Điền đầy tối đa 20 dòng mỗi cột để tránh bị tràn chữ xuống dưới (lỗi cắt chữ)
+                          const MAX_LINES_PER_COL = 20
                           const isCauSieu = form.form_type !== 'CAU_AN'
 
                           const cols: TargetPerson[][] = []

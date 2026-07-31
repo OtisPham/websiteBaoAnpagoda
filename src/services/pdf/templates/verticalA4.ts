@@ -25,7 +25,7 @@ export function generateVerticalA4Template(
   }
 
   return formList
-    .map((form) => {
+    .map((form, index) => {
       const isCauAn = form.form_type === 'CAU_AN';
       const traiChuTarget = (form.targets || []).find((t) => t.relation === 'TRAI_CHU');
       const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name || 'Gia chủ';
@@ -36,8 +36,8 @@ export function generateVerticalA4Template(
         ? `background-image: url('${escapeAttribute(templateUrl)}'); background-size: cover; background-position: center;`
         : 'background: #fdfbf7;';
 
-      // Limit to max 17 lines per column block
-      const MAX_LINES_PER_COL = 17;
+      // Limit to max 20 lines per column block
+      const MAX_LINES_PER_COL = 20;
       const chunks: TargetPerson[][] = [];
       let currentChunk: TargetPerson[] = [];
       let currentLines = 0;
@@ -125,7 +125,7 @@ export function generateVerticalA4Template(
       }
 
       return `
-        <div class="so-page-block vertical-page" style="page-break-after: always; width: 210mm; max-width: 210mm; margin: 0 auto; padding: 16px; box-sizing: border-box; font-family: 'Times New Roman', Times, serif;">
+        <div class="so-page-block vertical-page" style="page-break-after: ${index === formList.length - 1 ? 'auto' : 'always'}; width: 210mm; max-width: 210mm; margin: 0 auto; padding: 16px; box-sizing: border-box; font-family: 'Times New Roman', Times, serif;">
           <div style="position: relative; width: 100%; height: 270mm; max-height: 270mm; border: 2px solid rgba(120, 53, 15, 0.4); border-radius: 12px; padding: 24px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; ${bgStyle}">
             
             <!-- Top Section: Header & Trai Chu Card -->
@@ -169,9 +169,9 @@ export function generateVerticalA4Template(
               </div>
 
               <!-- Trai Chu Card -->
-              <div style="background: rgba(120, 53, 15, 0.05); border: 1px solid rgba(120, 53, 15, 0.2); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
+              <div style="background: rgba(120, 53, 15, 0.05); border: 1px solid rgba(120, 53, 15, 0.2); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px;">
                 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;">
-                  <span style="font-family: 'Times New Roman', serif; font-weight: bold; font-size: 25px; line-height: 1.2; color: #451a03;">
+                  <span style="font-family: 'Times New Roman', serif; font-weight: bold; font-size: 14pt; line-height: 1.2; color: #451a03;">
                     Trai Chủ / Gia Chủ: <span style="color: #78350f;">${escapeHtml(
                       traiChuName
                     )}</span>

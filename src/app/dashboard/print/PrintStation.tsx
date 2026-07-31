@@ -112,7 +112,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
       const orientation = printMode === 'READING' ? 'portrait' : 'landscape'
       const pdf = new jsPDF({
         unit: 'mm',
-        format: 'a4',
+        format: printMode === 'READING' ? 'a4' : 'letter',
         orientation
       })
 
@@ -123,7 +123,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
         const el = elements[i] as HTMLElement
         // Cố định kích thước khi chụp để không bị vỡ/cắt chữ trên màn hình nhỏ
         const isLandscape = printMode !== 'READING'
-        const captureWidth = isLandscape ? 1122 : 794 // 297mm or 210mm at 96dpi
+        const captureWidth = isLandscape ? 1056 : 794 // Letter (279.4mm) or A4 (210mm) at 96dpi
 
         // Render element thành Jpeg với chất lượng cao và nền trắng
         const dataUrl = await toJpeg(el, { 
@@ -430,8 +430,8 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                               borderTopWidth: '2px', borderBottomWidth: '2px', borderLeftWidth: '2px',
                               borderRightWidth: colIdx === pageCols.length - 1 ? '2px' : '0px',
                               height: '19cm',
-                              width: '6.5cm',
-                              maxWidth: '6.5cm'
+                              width: '6.75cm',
+                              maxWidth: '6.75cm'
                             }}
                           >
                             {/* Biểu tượng cái kéo canh cắt ở các góc đường nét đứt */}

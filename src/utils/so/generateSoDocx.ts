@@ -41,8 +41,10 @@ export const generateSoDocxFromUI = async (
   const sections: any[] = [];
   const A4_WIDTH_PX = 794;
   const A4_HEIGHT_PX = 1123;
-  const A4_LANDSCAPE_WIDTH_PX = 1123;
-  const A4_LANDSCAPE_HEIGHT_PX = 794;
+
+  // Kích thước chuẩn Letter ngang (của mẫu dán chánh điện / phụng vì) theo mẫu gốc
+  const LETTER_LANDSCAPE_WIDTH_PX = 1056; // 279.4mm
+  const LETTER_LANDSCAPE_HEIGHT_PX = 816; // 215.9mm
 
   if (printMode === 'READING') {
     // Chế độ A4 DỌC
@@ -313,8 +315,8 @@ export const generateSoDocxFromUI = async (
                   new ImageRun({
                     data: backgroundImageBuffer,
                     transformation: {
-                      width: A4_LANDSCAPE_WIDTH_PX,
-                      height: A4_LANDSCAPE_HEIGHT_PX,
+                      width: LETTER_LANDSCAPE_WIDTH_PX,
+                      height: LETTER_LANDSCAPE_HEIGHT_PX,
                     },
                     type: 'png',
                     floating: {
@@ -333,11 +335,17 @@ export const generateSoDocxFromUI = async (
       sections.push({
         properties: {
           page: {
-            size: { orientation: PageOrientation.LANDSCAPE },
+            size: {
+              width: 15840, // 279.4mm (Letter)
+              height: 12240, // 215.9mm (Letter)
+              orientation: PageOrientation.LANDSCAPE,
+            },
             margin: {
-              top: convertMillimetersToTwip(15), bottom: convertMillimetersToTwip(15),
-              left: convertMillimetersToTwip(15), right: convertMillimetersToTwip(15),
-            }
+              top: 567, // 10mm
+              right: 391, // 6.9mm
+              bottom: 425, // 7.5mm
+              left: 142, // 2.5mm
+            },
           },
         },
         headers,

@@ -34,14 +34,14 @@ export function generatePhungViToaViTemplate(
           const namesHtml = col.names
             .map(
               (name) =>
-                `<div style="font-size: 20px; font-weight: bold; font-family: 'Times New Roman', Times, serif; text-align: center; color: #1c1917; text-transform: uppercase; line-height: 1.375;">${escapeHtml(
+                `<div style="font-size: 14pt; font-family: 'Times New Roman', serif; font-weight: bold; text-align: center; color: #1c1917; text-transform: uppercase; margin: 0; padding: 0; line-height: 1.2;">${escapeHtml(
                   name
                 )}</div>`
             )
             .join('');
 
           return `
-            <div class="phung-vi-col" style="flex: 1; max-width: 265px; padding: 24px 20px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between; ${borderStyle}">
+            <td class="horizontal-col" style="flex: 1; max-width: 265px; padding: 16px; position: relative; border: 2px dashed #a8a29e; border-right-width: ${isLastCol ? '2px' : '0px'}; height: 15.75cm; vertical-align: top;">
               <!-- Scissors Cut Indicators -->
               <span style="position: absolute; top: -14px; left: -10px; font-size: 12px; color: #78716c; user-select: none;">✂</span>
               <span style="position: absolute; bottom: -14px; left: -10px; font-size: 12px; color: #78716c; user-select: none; transform: rotate(180deg);">✂</span>
@@ -54,38 +54,46 @@ export function generatePhungViToaViTemplate(
                   : ''
               }
 
-              <!-- Top Section: PHỤNG VÌ (NO Form Code) -->
-              <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; text-align: center; width: 100%;">
-                <div style="font-size: 11px; font-family: 'Times New Roman', Times, serif; font-style: italic; color: #78716c; margin-bottom: 4px;">
-                  Nam Mô Tiếp Dẫn Đạo Sư A Di Đà Phật
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; width: 100%; padding-bottom: 64px;">
+                <!-- Đỉnh bài vị: PHỤNG VÌ -->
+                <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 12pt; text-align: center; width: 100%;">
+                  <div style="font-size: 11px; font-family: 'Times New Roman', serif; font-style: italic; color: #78716c; margin-bottom: 4px;">
+                    Nam Mô Tiếp Dẫn Đạo Sư A Di Đà Phật
+                  </div>
+                  <div style="font-size: 24pt; font-family: 'Times New Roman', serif; font-weight: bold; color: #431407; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 2px solid rgba(120, 53, 15, 0.4); padding-bottom: 8px; width: 100%;">
+                    PHỤNG VÌ
+                  </div>
                 </div>
-                <div style="font-size: 28px; font-family: 'Times New Roman', Times, serif; font-weight: bold; color: #451a03; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 2px solid rgba(120, 53, 15, 0.4); padding-bottom: 8px; width: 100%;">
-                  PHỤNG VÌ
-                </div>
-              </div>
 
-              <!-- Center Section: Target Names -->
-              <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; margin: auto 0; width: 100%; padding: 8px 0;">
-                ${namesHtml}
-              </div>
-
-              <!-- Bottom Section: TỌA VỊ -->
-              <div style="margin-top: auto; padding-top: 16px; border-top: 2px solid rgba(120, 53, 15, 0.4); width: 100%; text-align: center;">
-                <div style="font-size: 24px; font-family: 'Times New Roman', Times, serif; font-weight: bold; color: #451a03; text-transform: uppercase; letter-spacing: 0.1em;">
-                  TỌA VỊ
+                <!-- Tên các hương linh -->
+                <div style="display: flex; flex-direction: column; width: 100%; text-align: center;">
+                  ${namesHtml}
                 </div>
-                <span style="font-size: 10px; font-style: italic; color: #78716c; margin-top: 4px; display: block;">
-                  Chùa Báo Ân • Linh Vị
-                </span>
+
+                <!-- Cuối trang: TỌA VỊ -->
+                <div style="position: absolute; bottom: 16px; left: 16px; right: 16px; margin-top: auto; padding-top: 16px; border-top: 2px solid rgba(120, 53, 15, 0.4); width: calc(100% - 32px); text-align: center;">
+                  <div style="font-size: 18pt; font-family: 'Times New Roman', serif; font-weight: bold; color: #431407; text-transform: uppercase; letter-spacing: 0.1em;">
+                    TỌA VỊ
+                  </div>
+                  <span style="font-size: 10px; font-style: italic; color: #78716c; margin-top: 4px; display: block;">
+                    Chùa Báo Ân • Linh Vị
+                  </span>
+                </div>
               </div>
-            </div>
+            </td>
           `;
         })
         .join('');
 
       return `
-        <div class="so-page-block phung-vi-page" style="page-break-after: always; width: 297mm; height: 210mm; max-width: 297mm; max-height: 210mm; margin: 0 auto; padding: 8px; background: #ffffff; color: #000000; display: flex; justify-content: center; overflow: hidden; box-sizing: border-box;">
-          ${colsHtml}
+        <div class="so-page-block horizontal-page" style="page-break-after: always; width: 297mm; height: 210mm; max-width: 297mm; max-height: 210mm; margin: 0 auto; padding: 8px; background: #ffffff; color: #000000; display: flex; align-items: center; justify-content: center; overflow: hidden; box-sizing: border-box;">
+          <table style="width: 100%; max-width: 277mm; margin: 0 auto; border-collapse: collapse; table-layout: fixed; height: 15.75cm;">
+            <tbody>
+              <tr>
+                ${colsHtml}
+              </tr>
+            </tbody>
+          </table>
         </div>
       `;
     })

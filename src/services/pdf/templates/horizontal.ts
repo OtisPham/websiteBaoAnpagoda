@@ -33,14 +33,14 @@ export function generateHorizontalTemplate(
           const namesHtml = col.names
             .map(
               (name) =>
-                `<div style="font-size: 20px; font-weight: bold; text-align: center; color: #000000; text-transform: uppercase; line-height: 1.25;">${escapeHtml(
+                `<div style="font-size: 14pt; font-family: 'Times New Roman', serif; font-weight: bold; text-align: center; color: #000000; text-transform: uppercase; margin: 0; padding: 0; line-height: 1.2;">${escapeHtml(
                   name
                 )}</div>`
             )
             .join('');
 
           return `
-            <div class="horizontal-col" style="flex: 1; max-width: 265px; padding: 24px 20px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between; ${borderStyle}">
+            <td class="horizontal-col" style="flex: 1; max-width: 265px; padding: 16px; position: relative; border: 2px dashed #a8a29e; border-right-width: ${isLastCol ? '2px' : '0px'}; height: 15.75cm; vertical-align: top;">
               <!-- Scissors Cut Indicators -->
               <span style="position: absolute; top: -14px; left: -10px; font-size: 12px; color: #78716c; user-select: none;">✂</span>
               <span style="position: absolute; bottom: -14px; left: -10px; font-size: 12px; color: #78716c; user-select: none; transform: rotate(180deg);">✂</span>
@@ -53,23 +53,31 @@ export function generateHorizontalTemplate(
                   : ''
               }
 
-              <!-- Short Form Code Number Header (72px bold) -->
-              <div style="font-size: 72px; font-weight: bold; line-height: 1; margin-bottom: 4px; color: #000000; text-align: center; letter-spacing: -0.05em;">
-                ${escapeHtml(col.shortCode)}
-              </div>
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
+                <!-- Short Form Code Number Header (60pt bold) -->
+                <div style="font-size: 60pt; font-family: 'Times New Roman', serif; font-weight: bold; line-height: 1; margin-bottom: 12pt; color: #000000; text-align: center;">
+                  ${escapeHtml(col.shortCode)}
+                </div>
 
-              <!-- Names List -->
-              <div style="display: flex; flex-direction: column; gap: 4px; width: 100%; margin: auto 0;">
-                ${namesHtml}
+                <!-- Names List -->
+                <div style="display: flex; flex-direction: column; width: 100%; text-align: center;">
+                  ${namesHtml}
+                </div>
               </div>
-            </div>
+            </td>
           `;
         })
         .join('');
 
       return `
-        <div class="so-page-block horizontal-page" style="page-break-after: always; width: 297mm; height: 210mm; max-width: 297mm; max-height: 210mm; margin: 0 auto; padding: 8px; background: #ffffff; color: #000000; display: flex; justify-content: center; overflow: hidden; box-sizing: border-box;">
-          ${colsHtml}
+        <div class="so-page-block horizontal-page" style="page-break-after: always; width: 297mm; height: 210mm; max-width: 297mm; max-height: 210mm; margin: 0 auto; padding: 8px; background: #ffffff; color: #000000; display: flex; align-items: center; justify-content: center; overflow: hidden; box-sizing: border-box;">
+          <table style="width: 100%; max-width: 277mm; margin: 0 auto; border-collapse: collapse; table-layout: fixed; height: 15.75cm;">
+            <tbody>
+              <tr>
+                ${colsHtml}
+              </tr>
+            </tbody>
+          </table>
         </div>
       `;
     })

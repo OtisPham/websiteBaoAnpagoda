@@ -378,82 +378,94 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                   className="so-page-block bg-white text-black p-8 print:p-2 w-full print:w-[297mm] print:max-w-[297mm] print:h-[210mm] print:max-h-[210mm] print:border-none print:shadow-none print:m-0 break-after-page flex justify-center min-h-[50vh] print:min-h-0 overflow-hidden"
                   style={{ pageBreakAfter: 'always', page: 'so-page' as any }}
                 >
-                  {pageCols.map((col, colIdx) => (
-                    <div
-                      key={colIdx}
-                      className={`flex flex-col items-center justify-between flex-1 max-w-[265px] px-5 py-6 relative border-t-2 border-b-2 border-l-2 border-dashed border-stone-400 print:border-stone-500 ${
-                        colIdx === pageCols.length - 1 ? 'border-r-2' : ''
-                      }`}
-                    >
-                      {/* Biểu tượng cái kéo canh cắt ở các góc đường nét đứt */}
-                      <span className="absolute -top-3.5 -left-2.5 text-xs text-stone-500 print:text-stone-600 select-none">
-                        ✂
-                      </span>
-                      <span className="absolute -bottom-3.5 -left-2.5 text-xs text-stone-500 print:text-stone-600 select-none rotate-180">
-                        ✂
-                      </span>
-                      {colIdx === pageCols.length - 1 && (
-                        <>
-                          <span className="absolute -top-3.5 -right-2.5 text-xs text-stone-500 print:text-stone-600 select-none">
-                            ✂
-                          </span>
-                          <span className="absolute -bottom-3.5 -right-2.5 text-xs text-stone-500 print:text-stone-600 select-none rotate-180">
-                            ✂
-                          </span>
-                        </>
-                      )}
-
-                      {printMode === 'PHUNG_VI' ? (
-                        <>
-                          {/* Đỉnh bài vị: PHỤNG VÌ */}
-                          <div className="flex flex-col items-center mb-6 text-center w-full">
-                            <div className="text-[11px] font-serif italic text-stone-500 mb-1">
-                              Nam Mô Tiếp Dẫn Đạo Sư A Di Đà Phật
-                            </div>
-                            <div className="text-3xl font-serif font-bold text-amber-950 uppercase tracking-widest border-b-2 border-amber-900/40 pb-2 w-full">
-                              PHỤNG VÌ
-                            </div>
-                          </div>
-
-                          {/* Ở giữa: Tên các hương linh */}
-                          <div className="flex-1 flex flex-col justify-center gap-1.5 my-auto w-full py-2">
-                            {col.names.map((name, nIdx) => (
-                              <div
-                                key={nIdx}
-                                className="text-[20px] font-serif font-bold text-center text-stone-900 uppercase leading-snug"
-                              >
-                                {name}
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Cuối trang/cột: TỌA VỊ */}
-                          <div className="mt-auto pt-4 border-t-2 border-amber-900/40 w-full text-center">
-                            <div className="text-2xl font-serif font-bold text-amber-950 uppercase tracking-widest">
-                              TỌA VỊ
-                            </div>
-                            <span className="text-[10px] italic text-stone-500 mt-1 block">
-                              Chùa Báo Ân • Linh Vị
+                  <table className="w-full max-w-[277mm] mx-auto border-collapse" style={{ height: '15.75cm', tableLayout: 'fixed' }}>
+                    <tbody>
+                      <tr>
+                        {pageCols.map((col, colIdx) => (
+                          <td
+                            key={colIdx}
+                            className="border-dashed border-stone-400 print:border-stone-500 relative p-4 align-top"
+                            style={{ 
+                              borderTopWidth: '2px', borderBottomWidth: '2px', borderLeftWidth: '2px',
+                              borderRightWidth: colIdx === pageCols.length - 1 ? '2px' : '0px',
+                              height: '15.75cm' 
+                            }}
+                          >
+                            {/* Biểu tượng cái kéo canh cắt ở các góc đường nét đứt */}
+                            <span className="absolute -top-3.5 -left-2.5 text-xs text-stone-500 print:text-stone-600 select-none">
+                              ✂
                             </span>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          {/* Chế độ Dán Chánh Điện POSTER */}
-                          <div className="text-[72px] font-bold leading-none mb-1 text-black text-center tracking-tight">
-                            {col.shortCode}
-                          </div>
-                          <div className="flex flex-col gap-1 w-full my-auto">
-                            {col.names.map((name, nIdx) => (
-                              <div key={nIdx} className="text-[20px] font-bold text-center text-black uppercase leading-tight">
-                                {name}
-                              </div>
-                            ))}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  ))}
+                            <span className="absolute -bottom-3.5 -left-2.5 text-xs text-stone-500 print:text-stone-600 select-none rotate-180">
+                              ✂
+                            </span>
+                            {colIdx === pageCols.length - 1 && (
+                              <>
+                                <span className="absolute -top-3.5 -right-2.5 text-xs text-stone-500 print:text-stone-600 select-none">
+                                  ✂
+                                </span>
+                                <span className="absolute -bottom-3.5 -right-2.5 text-xs text-stone-500 print:text-stone-600 select-none rotate-180">
+                                  ✂
+                                </span>
+                              </>
+                            )}
+
+                            <div className="flex flex-col items-center justify-start w-full h-full pb-16">
+                              {printMode === 'PHUNG_VI' ? (
+                                <>
+                                  {/* Đỉnh bài vị: PHỤNG VÌ */}
+                                  <div className="flex flex-col items-center mb-[12pt] text-center w-full">
+                                    <div className="text-[11px] font-serif italic text-stone-500 mb-1">
+                                      Nam Mô Tiếp Dẫn Đạo Sư A Di Đà Phật
+                                    </div>
+                                    <div className="font-serif font-bold text-amber-950 uppercase tracking-widest border-b-2 border-amber-900/40 pb-2 w-full" style={{ fontSize: '24pt' }}>
+                                      PHỤNG VÌ
+                                    </div>
+                                  </div>
+
+                                  {/* Ở giữa: Tên các hương linh */}
+                                  <div className="flex flex-col text-center w-full">
+                                    {col.names.map((name, nIdx) => (
+                                      <div
+                                        key={nIdx}
+                                        className="font-serif font-bold text-stone-900 uppercase"
+                                        style={{ fontSize: '14pt', margin: 0, padding: 0, lineHeight: 1.2 }}
+                                      >
+                                        {name}
+                                      </div>
+                                    ))}
+                                  </div>
+
+                                  {/* Cuối trang/cột: TỌA VỊ */}
+                                  <div className="absolute bottom-4 left-4 right-4 pt-4 border-t-2 border-amber-900/40 text-center">
+                                    <div className="font-serif font-bold text-amber-950 uppercase tracking-widest" style={{ fontSize: '18pt' }}>
+                                      TỌA VỊ
+                                    </div>
+                                    <span className="text-[10px] italic text-stone-500 mt-1 block">
+                                      Chùa Báo Ân • Linh Vị
+                                    </span>
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  {/* Chế độ Dán Chánh Điện POSTER */}
+                                  <div className="font-serif font-bold text-black text-center" style={{ fontSize: '60pt', marginBottom: '12pt', lineHeight: 1 }}>
+                                    {col.shortCode}
+                                  </div>
+                                  <div className="flex flex-col w-full text-center">
+                                    {col.names.map((name, nIdx) => (
+                                      <div key={nIdx} className="font-serif font-bold text-black uppercase" style={{ fontSize: '14pt', margin: 0, padding: 0, lineHeight: 1.2 }}>
+                                        {name}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               ))
             })() : selectedForms.map((form, idx) => {

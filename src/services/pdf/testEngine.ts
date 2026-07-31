@@ -24,7 +24,7 @@ export function runPdfEngineSelfCheck(): { success: boolean; results: Record<str
   // Test 3: Horizontal Chanh Dien
   const horizontalHtml = renderSoHtml(mockFormsList, { printMode: 'HORIZONTAL_CHANH_DIEN' });
   results.horizontalChanhDien =
-    horizontalHtml.includes('72px') &&
+    horizontalHtml.includes('60pt') &&
     horizontalHtml.includes('✂') &&
     horizontalHtml.includes('001') && // shortCode for CA-0001
     horizontalHtml.includes('002');   // shortCode for CS-0002

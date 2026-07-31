@@ -83,7 +83,7 @@ export const generateSoDocxFromUI = async (
       }
 
       // Chia cột cho danh sách mục tiêu
-      const MAX_LINES_PER_COL = 17;
+      const MAX_LINES_PER_COL = 28;
       const cols: any[][] = [];
       let currentCol: any[] = [];
       let currentLines = 0;

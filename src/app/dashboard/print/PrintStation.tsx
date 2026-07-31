@@ -600,8 +600,8 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             (Gia chủ cúng dường chung cho gia quyến)
                           </p>
                         ) : (() => {
-                          // Điền đầy tối đa 28 dòng mỗi cột rồi mới chuyển sang cột tiếp theo
-                          const MAX_LINES_PER_COL = 28
+                          // Điền đầy tối đa 17 dòng mỗi cột rồi mới chuyển sang cột tiếp theo
+                          const MAX_LINES_PER_COL = 17
                           const isCauSieu = form.form_type !== 'CAU_AN'
 
                           const cols: TargetPerson[][] = []

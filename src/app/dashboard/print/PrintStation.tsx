@@ -179,7 +179,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 print:space-y-0 print:m-0 print:p-0">
       <style>{`
         @media print {
           @page so-portrait-page {
@@ -417,7 +417,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               return pages.map((pageCols, pageIdx) => (
                 <div
                   key={`poster-page-${pageIdx}`}
-                  className="so-page-block bg-white text-black p-8 print:p-0 w-full print:w-full print:max-w-full print:h-[180mm] print:max-h-[180mm] print:border-none print:shadow-none print:m-0 break-after-page flex justify-center min-h-[50vh] print:min-h-0 overflow-hidden"
+                  className="so-page-block bg-white text-black p-8 print:p-0 w-full print:w-full print:max-w-full print:h-[175mm] print:max-h-[175mm] print:border-none print:shadow-none print:m-0 break-after-page flex justify-center min-h-[50vh] print:min-h-0 overflow-hidden"
                   style={{ pageBreakAfter: 'always', page: 'so-page' as any }}
                 >
                   <table className="mx-auto border-collapse" style={{ width: 'max-content', height: '19cm', tableLayout: 'fixed' }}>
@@ -527,7 +527,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                   >
                   {/* Khung Sớ A4 Dọc Chuẩn gom vừa khít 1 trang A4 */}
                   <div
-                    className="relative w-full h-[270mm] max-h-[270mm] print:h-[257mm] print:max-h-[257mm] print:w-full overflow-hidden border-2 border-amber-900/40 print:border-amber-900/60 rounded-xl p-8 print:p-4 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:shadow-none"
+                    className="relative w-full h-[270mm] max-h-[270mm] print:h-[250mm] print:max-h-[250mm] print:w-full overflow-hidden border-2 border-amber-900/40 print:border-amber-900/60 rounded-xl p-8 print:p-4 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:shadow-none"
                     style={{
                       backgroundImage: selectedTemplateUrl ? `url(${selectedTemplateUrl})` : 'none',
                       backgroundSize: 'cover',

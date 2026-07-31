@@ -90,8 +90,8 @@ export const generateSoDocxFromUI = async (
 
       actualTargets.forEach((t: any) => {
         const name = t.full_name.trim();
-        const wordCount = name.split(/\s+/).length;
-        const linesNeeded = wordCount >= 4 ? 2 : 1;
+        // Bỏ logic tính wordCount >= 4 thì 2 dòng, vì trên Word 1 dòng đủ dài để chứa tên
+        const linesNeeded = 1;
         if (currentLines + linesNeeded > MAX_LINES_PER_COL && currentCol.length > 0) {
           cols.push(currentCol);
           currentCol = [];
@@ -245,8 +245,7 @@ export const generateSoDocxFromUI = async (
 
       actualTargets.forEach((t: any) => {
         const name = t.full_name.trim();
-        const wordCount = name.split(/\s+/).length;
-        const linesNeeded = wordCount >= 4 ? 2 : 1;
+        const linesNeeded = 1;
         if (currentLines + linesNeeded > MAX_LINES_PER_COL && currentCol.length > 0) {
           allColumns.push({ shortCode, names: currentCol });
           currentCol = [];

@@ -68,6 +68,7 @@ export const generateSoDocxFromUI = async (
                       width: A4_WIDTH_PX,
                       height: A4_HEIGHT_PX,
                     },
+                    type: 'png',
                     floating: {
                       horizontalPosition: { offset: 0 },
                       verticalPosition: { offset: 0 },
@@ -102,7 +103,10 @@ export const generateSoDocxFromUI = async (
       if (currentCol.length > 0) cols.push(currentCol);
 
       // Tạo bảng chia cột hiển thị rõ viền như yêu cầu
-      let targetTable = new Paragraph({ text: "(Gia chủ cúng dường chung cho gia quyến)", alignment: AlignmentType.CENTER, italics: true });
+      let targetTable: any = new Paragraph({ 
+        children: [new TextRun({ text: "(Gia chủ cúng dường chung cho gia quyến)", italics: true })], 
+        alignment: AlignmentType.CENTER 
+      });
       
       if (cols.length > 0) {
         // Tạo các ô (TableCell) tương ứng với số cột
@@ -271,20 +275,20 @@ export const generateSoDocxFromUI = async (
         
         if (printMode === 'PHUNG_VI') {
           if (col.shortCode !== "") {
-            cellChildren.push(new Paragraph({ text: "Nam Mô Tiếp Dẫn Đạo Sư A Di Đà Phật", italics: true, size: 20, alignment: AlignmentType.CENTER }));
-            cellChildren.push(new Paragraph({ text: "PHỤNG VÌ", bold: true, size: 36, alignment: AlignmentType.CENTER, spacing: { after: 400 } }));
+            cellChildren.push(new Paragraph({ children: [new TextRun({ text: "Nam Mô Tiếp Dẫn Đạo Sư A Di Đà Phật", italics: true, size: 20 })], alignment: AlignmentType.CENTER }));
+            cellChildren.push(new Paragraph({ children: [new TextRun({ text: "PHỤNG VÌ", bold: true, size: 36 })], alignment: AlignmentType.CENTER, spacing: { after: 400 } }));
             col.names.forEach(name => {
-              cellChildren.push(new Paragraph({ text: name, bold: true, size: 28, alignment: AlignmentType.CENTER, spacing: { after: 100 } }));
+              cellChildren.push(new Paragraph({ children: [new TextRun({ text: name, bold: true, size: 28 })], alignment: AlignmentType.CENTER, spacing: { after: 100 } }));
             });
-            cellChildren.push(new Paragraph({ text: "TỌA VỊ", bold: true, size: 32, alignment: AlignmentType.CENTER, spacing: { before: 800 } }));
-            cellChildren.push(new Paragraph({ text: "Chùa Báo Ân • Linh Vị", italics: true, size: 20, alignment: AlignmentType.CENTER }));
+            cellChildren.push(new Paragraph({ children: [new TextRun({ text: "TỌA VỊ", bold: true, size: 32 })], alignment: AlignmentType.CENTER, spacing: { before: 800 } }));
+            cellChildren.push(new Paragraph({ children: [new TextRun({ text: "Chùa Báo Ân • Linh Vị", italics: true, size: 20 })], alignment: AlignmentType.CENTER }));
           }
         } else {
           // POSTER
           if (col.shortCode !== "") {
-            cellChildren.push(new Paragraph({ text: col.shortCode, bold: true, size: 80, alignment: AlignmentType.CENTER, spacing: { after: 400 } }));
+            cellChildren.push(new Paragraph({ children: [new TextRun({ text: col.shortCode, bold: true, size: 80 })], alignment: AlignmentType.CENTER, spacing: { after: 400 } }));
             col.names.forEach(name => {
-              cellChildren.push(new Paragraph({ text: name, bold: true, size: 28, alignment: AlignmentType.CENTER, spacing: { after: 100 } }));
+              cellChildren.push(new Paragraph({ children: [new TextRun({ text: name, bold: true, size: 28 })], alignment: AlignmentType.CENTER, spacing: { after: 100 } }));
             });
           }
         }
@@ -313,6 +317,7 @@ export const generateSoDocxFromUI = async (
                       width: A4_LANDSCAPE_WIDTH_PX,
                       height: A4_LANDSCAPE_HEIGHT_PX,
                     },
+                    type: 'png',
                     floating: {
                       horizontalPosition: { offset: 0 },
                       verticalPosition: { offset: 0 },

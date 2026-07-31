@@ -587,7 +587,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                                       return (
                                         <div
                                           key={idx}
-                                          className="flex items-baseline justify-between border-b border-stone-200/70 py-1.5 text-[20px] leading-tight"
+                                          className="flex items-baseline justify-between border-b border-stone-200/70 py-1 text-[16px] leading-tight"
                                         >
                                           <div className="truncate pr-2">
                                             <span className="font-semibold text-stone-900">

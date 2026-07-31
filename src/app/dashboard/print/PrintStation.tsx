@@ -378,7 +378,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                   className="so-page-block bg-white text-black p-8 print:p-2 w-full print:w-[297mm] print:max-w-[297mm] print:h-[210mm] print:max-h-[210mm] print:border-none print:shadow-none print:m-0 break-after-page flex justify-center min-h-[50vh] print:min-h-0 overflow-hidden"
                   style={{ pageBreakAfter: 'always', page: 'so-page' as any }}
                 >
-                  <table className="w-full max-w-[277mm] mx-auto border-collapse" style={{ height: '19cm', tableLayout: 'fixed' }}>
+                  <table className="mx-auto border-collapse" style={{ width: 'max-content', height: '19cm', tableLayout: 'fixed' }}>
                     <tbody>
                       <tr>
                         {pageCols.map((col, colIdx) => (
@@ -388,7 +388,9 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             style={{ 
                               borderTopWidth: '2px', borderBottomWidth: '2px', borderLeftWidth: '2px',
                               borderRightWidth: colIdx === pageCols.length - 1 ? '2px' : '0px',
-                              height: '19cm' 
+                              height: '19cm',
+                              width: '6.5cm',
+                              maxWidth: '6.5cm'
                             }}
                           >
                             {/* Biểu tượng cái kéo canh cắt ở các góc đường nét đứt */}

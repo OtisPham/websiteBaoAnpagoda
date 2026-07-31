@@ -41,7 +41,7 @@ export function generatePhungViToaViTemplate(
             .join('');
 
           return `
-            <td class="phungvi-col" style="flex: 1; max-width: 265px; padding: 16px; position: relative; border: 2px dashed #a8a29e; border-right-width: ${isLastCol ? '2px' : '0px'}; height: 19cm; vertical-align: top;">
+            <td class="phungvi-col" style="width: 6.5cm; max-width: 6.5cm; padding: 16px; position: relative; border: 2px dashed #a8a29e; border-right-width: ${isLastCol ? '2px' : '0px'}; height: 19cm; vertical-align: top;">
               <!-- Scissors Cut Indicators -->
               <span style="position: absolute; top: -14px; left: -10px; font-size: 12px; color: #78716c; user-select: none;">✂</span>
               <span style="position: absolute; bottom: -14px; left: -10px; font-size: 12px; color: #78716c; user-select: none; transform: rotate(180deg);">✂</span>
@@ -87,7 +87,7 @@ export function generatePhungViToaViTemplate(
 
       return `
         <div class="so-page-block horizontal-page" style="page-break-after: always; width: 297mm; height: 210mm; max-width: 297mm; max-height: 210mm; margin: 0 auto; padding: 8px; background: #ffffff; color: #000000; display: flex; align-items: center; justify-content: center; overflow: hidden; box-sizing: border-box;">
-          <table style="width: 100%; max-width: 277mm; margin: 0 auto; border-collapse: collapse; table-layout: fixed; height: 19cm;">
+          <table style="width: max-content; margin: 0 auto; border-collapse: collapse; table-layout: fixed; height: 19cm;">
             <tbody>
               <tr>
                 ${colsHtml}

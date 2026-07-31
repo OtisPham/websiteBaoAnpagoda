@@ -590,7 +590,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                                           className="flex items-baseline justify-between border-b border-stone-200/70 py-1 leading-tight"
                                           style={{ fontSize: '12pt' }}
                                         >
-                                          <div className="truncate pr-2">
+                                          <div className="pr-2 break-words max-w-[75%]">
                                             <span className="font-semibold text-stone-900">
                                               {globalNum}. {t.full_name}
                                             </span>

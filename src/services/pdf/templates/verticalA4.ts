@@ -85,7 +85,7 @@ export function generateVerticalA4Template(
 
                 return `
                   <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid #e7e5e4; padding: 4px 0; font-size: 12pt; line-height: 1.2;">
-                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px;">
+                    <div style="padding-right: 8px; word-break: break-word; max-width: 75%;">
                       <span style="font-weight: 600; color: #1c1917;">${globalNum ? `${globalNum}. ` : ''}${escapeHtml(
                   t.full_name
                 )}</span>

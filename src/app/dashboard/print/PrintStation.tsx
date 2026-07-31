@@ -335,7 +335,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
           <div className="so-print-layout print:m-0 print:p-0">
             {printMode === 'POSTER' || printMode === 'PHUNG_VI' ? (() => {
               // Gom TẤT CẢ các cột từ tất cả các sớ được chọn (selectedForms) để xếp kề bên nhau trên cùng trang
-              const MAX_LINES_PER_COL = 27
+              const MAX_LINES_PER_COL = 22
               const MAX_COLS_PER_PAGE = 4
 
               const allColumns: { shortCode: string; names: string[] }[] = []
@@ -411,7 +411,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                               </>
                             )}
 
-                            <div className="flex flex-col items-center justify-start w-full h-full pb-16">
+                            <div className="flex flex-col items-center justify-start w-full h-full pb-[90px]">
                               {printMode === 'PHUNG_VI' ? (
                                 <>
                                   {/* Đỉnh bài vị: PHỤNG VÌ */}

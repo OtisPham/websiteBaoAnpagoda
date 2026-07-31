@@ -54,19 +54,20 @@ export function generatePhungViToaViTemplate(
                   : ''
               }
 
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; width: 100%; padding-bottom: 64px;">
-                <!-- Đỉnh bài vị: PHỤNG VÌ -->
-                <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 12pt; text-align: center; width: 100%;">
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; width: 100%; padding-bottom: 90px; position: relative;">
+                
+                <!-- Phung Vi Header -->
+                <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 12pt; text-align: center; width: 100%; flex-shrink: 0;">
                   <div style="font-size: 11px; font-family: 'Times New Roman', serif; font-style: italic; color: #78716c; margin-bottom: 4px;">
                     Nam Mô Tiếp Dẫn Đạo Sư A Di Đà Phật
                   </div>
-                  <div style="font-size: 24pt; font-family: 'Times New Roman', serif; font-weight: bold; color: #431407; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 2px solid rgba(120, 53, 15, 0.4); padding-bottom: 8px; width: 100%;">
+                  <div style="font-size: 24pt; font-family: 'Times New Roman', serif; font-weight: bold; color: #451a03; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 2px solid rgba(120, 53, 15, 0.4); padding-bottom: 8px; width: 100%;">
                     PHỤNG VÌ
                   </div>
                 </div>
 
-                <!-- Tên các hương linh -->
-                <div style="display: flex; flex-direction: column; width: 100%; text-align: center;">
+                <!-- Names List -->
+                <div style="display: flex; flex-direction: column; justify-content: flex-start; width: 100%; text-align: center;">
                   ${namesHtml}
                 </div>
 

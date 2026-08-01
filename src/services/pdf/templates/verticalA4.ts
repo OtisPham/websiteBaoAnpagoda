@@ -100,10 +100,20 @@ export function generateVerticalA4Template(
         let columnGap = '4px';
 
         if (maxLinesInCol >= 20) {
-          // Fallback an toàn (thực tế maxLinesInCol <= 20 do logic chia trang)
+          itemPadding = '1px 0';
+          itemFontSize = '10pt';
+          itemLineHeight = '1.1';
+          columnGap = '2px';
+        } else if (maxLinesInCol >= 18) {
+          itemPadding = '2px 0';
+          itemFontSize = '10.5pt';
+          itemLineHeight = '1.15';
+          columnGap = '3px';
+        } else if (maxLinesInCol >= 15) {
           itemPadding = '3px 0';
-          itemFontSize = '11.5pt';
+          itemFontSize = '11pt';
           itemLineHeight = '1.2';
+          columnGap = '4px';
         }
 
         let currentGlobalNum = 1 + (pagesData.slice(0, pageSubIndex).reduce((sum, p) => sum + p.length, 0));

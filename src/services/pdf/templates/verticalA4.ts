@@ -36,87 +36,88 @@ export function generateVerticalA4Template(
         ? `background-image: url('${escapeAttribute(templateUrl)}'); background-size: cover; background-position: center;`
         : 'background: #fdfbf7;';
 
-      const MAX_LINES_PER_COL = 20;
-      const MAX_LINES_PER_PAGE = MAX_LINES_PER_COL * 2;
+      let colsPerPage = 2;
+      let charsPerLine = 36;
+      if (actualTargets.length > 26) {
+        colsPerPage = 3;
+        charsPerLine = 22;
+      }
+      
+      const MAX_LINES_PER_COL = 27;
 
       // Bước 1: Tính toán số dòng cho mỗi mục
       const targetsWithLines = actualTargets.map((t) => {
-        const name = (t.full_name || '').trim();
-        const wordCount = name ? name.split(/\s+/).length : 0;
-        const linesNeeded = wordCount >= 4 ? 2 : 1;
+        const nameLen = (t.full_name || '').length;
+        const dharmaLen = t.dharma_name ? t.dharma_name.length + 6 : 0;
+        const detailLen = (t.birth_year ? 8 : 0) + (t.death_year || t.relation ? 8 : 0);
+        const totalLen = nameLen + dharmaLen + detailLen;
+        
+        const linesNeeded = Math.max(1, Math.ceil(totalLen / charsPerLine));
         return { target: t, lines: linesNeeded };
       });
 
-      // Bước 2: Chia mục tiêu thành các trang (tối đa 38 dòng/trang)
-      const pagesData: { target: TargetPerson; lines: number }[][] = [];
-      let currentPageData: { target: TargetPerson; lines: number }[] = [];
-      let currentPageLines = 0;
+      // Bước 2: Phân bổ dữ liệu thành các trang và cột
+      const pagesData: TargetPerson[][][] = [];
+      let unassignedItems = [...targetsWithLines];
 
-      for (const item of targetsWithLines) {
-        if (currentPageLines + item.lines > MAX_LINES_PER_PAGE && currentPageData.length > 0) {
-          pagesData.push(currentPageData);
-          currentPageData = [];
-          currentPageLines = 0;
+      while (unassignedItems.length > 0) {
+        let itemsToTake = unassignedItems.length;
+        let validLayout: TargetPerson[][] | null = null;
+
+        while (itemsToTake > 0) {
+          const candidateItems = unassignedItems.slice(0, itemsToTake);
+          
+          const chunks: TargetPerson[][] = Array.from({ length: colsPerPage }, () => []);
+          const chunkLines: number[] = Array.from({ length: colsPerPage }, () => 0);
+          
+          const itemsPerCol = Math.ceil(candidateItems.length / colsPerPage);
+          let isValid = true;
+
+          for (let i = 0; i < candidateItems.length; i++) {
+            const colIndex = Math.min(Math.floor(i / itemsPerCol), colsPerPage - 1);
+            chunks[colIndex].push(candidateItems[i].target);
+            chunkLines[colIndex] += candidateItems[i].lines;
+            
+            if (chunkLines[colIndex] > MAX_LINES_PER_COL) {
+              isValid = false;
+              break;
+            }
+          }
+
+          if (isValid) {
+            while (chunks.length > 0 && chunks[chunks.length - 1].length === 0) {
+              chunks.pop();
+            }
+            validLayout = chunks;
+            break;
+          }
+          
+          itemsToTake--;
         }
-        currentPageData.push(item);
-        currentPageLines += item.lines;
+
+        if (validLayout) {
+          pagesData.push(validLayout);
+          unassignedItems = unassignedItems.slice(itemsToTake);
+        } else {
+          pagesData.push([[unassignedItems[0].target]]);
+          unassignedItems.shift();
+        }
       }
-      if (currentPageData.length > 0) {
-        pagesData.push(currentPageData);
-      }
+
       if (pagesData.length === 0) {
-        pagesData.push([]); // Đảm bảo luôn có ít nhất 1 trang
+        pagesData.push([[]]);
       }
+
+      // Biến đếm thứ tự tổng (Global Numbering)
+      let currentGlobalNum = 1;
 
       // Bước 3: Tạo HTML cho từng trang
-      return pagesData.map((pageTargets, pageSubIndex) => {
-        // Cân bằng hai cột (Two-column Balance Algorithm) cho trang hiện tại
-        const chunks: TargetPerson[][] = [[], []];
-        let leftColLines = 0;
-        let rightColLines = 0;
-
-        const halfItems = Math.ceil(pageTargets.length / 2);
-
-        pageTargets.forEach((item, idx) => {
-          if (idx < halfItems) {
-            chunks[0].push(item.target);
-            leftColLines += item.lines;
-          } else {
-            chunks[1].push(item.target);
-            rightColLines += item.lines;
-          }
-        });
-
-        // Bỏ cột 2 nếu không có dữ liệu
-        if (chunks[1].length === 0) {
-          chunks.pop();
-        }
-
-        // Tự động điều chỉnh khoảng cách nếu cần (dù đã giới hạn 19 dòng/cột)
-        const maxLinesInCol = Math.max(leftColLines, rightColLines);
-        let itemPadding = '4px 0';
-        let itemFontSize = '12pt';
-        let itemLineHeight = '1.2';
-        let columnGap = '4px';
-
-        if (maxLinesInCol >= 20) {
-          itemPadding = '1px 0';
-          itemFontSize = '10pt';
-          itemLineHeight = '1.1';
-          columnGap = '2px';
-        } else if (maxLinesInCol >= 18) {
-          itemPadding = '2px 0';
-          itemFontSize = '10.5pt';
-          itemLineHeight = '1.15';
-          columnGap = '3px';
-        } else if (maxLinesInCol >= 15) {
-          itemPadding = '3px 0';
-          itemFontSize = '11pt';
-          itemLineHeight = '1.2';
-          columnGap = '4px';
-        }
-
-        let currentGlobalNum = 1 + (pagesData.slice(0, pageSubIndex).reduce((sum, p) => sum + p.length, 0));
+      return pagesData.map((chunks, pageSubIndex) => {
+        
+        const itemPadding = '2px 0';
+        const itemFontSize = '14pt';
+        const itemLineHeight = '1.1';
+        const columnGap = '2px';
 
         // Targets Column Splitting
       let targetsContentHtml = '';

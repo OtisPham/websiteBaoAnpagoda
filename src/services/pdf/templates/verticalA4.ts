@@ -36,7 +36,7 @@ export function generateVerticalA4Template(
         ? `background-image: url('${escapeAttribute(templateUrl)}'); background-size: cover; background-position: center;`
         : 'background: #fdfbf7;';
 
-      const MAX_LINES_PER_COL = 19;
+      const MAX_LINES_PER_COL = 20;
       const MAX_LINES_PER_PAGE = MAX_LINES_PER_COL * 2;
 
       // Bước 1: Tính toán số dòng cho mỗi mục
@@ -171,8 +171,8 @@ export function generateVerticalA4Template(
       }
 
         return `
-          <div class="so-page-block vertical-page" style="page-break-after: __PAGE_BREAK__; width: 210mm; max-width: 210mm; margin: 0 auto; padding: 16px; box-sizing: border-box; font-family: 'Times New Roman', Times, serif;">
-          <div style="position: relative; width: 100%; height: 270mm; max-height: 270mm; border: 2px solid rgba(120, 53, 15, 0.4); border-radius: 12px; padding: 24px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; ${bgStyle}">
+          <div class="so-page-block vertical-page" style="page-break-after: __PAGE_BREAK__; width: 210mm; height: 297mm; max-width: 210mm; max-height: 297mm; margin: 0 auto; padding: 1.27cm; box-sizing: border-box; font-family: 'Times New Roman', Times, serif;">
+          <div style="position: relative; width: 100%; height: 100%; border: 2px solid rgba(120, 53, 15, 0.4); border-radius: 12px; padding: 24px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; ${bgStyle}">
             
             <!-- Top Section: Header & Trai Chu Card -->
             <div style="display: flex; flex-direction: column; gap: 16px; flex: 1; overflow: hidden;">

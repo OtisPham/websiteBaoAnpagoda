@@ -600,38 +600,36 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             (Gia chủ cúng dường chung cho gia quyến)
                           </p>
                         ) : (() => {
-                          // Điền đầy tối đa 20 dòng mỗi cột để tránh bị tràn chữ xuống dưới (lỗi cắt chữ)
-                          const MAX_LINES_PER_COL = 20
-                          const isCauSieu = form.form_type !== 'CAU_AN'
+                          const colsPerPage = actualTargets.length > 26 ? 3 : 2;
+                          const charsPerLine = colsPerPage === 3 ? 22 : 36;
+                          const MAX_LINES_PER_COL = 27;
+                          const isCauSieu = form.form_type !== 'CAU_AN';
 
-                          const cols: TargetPerson[][] = []
-                          let currentCol: TargetPerson[] = []
-                          let currentLines = 0
+                          // Tính toán linesNeeded để dự đoán rớt dòng
+                          const targetsWithLines = actualTargets.map((t) => {
+                            const nameLen = (t.full_name || '').length;
+                            const dharmaLen = t.dharma_name ? t.dharma_name.length + 6 : 0;
+                            const detailLen = (t.birth_year ? 8 : 0) + (t.relation ? 8 : 0);
+                            const totalLen = nameLen + dharmaLen + detailLen;
+                            const linesNeeded = Math.max(1, Math.ceil(totalLen / charsPerLine));
+                            return { target: t, lines: linesNeeded };
+                          });
 
-                          actualTargets.forEach((t) => {
-                            const name = t.full_name.trim()
-                            const linesNeeded = 1
-
-                            if (currentLines + linesNeeded > MAX_LINES_PER_COL && currentCol.length > 0) {
-                              cols.push(currentCol)
-                              currentCol = []
-                              currentLines = 0
-                            }
-
-                            currentCol.push(t)
-                            currentLines += linesNeeded
-                          })
-
-                          if (currentCol.length > 0) {
-                            cols.push(currentCol)
-                          }
+                          // Phân bổ đều mục tiêu vào các cột (cân bằng cột)
+                          const cols: TargetPerson[][] = Array.from({ length: colsPerPage }, () => []);
+                          const itemsPerCol = Math.ceil(targetsWithLines.length / colsPerPage);
+                          
+                          targetsWithLines.forEach((item, idx) => {
+                            const colIndex = Math.min(Math.floor(idx / itemsPerCol), colsPerPage - 1);
+                            cols[colIndex].push(item.target);
+                          });
 
                           // Để đánh số thứ tự đúng, cần đếm tổng số mục trước đó
                           let currentGlobalNum = 1;
 
                           return (
                             <div
-                              className={`grid gap-x-4 gap-y-1 ${
+                              className={`grid gap-x-2 gap-y-0.5 ${
                                 cols.length === 1
                                   ? 'grid-cols-1'
                                   : cols.length === 2
@@ -643,27 +641,27 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             >
                               {cols.map((colItems, colIdx) => {
                                 return (
-                                  <div key={colIdx} className="space-y-1">
+                                  <div key={colIdx} className="space-y-0">
                                     {colItems.map((t, idx) => {
                                       const globalNum = currentGlobalNum++
                                       return (
                                         <div
                                           key={idx}
-                                          className="flex items-baseline justify-between border-b border-stone-200/70 py-1 leading-tight"
-                                          style={{ fontSize: '12pt' }}
+                                          className="flex items-baseline justify-between border-b border-stone-200/70 py-[2px] leading-tight"
+                                          style={{ fontSize: '14pt', lineHeight: '1.1' }}
                                         >
-                                          <div className="pr-2 break-words max-w-[75%]">
+                                          <div className="pr-1 break-words max-w-[75%]">
                                             <span className="font-semibold text-stone-900">
                                               {globalNum}. {t.full_name}
                                             </span>
                                             {t.dharma_name && (
-                                              <span className="text-amber-800 ml-1 font-medium">
+                                              <span className="text-amber-800 ml-1 font-medium" style={{ fontSize: '12pt' }}>
                                                 (PD: {t.dharma_name})
                                               </span>
                                             )}
                                           </div>
                                           {!isCauSieu && (
-                                            <div className="text-[14px] text-stone-600 shrink-0 ml-1 self-center">
+                                            <div className="text-[12px] text-stone-600 shrink-0 ml-1 self-center">
                                               {t.birth_year ? `SN: ${t.birth_year} ` : ''}
                                               {t.relation ? `• ${t.relation}` : ''}
                                             </div>

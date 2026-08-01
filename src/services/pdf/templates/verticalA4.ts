@@ -36,65 +36,79 @@ export function generateVerticalA4Template(
         ? `background-image: url('${escapeAttribute(templateUrl)}'); background-size: cover; background-position: center;`
         : 'background: #fdfbf7;';
 
-      // Cân bằng hai cột (Two-column Balance Algorithm)
-      const chunks: TargetPerson[][] = [[], []];
-      let leftColLines = 0;
-      let rightColLines = 0;
+      const MAX_LINES_PER_COL = 19;
+      const MAX_LINES_PER_PAGE = MAX_LINES_PER_COL * 2;
 
-      const totalItems = actualTargets.length;
-      const halfItems = Math.ceil(totalItems / 2);
-
-      actualTargets.forEach((t, idx) => {
+      // Bước 1: Tính toán số dòng cho mỗi mục
+      const targetsWithLines = actualTargets.map((t) => {
         const name = (t.full_name || '').trim();
         const wordCount = name ? name.split(/\s+/).length : 0;
         const linesNeeded = wordCount >= 4 ? 2 : 1;
-
-        if (idx < halfItems) {
-          chunks[0].push(t);
-          leftColLines += linesNeeded;
-        } else {
-          chunks[1].push(t);
-          rightColLines += linesNeeded;
-        }
+        return { target: t, lines: linesNeeded };
       });
 
-      // Bỏ cột 2 nếu không có dữ liệu
-      if (chunks[1].length === 0) {
-        chunks.pop();
+      // Bước 2: Chia mục tiêu thành các trang (tối đa 38 dòng/trang)
+      const pagesData: { target: TargetPerson; lines: number }[][] = [];
+      let currentPageData: { target: TargetPerson; lines: number }[] = [];
+      let currentPageLines = 0;
+
+      for (const item of targetsWithLines) {
+        if (currentPageLines + item.lines > MAX_LINES_PER_PAGE && currentPageData.length > 0) {
+          pagesData.push(currentPageData);
+          currentPageData = [];
+          currentPageLines = 0;
+        }
+        currentPageData.push(item);
+        currentPageLines += item.lines;
+      }
+      if (currentPageData.length > 0) {
+        pagesData.push(currentPageData);
+      }
+      if (pagesData.length === 0) {
+        pagesData.push([]); // Đảm bảo luôn có ít nhất 1 trang
       }
 
-      // Tự động tính toán (Auto-fit / Dynamic Spacing)
-      const maxLinesInCol = Math.max(leftColLines, rightColLines);
-      let itemPadding = '4px 0';
-      let itemFontSize = '12pt';
-      let itemLineHeight = '1.2';
-      let columnGap = '4px';
+      // Bước 3: Tạo HTML cho từng trang
+      return pagesData.map((pageTargets, pageSubIndex) => {
+        // Cân bằng hai cột (Two-column Balance Algorithm) cho trang hiện tại
+        const chunks: TargetPerson[][] = [[], []];
+        let leftColLines = 0;
+        let rightColLines = 0;
 
-      if (maxLinesInCol >= 30) {
-        itemPadding = '1px 0';
-        itemFontSize = '9.5pt';
-        itemLineHeight = '1.1';
-        columnGap = '1px';
-      } else if (maxLinesInCol >= 25) {
-        itemPadding = '2px 0';
-        itemFontSize = '10pt';
-        itemLineHeight = '1.15';
-        columnGap = '2px';
-      } else if (maxLinesInCol >= 21) {
-        itemPadding = '2.5px 0';
-        itemFontSize = '11pt';
-        itemLineHeight = '1.15';
-        columnGap = '3px';
-      } else if (maxLinesInCol >= 19) {
-        itemPadding = '3px 0';
-        itemFontSize = '11.5pt';
-        itemLineHeight = '1.2';
-        columnGap = '4px';
-      }
+        const halfItems = Math.ceil(pageTargets.length / 2);
 
-      let currentGlobalNum = 1;
+        pageTargets.forEach((item, idx) => {
+          if (idx < halfItems) {
+            chunks[0].push(item.target);
+            leftColLines += item.lines;
+          } else {
+            chunks[1].push(item.target);
+            rightColLines += item.lines;
+          }
+        });
 
-      // Targets Column Splitting using lineWeight.ts chunkSoColumns
+        // Bỏ cột 2 nếu không có dữ liệu
+        if (chunks[1].length === 0) {
+          chunks.pop();
+        }
+
+        // Tự động điều chỉnh khoảng cách nếu cần (dù đã giới hạn 19 dòng/cột)
+        const maxLinesInCol = Math.max(leftColLines, rightColLines);
+        let itemPadding = '4px 0';
+        let itemFontSize = '12pt';
+        let itemLineHeight = '1.2';
+        let columnGap = '4px';
+
+        if (maxLinesInCol >= 20) {
+          // Fallback an toàn (thực tế maxLinesInCol <= 20 do logic chia trang)
+          itemPadding = '3px 0';
+          itemFontSize = '11.5pt';
+          itemLineHeight = '1.2';
+        }
+
+        let currentGlobalNum = 1 + (pagesData.slice(0, pageSubIndex).reduce((sum, p) => sum + p.length, 0));
+
+        // Targets Column Splitting
       let targetsContentHtml = '';
       if (actualTargets.length === 0) {
         targetsContentHtml = `
@@ -156,8 +170,8 @@ export function generateVerticalA4Template(
         targetsContentHtml = `<div style="${gridColsCss}">${colsHtml}</div>`;
       }
 
-      return `
-        <div class="so-page-block vertical-page" style="page-break-after: ${index === formList.length - 1 ? 'auto' : 'always'}; width: 210mm; max-width: 210mm; margin: 0 auto; padding: 16px; box-sizing: border-box; font-family: 'Times New Roman', Times, serif;">
+        return `
+          <div class="so-page-block vertical-page" style="page-break-after: __PAGE_BREAK__; width: 210mm; max-width: 210mm; margin: 0 auto; padding: 16px; box-sizing: border-box; font-family: 'Times New Roman', Times, serif;">
           <div style="position: relative; width: 100%; height: 270mm; max-height: 270mm; border: 2px solid rgba(120, 53, 15, 0.4); border-radius: 12px; padding: 24px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; ${bgStyle}">
             
             <!-- Top Section: Header & Trai Chu Card -->
@@ -266,6 +280,11 @@ export function generateVerticalA4Template(
           </div>
         </div>
       `;
+      });
+    })
+    .flat()
+    .map((html, idx, arr) => {
+      return html.replace('__PAGE_BREAK__', idx === arr.length - 1 ? 'auto' : 'always');
     })
     .join('');
 }

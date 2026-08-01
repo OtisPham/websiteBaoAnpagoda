@@ -36,29 +36,60 @@ export function generateVerticalA4Template(
         ? `background-image: url('${escapeAttribute(templateUrl)}'); background-size: cover; background-position: center;`
         : 'background: #fdfbf7;';
 
-      // Limit to max 20 lines per column block
-      const MAX_LINES_PER_COL = 20;
-      const chunks: TargetPerson[][] = [];
-      let currentChunk: TargetPerson[] = [];
-      let currentLines = 0;
+      // Cân bằng hai cột (Two-column Balance Algorithm)
+      const chunks: TargetPerson[][] = [[], []];
+      let leftColLines = 0;
+      let rightColLines = 0;
 
-      actualTargets.forEach((t) => {
+      const totalItems = actualTargets.length;
+      const halfItems = Math.ceil(totalItems / 2);
+
+      actualTargets.forEach((t, idx) => {
         const name = (t.full_name || '').trim();
         const wordCount = name ? name.split(/\s+/).length : 0;
         const linesNeeded = wordCount >= 4 ? 2 : 1;
 
-        if (currentLines + linesNeeded > MAX_LINES_PER_COL && currentChunk.length > 0) {
-          chunks.push(currentChunk);
-          currentChunk = [];
-          currentLines = 0;
+        if (idx < halfItems) {
+          chunks[0].push(t);
+          leftColLines += linesNeeded;
+        } else {
+          chunks[1].push(t);
+          rightColLines += linesNeeded;
         }
-
-        currentChunk.push(t);
-        currentLines += linesNeeded;
       });
 
-      if (currentChunk.length > 0) {
-        chunks.push(currentChunk);
+      // Bỏ cột 2 nếu không có dữ liệu
+      if (chunks[1].length === 0) {
+        chunks.pop();
+      }
+
+      // Tự động tính toán (Auto-fit / Dynamic Spacing)
+      const maxLinesInCol = Math.max(leftColLines, rightColLines);
+      let itemPadding = '4px 0';
+      let itemFontSize = '12pt';
+      let itemLineHeight = '1.2';
+      let columnGap = '4px';
+
+      if (maxLinesInCol >= 30) {
+        itemPadding = '1px 0';
+        itemFontSize = '9.5pt';
+        itemLineHeight = '1.1';
+        columnGap = '1px';
+      } else if (maxLinesInCol >= 25) {
+        itemPadding = '2px 0';
+        itemFontSize = '10pt';
+        itemLineHeight = '1.15';
+        columnGap = '2px';
+      } else if (maxLinesInCol >= 21) {
+        itemPadding = '2.5px 0';
+        itemFontSize = '11pt';
+        itemLineHeight = '1.15';
+        columnGap = '3px';
+      } else if (maxLinesInCol >= 19) {
+        itemPadding = '3px 0';
+        itemFontSize = '11.5pt';
+        itemLineHeight = '1.2';
+        columnGap = '4px';
       }
 
       let currentGlobalNum = 1;
@@ -71,7 +102,8 @@ export function generateVerticalA4Template(
             (Gia chủ cúng dường chung cho gia quyến)
           </p>`;
       } else {
-        const gridColsCss = `display: grid; grid-template-columns: repeat(${chunks.length}, minmax(0, 1fr)); gap: 16px 12px;`;
+        // Điều chỉnh margin/padding để không sát viền dưới
+        const gridColsCss = `display: grid; grid-template-columns: repeat(${chunks.length}, minmax(0, 1fr)); gap: 16px 24px; margin-bottom: 8px; padding-bottom: 8px;`;
 
         const colsHtml = chunks
           .map((colItems) => {
@@ -93,7 +125,7 @@ export function generateVerticalA4Template(
                 }
 
                 return `
-                  <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid #e7e5e4; padding: 4px 0; font-size: 12pt; line-height: 1.2;">
+                  <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid #e7e5e4; padding: ${itemPadding}; font-size: ${itemFontSize}; line-height: ${itemLineHeight};">
                     <div style="padding-right: 8px; word-break: break-word; max-width: 75%;">
                       <span style="font-weight: 600; color: #1c1917;">${globalNum}. ${escapeHtml(
                   t.full_name
@@ -108,7 +140,7 @@ export function generateVerticalA4Template(
                     </div>
                     ${
                       details
-                        ? `<div style="font-size: 14px; color: #57534e; flex-shrink: 0; margin-left: 4px; align-self: center;">${escapeHtml(
+                        ? `<div style="font-size: 0.9em; color: #57534e; flex-shrink: 0; margin-left: 4px; align-self: center;">${escapeHtml(
                             details.trim()
                           )}</div>`
                         : ''
@@ -117,7 +149,7 @@ export function generateVerticalA4Template(
               })
               .join('');
 
-            return `<div style="display: flex; flex-direction: column; gap: 4px;">${itemsHtml}</div>`;
+            return `<div style="display: flex; flex-direction: column; gap: ${columnGap};">${itemsHtml}</div>`;
           })
           .join('');
 
@@ -129,10 +161,10 @@ export function generateVerticalA4Template(
           <div style="position: relative; width: 100%; height: 270mm; max-height: 270mm; border: 2px solid rgba(120, 53, 15, 0.4); border-radius: 12px; padding: 24px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; ${bgStyle}">
             
             <!-- Top Section: Header & Trai Chu Card -->
-            <div style="display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+            <div style="display: flex; flex-direction: column; gap: 16px; flex: 1; overflow: hidden;">
               
               <!-- Header Bar -->
-              <div style="display: flex; align-items: flex-start; justify-content: center; border-bottom: 2px solid rgba(120, 53, 15, 0.3); padding-bottom: 16px;">
+              <div style="display: flex; align-items: flex-start; justify-content: center; border-bottom: 2px solid rgba(120, 53, 15, 0.3); padding-bottom: 16px; flex-shrink: 0;">
                 
                 <!-- Main Title -->
                 <div style="text-align: center; flex: 1; padding: 0 16px;">
@@ -169,7 +201,7 @@ export function generateVerticalA4Template(
               </div>
 
               <!-- Trai Chu Card -->
-              <div style="background: rgba(120, 53, 15, 0.05); border: 1px solid rgba(120, 53, 15, 0.2); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px;">
+              <div style="background: rgba(120, 53, 15, 0.05); border: 1px solid rgba(120, 53, 15, 0.2); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0;">
                 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;">
                   <span style="font-family: 'Times New Roman', serif; font-weight: bold; font-size: 14pt; line-height: 1.2; color: #451a03;">
                     Trai Chủ / Gia Chủ: <span style="color: #78350f;">${escapeHtml(
@@ -195,15 +227,17 @@ export function generateVerticalA4Template(
               </div>
 
               <!-- Target List Section -->
-              <div>
-                <h3 style="font-family: 'Times New Roman', serif; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #78350f; border-bottom: 1px solid rgba(120, 53, 15, 0.2); padding-bottom: 8px; margin: 0 0 12px 0;">
+              <div style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+                <h3 style="font-family: 'Times New Roman', serif; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #78350f; border-bottom: 1px solid rgba(120, 53, 15, 0.2); padding-bottom: 8px; margin: 0 0 12px 0; flex-shrink: 0;">
                   ${
                     isCauAn
                       ? 'Danh Sách Hương Linh & Phật Tử Cầu An Tiêu Tai'
                       : 'Danh Sách Chư Hương Linh Phục Nguyện Siêu Độ'
                   }
                 </h3>
-                ${targetsContentHtml}
+                <div style="flex: 1; overflow: visible;">
+                  ${targetsContentHtml}
+                </div>
               </div>
             </div>
 

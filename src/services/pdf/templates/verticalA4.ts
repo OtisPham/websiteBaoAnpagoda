@@ -35,7 +35,6 @@ export function generateVerticalA4Template(
         ? `background-image: url('${escapeAttribute(templateUrl)}'); background-size: cover; background-position: center;`
         : 'background: #fdfbf7;';
 
-      const colsPerPage = 2;
       const MAX_ITEMS_PER_PAGE = 30; // 15 rows max
 
       // Phân bổ dữ liệu thành các trang
@@ -53,7 +52,7 @@ export function generateVerticalA4Template(
 
       // Tạo HTML cho từng trang
       return pagesData.map((pageTargets, pageSubIndex) => {
-        
+        const colsPerPage = pageTargets.length <= 15 ? 1 : 2;
         const itemPadding = '2px 0';
         const itemFontSize = '14pt';
         const itemLineHeight = '1.1';

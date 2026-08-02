@@ -606,7 +606,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                               (Gia chủ cúng dường chung cho gia quyến)
                             </p>
                           ) : (() => {
-                            const colsPerPage = 2; // CHỈ 2 cột
+                            const colsPerPage = pageTargets.length <= 15 ? 1 : 2;
                             const isCauSieu = form.form_type !== 'CAU_AN';
 
                             // Create row-major 2D array for Grid
@@ -629,7 +629,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             }
 
                             return (
-                              <div className="grid gap-x-4 gap-y-[2px] w-full grid-cols-2">
+                              <div className={`grid gap-x-4 gap-y-[2px] w-full ${colsPerPage === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
                                 {gridRows.map((rowArr, rowIdx) => (
                                   <React.Fragment key={rowIdx}>
                                     {rowArr.map((t, colIdx) => {

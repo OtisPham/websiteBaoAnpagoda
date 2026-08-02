@@ -1,5 +1,4 @@
 import { FormRecord, TargetPerson, TemplateOptions } from '../types';
-import { chunkSoColumns } from '../lineWeight';
 
 /**
  * HTML/CSS generator for Vertical A4 / Dọc A4 (A4 Portrait)
@@ -36,105 +35,59 @@ export function generateVerticalA4Template(
         ? `background-image: url('${escapeAttribute(templateUrl)}'); background-size: cover; background-position: center;`
         : 'background: #fdfbf7;';
 
-      let colsPerPage = 2;
-      let charsPerLine = 36;
-      if (actualTargets.length > 26) {
-        colsPerPage = 3;
-        charsPerLine = 22;
-      }
-      
-      const MAX_LINES_PER_COL = 27;
+      const colsPerPage = 2;
+      const MAX_ITEMS_PER_PAGE = 30; // 15 rows max
 
-      // Bước 1: Tính toán số dòng cho mỗi mục
-      const targetsWithLines = actualTargets.map((t) => {
-        const nameLen = (t.full_name || '').length;
-        const dharmaLen = t.dharma_name ? t.dharma_name.length + 6 : 0;
-        const detailLen = (t.birth_year ? 8 : 0) + (t.death_year || t.relation ? 8 : 0);
-        const totalLen = nameLen + dharmaLen + detailLen;
-        
-        const linesNeeded = Math.max(1, Math.ceil(totalLen / charsPerLine));
-        return { target: t, lines: linesNeeded };
-      });
-
-      // Bước 2: Phân bổ dữ liệu thành các trang và cột
-      const pagesData: TargetPerson[][][] = [];
-      let unassignedItems = [...targetsWithLines];
-
-      while (unassignedItems.length > 0) {
-        let itemsToTake = unassignedItems.length;
-        let validLayout: TargetPerson[][] | null = null;
-
-        while (itemsToTake > 0) {
-          const candidateItems = unassignedItems.slice(0, itemsToTake);
-          
-          const chunks: TargetPerson[][] = Array.from({ length: colsPerPage }, () => []);
-          const chunkLines: number[] = Array.from({ length: colsPerPage }, () => 0);
-          
-          const itemsPerCol = Math.ceil(candidateItems.length / colsPerPage);
-          let isValid = true;
-
-          for (let i = 0; i < candidateItems.length; i++) {
-            const colIndex = Math.min(Math.floor(i / itemsPerCol), colsPerPage - 1);
-            chunks[colIndex].push(candidateItems[i].target);
-            chunkLines[colIndex] += candidateItems[i].lines;
-            
-            if (chunkLines[colIndex] > MAX_LINES_PER_COL) {
-              isValid = false;
-              break;
-            }
-          }
-
-          if (isValid) {
-            while (chunks.length > 0 && chunks[chunks.length - 1].length === 0) {
-              chunks.pop();
-            }
-            validLayout = chunks;
-            break;
-          }
-          
-          itemsToTake--;
-        }
-
-        if (validLayout) {
-          pagesData.push(validLayout);
-          unassignedItems = unassignedItems.slice(itemsToTake);
-        } else {
-          pagesData.push([[unassignedItems[0].target]]);
-          unassignedItems.shift();
-        }
+      // Phân bổ dữ liệu thành các trang
+      const pagesData: TargetPerson[][] = [];
+      for (let i = 0; i < actualTargets.length; i += MAX_ITEMS_PER_PAGE) {
+        pagesData.push(actualTargets.slice(i, i + MAX_ITEMS_PER_PAGE));
       }
 
       if (pagesData.length === 0) {
-        pagesData.push([[]]);
+        pagesData.push([]);
       }
 
       // Biến đếm thứ tự tổng (Global Numbering)
       let currentGlobalNum = 1;
 
-      // Bước 3: Tạo HTML cho từng trang
-      return pagesData.map((chunks, pageSubIndex) => {
+      // Tạo HTML cho từng trang
+      return pagesData.map((pageTargets, pageSubIndex) => {
         
         const itemPadding = '2px 0';
         const itemFontSize = '14pt';
         const itemLineHeight = '1.1';
-        const columnGap = '2px';
+        const columnGap = '16px';
 
-        // Targets Column Splitting
-      let targetsContentHtml = '';
-      if (actualTargets.length === 0) {
-        targetsContentHtml = `
-          <p style="font-size: 14px; font-style: italic; color: #78716c; padding: 16px 0; text-align: center;">
-            (Gia chủ cúng dường chung cho gia quyến)
-          </p>`;
-      } else {
-        // Điều chỉnh margin/padding để không sát viền dưới
-        const gridColsCss = `display: grid; grid-template-columns: repeat(${chunks.length}, minmax(0, 1fr)); gap: 16px 24px; margin-bottom: 8px; padding-bottom: 8px;`;
+        // Targets Grid Rendering
+        let targetsContentHtml = '';
+        if (actualTargets.length === 0) {
+          targetsContentHtml = `
+            <p style="font-size: 14px; font-style: italic; color: #78716c; padding: 16px 0; text-align: center;">
+              (Gia chủ cúng dường chung cho gia quyến)
+            </p>`;
+        } else {
+          const gridColsCss = `display: grid; grid-template-columns: repeat(${colsPerPage}, minmax(0, 1fr)); gap: 12px 24px; margin-bottom: 8px; padding-bottom: 8px;`;
 
-        const colsHtml = chunks
-          .map((colItems) => {
-            const itemsHtml = colItems
-              .map((t) => {
-                const globalNum = currentGlobalNum++;
+          // Tính toán số dòng của trang này
+          const numRows = Math.ceil(pageTargets.length / colsPerPage);
+          
+          // Render item theo dòng để các item trên cùng dòng có chiều cao bằng nhau (nhờ CSS Grid)
+          let itemsHtml = '';
+          for (let row = 0; row < numRows; row++) {
+            for (let col = 0; col < colsPerPage; col++) {
+              // Lấy phần tử theo cột, mục đích là cột 1 chứa từ 1 đến N, cột 2 chứa từ N+1 đến 2N
+              // Với N là numRows
+              const targetIndex = col * numRows + row;
+              
+              if (targetIndex < pageTargets.length) {
+                const t = pageTargets[targetIndex];
+                
+                // Vì ta thay đổi trật tự render để CSS Grid layout row-by-row, ta cần đánh số chính xác.
+                // Tuy nhiên, việc đánh số theo chiều dọc (cột 1 rồi cột 2) yêu cầu số thứ tự = Số đã đánh trước trang này + targetIndex + 1.
+                // Tính global index cho phần tử này.
+                const pastTargets = pageSubIndex * MAX_ITEMS_PER_PAGE;
+                const globalNum = pastTargets + targetIndex + 1;
 
                 let details = '';
                 if (!isCauAn) {
@@ -149,8 +102,8 @@ export function generateVerticalA4Template(
                   }`;
                 }
 
-                return `
-                  <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid #e7e5e4; padding: ${itemPadding}; font-size: ${itemFontSize}; line-height: ${itemLineHeight};">
+                itemsHtml += `
+                  <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid #e7e5e4; padding: ${itemPadding}; font-size: ${itemFontSize}; line-height: ${itemLineHeight}; height: 100%;">
                     <div style="padding-right: 8px; word-break: break-word; max-width: 75%;">
                       <span style="font-weight: 600; color: #1c1917;">${globalNum}. ${escapeHtml(
                   t.full_name
@@ -171,15 +124,15 @@ export function generateVerticalA4Template(
                         : ''
                     }
                   </div>`;
-              })
-              .join('');
+              } else {
+                // Ô trống nếu cột không đầy
+                itemsHtml += `<div></div>`;
+              }
+            }
+          }
 
-            return `<div style="display: flex; flex-direction: column; gap: ${columnGap};">${itemsHtml}</div>`;
-          })
-          .join('');
-
-        targetsContentHtml = `<div style="${gridColsCss}">${colsHtml}</div>`;
-      }
+          targetsContentHtml = `<div style="${gridColsCss}">${itemsHtml}</div>`;
+        }
 
         return `
           <div class="so-page-block vertical-page" style="page-break-after: __PAGE_BREAK__; width: 210mm; height: 297mm; max-width: 210mm; max-height: 297mm; margin: 0 auto; padding: 1.27cm; box-sizing: border-box; font-family: 'Times New Roman', Times, serif;">
@@ -189,10 +142,10 @@ export function generateVerticalA4Template(
             <div style="display: flex; flex-direction: column; gap: 16px; flex: 1; overflow: hidden;">
               
               <!-- Header Bar -->
-              <div style="display: flex; align-items: flex-start; justify-content: center; border-bottom: 2px solid rgba(120, 53, 15, 0.3); padding-bottom: 16px; flex-shrink: 0;">
+              <div style="border-bottom: 2px solid rgba(120, 53, 15, 0.3); padding-bottom: 12px; flex-shrink: 0; position: relative;">
                 
                 <!-- Main Title -->
-                <div style="text-align: center; flex: 1; padding: 0 16px;">
+                <div style="text-align: center; width: 100%;">
                   <p style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #78716c; margin: 0 0 2px 0;">
                     Giáo Hội Phật Giáo Việt Nam
                   </p>
@@ -211,8 +164,8 @@ export function generateVerticalA4Template(
                   </p>
                 </div>
 
-                <!-- Form Code & Time -->
-                <div style="text-align: right; font-size: 12px; color: #44403c; font-weight: 500; display: flex; flex-direction: column; gap: 4px;">
+                <!-- Form Code & Time (Moved below and right-aligned) -->
+                <div style="text-align: right; font-size: 12px; color: #44403c; font-weight: 500; display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px; align-items: center;">
                   <div style="display: inline-block; background: rgba(120, 53, 15, 0.1); color: #451a03; font-weight: bold; padding: 4px 10px; border-radius: 4px;">
                     Mã: ${escapeHtml(form.form_code)}
                   </div>

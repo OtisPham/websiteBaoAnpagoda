@@ -48,8 +48,17 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
   const [printMode, setPrintMode] = useState<'READING' | 'POSTER' | 'PHUNG_VI'>('READING')
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false)
   const [isDownloadingWord, setIsDownloadingWord] = useState(false)
+  const [filterDate, setFilterDate] = useState<string>('ALL')
 
   const selectedTemplateUrl = templates.find(t => t.id === selectedTemplateId)?.file_url
+
+  // Lấy danh sách các ngày duy nhất để làm bộ lọc
+  const uniqueDates = Array.from(new Set(acceptedForms.map(f => f.scheduled_date).filter(Boolean))).sort()
+  
+  // Danh sách sớ đã được lọc
+  const displayForms = filterDate === 'ALL' 
+    ? acceptedForms 
+    : acceptedForms.filter(f => f.scheduled_date === filterDate)
 
   // Toggle chọn phiếu
   const handleToggleSelect = (id: string) => {
@@ -61,10 +70,16 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
   }
 
   const handleSelectAll = () => {
-    if (selectedIds.length === acceptedForms.length) {
-      setSelectedIds([])
+    // Nếu tất cả các form HIỆN THỊ đều đã được chọn thì bỏ chọn chúng
+    const visibleIds = displayForms.map(f => f.id)
+    const isAllVisibleSelected = visibleIds.every(id => selectedIds.includes(id))
+    
+    if (isAllVisibleSelected && visibleIds.length > 0) {
+      setSelectedIds(selectedIds.filter(id => !visibleIds.includes(id)))
     } else {
-      setSelectedIds(acceptedForms.map((f) => f.id))
+      // Chọn tất cả các form hiện thị (giữ nguyên những form đang chọn ở trang khác nếu có)
+      const newSelected = new Set([...selectedIds, ...visibleIds])
+      setSelectedIds(Array.from(newSelected))
     }
   }
 
@@ -210,8 +225,22 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
           </div>
 
           <div className="bg-white dark:bg-[#1c1816] p-6 rounded-2xl border border-stone-200 dark:border-stone-850 shadow-sm space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="font-serif text-lg font-bold">Phiếu Lễ Sẵn Sàng In ({acceptedForms.length})</h3>
+            <div className="flex justify-between items-center flex-wrap gap-4">
+              <div className="flex items-center gap-4">
+                <h3 className="font-serif text-lg font-bold">Phiếu Lễ Sẵn Sàng In ({displayForms.length})</h3>
+                {uniqueDates.length > 0 && (
+                  <select
+                    value={filterDate}
+                    onChange={(e) => setFilterDate(e.target.value)}
+                    className="border border-stone-200 dark:border-stone-700 rounded-md text-sm px-3 py-1.5 bg-stone-50 dark:bg-stone-900 text-stone-700 dark:text-stone-300 font-medium cursor-pointer hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
+                  >
+                    <option value="ALL">Tất cả các ngày</option>
+                    {uniqueDates.map(date => (
+                      <option key={date} value={date}>Ngày: {date}</option>
+                    ))}
+                  </select>
+                )}
+              </div>
               <div className="flex gap-3">
                 {selectedIds.length > 0 && (
                   <button
@@ -232,7 +261,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                     <th className="px-6 py-4 w-12">
                       <input
                         type="checkbox"
-                        checked={selectedIds.length === acceptedForms.length && acceptedForms.length > 0}
+                        checked={displayForms.length > 0 && displayForms.every(f => selectedIds.includes(f.id))}
                         onChange={handleSelectAll}
                         className="rounded text-amber-700 focus:ring-amber-500 h-4 w-4"
                       />
@@ -245,7 +274,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
-                  {acceptedForms.map((form) => (
+                  {displayForms.map((form) => (
                     <tr key={form.id} className="hover:bg-stone-50/30 dark:hover:bg-stone-900/10">
                       <td className="px-6 py-4">
                         <input

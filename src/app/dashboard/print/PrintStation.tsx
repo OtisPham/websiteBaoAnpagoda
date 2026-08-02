@@ -377,7 +377,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
           <div className="so-print-layout print:m-0 print:p-0">
             {printMode === 'POSTER' || printMode === 'PHUNG_VI' ? (() => {
               // Gom TẤT CẢ các cột từ tất cả các sớ được chọn (selectedForms) để xếp kề bên nhau trên cùng trang
-              const MAX_LINES_PER_COL = 24
+              const MAX_LINES_PER_COL = printMode === 'PHUNG_VI' ? 15 : 26
               const MAX_COLS_PER_PAGE = 4
 
               const allColumns: { shortCode: string; names: string[] }[] = []
@@ -419,7 +419,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                   className="so-page-block bg-white text-black p-8 print:p-0 w-full print:w-full print:max-w-full print:h-[175mm] print:max-h-[175mm] print:border-none print:shadow-none print:m-0 break-after-page flex justify-center min-h-[50vh] print:min-h-0 overflow-hidden"
                   style={{ pageBreakAfter: pageIdx === pages.length - 1 ? 'auto' : 'always', page: 'so-page' as any }}
                 >
-                  <table className="mx-auto border-collapse" style={{ width: 'max-content', height: '19cm', tableLayout: 'fixed' }}>
+                  <table className="mx-auto border-collapse" style={{ width: 'max-content', height: printMode === 'PHUNG_VI' ? '16cm' : '19cm', tableLayout: 'fixed' }}>
                     <tbody>
                       <tr>
                         {pageCols.map((col, colIdx) => (
@@ -429,7 +429,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             style={{ 
                               borderTopWidth: '2px', borderBottomWidth: '2px', borderLeftWidth: '2px',
                               borderRightWidth: colIdx === pageCols.length - 1 ? '2px' : '0px',
-                              height: '19cm',
+                              height: printMode === 'PHUNG_VI' ? '16cm' : '19cm',
                               width: '6.75cm',
                               maxWidth: '6.75cm'
                             }}
@@ -452,14 +452,11 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                               </>
                             )}
 
-                            <div className="flex flex-col items-center justify-start w-full h-full pb-[60px]">
+                            <div className="flex flex-col items-center justify-start w-full h-full pb-[50px]">
                               {printMode === 'PHUNG_VI' ? (
                                 <>
                                   {/* Đỉnh bài vị: PHỤNG VÌ */}
                                   <div className="flex flex-col items-center mb-[12pt] text-center w-full">
-                                    <div className="text-[11px] font-serif italic text-stone-500 mb-1">
-                                      Nam Mô Tiếp Dẫn Đạo Sư A Di Đà Phật
-                                    </div>
                                     <div className="font-serif font-bold text-amber-950 uppercase tracking-widest border-b-2 border-amber-900/40 pb-2 w-full" style={{ fontSize: '24pt' }}>
                                       PHỤNG VÌ
                                     </div>
@@ -483,9 +480,6 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                                     <div className="font-serif font-bold text-amber-950 uppercase tracking-widest" style={{ fontSize: '18pt' }}>
                                       TỌA VỊ
                                     </div>
-                                    <span className="text-[10px] italic text-stone-500 mt-1 block">
-                                      Chùa Báo Ân • Linh Vị
-                                    </span>
                                   </div>
                                 </>
                               ) : (
@@ -536,9 +530,9 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                     {/* Phần trên sớ: Header & Thông tin Trai Chủ */}
                     <div className="space-y-4 overflow-hidden">
                       {/* Header sớ */}
-                      <div className="flex items-start justify-center border-b-2 border-amber-900/30 pb-5">
+                      <div className="border-b-2 border-amber-900/30 pb-3 relative">
                         {/* Tiêu đề chính */}
-                        <div className="text-center flex-1 px-4">
+                        <div className="text-center w-full">
                           <p className="text-[11px] font-semibold uppercase tracking-widest text-stone-500 mb-0.5">
                             Giáo Hội Phật Giáo Việt Nam
                           </p>
@@ -560,7 +554,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                         </div>
 
                         {/* Mã sớ & Ca lễ */}
-                        <div className="text-right text-xs text-stone-700 font-medium space-y-1">
+                        <div className="text-right text-xs text-stone-700 font-medium flex justify-end gap-3 mt-3 items-center">
                           <div className="inline-block bg-amber-900/10 text-amber-950 font-bold px-2.5 py-1 rounded">
                             Mã: {form.form_code}
                           </div>
@@ -570,7 +564,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                       </div>
 
                       {/* Khung Thông tin Gia Chủ / Trai Chủ */}
-                      <div className="bg-amber-900/5 border border-amber-900/20 rounded-lg px-4 py-2 space-y-1">
+                      <div className="bg-amber-900/5 border border-amber-900/20 rounded-lg px-4 py-2 space-y-1 mt-4">
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <span className="font-serif font-bold leading-tight text-amber-950" style={{ fontSize: '14pt' }}>
                             Trai Chủ: <span className="text-amber-900">{traiChuName}</span>
@@ -588,7 +582,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                       </div>
 
                       {/* Danh Sách Khấn Nguyện */}
-                      <div>
+                      <div className="mt-4 flex-1">
                         <h3 className="font-serif font-bold text-sm uppercase tracking-wider text-amber-900 border-b border-amber-900/20 pb-2 mb-3">
                           {form.form_type === 'CAU_AN'
                             ? 'Danh Sách Hương Linh & Phật Tử Cầu An Tiêu Tai'
@@ -600,78 +594,75 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                             (Gia chủ cúng dường chung cho gia quyến)
                           </p>
                         ) : (() => {
-                          const colsPerPage = actualTargets.length > 26 ? 3 : 2;
-                          const charsPerLine = colsPerPage === 3 ? 22 : 36;
-                          const MAX_LINES_PER_COL = 27;
+                          const colsPerPage = actualTargets.length > 30 ? 3 : 2;
+                          const MAX_ROWS = 15; // 2 cols * 15 rows = 30 max per page
                           const isCauSieu = form.form_type !== 'CAU_AN';
 
-                          // Tính toán linesNeeded để dự đoán rớt dòng
-                          const targetsWithLines = actualTargets.map((t) => {
-                            const nameLen = (t.full_name || '').length;
-                            const dharmaLen = t.dharma_name ? t.dharma_name.length + 6 : 0;
-                            const detailLen = (t.birth_year ? 8 : 0) + (t.relation ? 8 : 0);
-                            const totalLen = nameLen + dharmaLen + detailLen;
-                            const linesNeeded = Math.max(1, Math.ceil(totalLen / charsPerLine));
-                            return { target: t, lines: linesNeeded };
-                          });
-
-                          // Phân bổ đều mục tiêu vào các cột (cân bằng cột)
-                          const cols: TargetPerson[][] = Array.from({ length: colsPerPage }, () => []);
-                          const itemsPerCol = Math.ceil(targetsWithLines.length / colsPerPage);
+                          // Create row-major 2D array for Grid
+                          // Row 1: Item 1, Item 16
+                          // Row 2: Item 2, Item 17
+                          const itemsPerCol = Math.ceil(actualTargets.length / colsPerPage);
+                          const gridRows: TargetPerson[][] = [];
                           
-                          targetsWithLines.forEach((item, idx) => {
-                            const colIndex = Math.min(Math.floor(idx / itemsPerCol), colsPerPage - 1);
-                            cols[colIndex].push(item.target);
-                          });
-
-                          // Để đánh số thứ tự đúng, cần đếm tổng số mục trước đó
-                          let currentGlobalNum = 1;
+                          for (let rowIdx = 0; rowIdx < itemsPerCol; rowIdx++) {
+                            const rowArr: TargetPerson[] = [];
+                            for (let colIdx = 0; colIdx < colsPerPage; colIdx++) {
+                              const targetIdx = colIdx * itemsPerCol + rowIdx;
+                              if (targetIdx < actualTargets.length) {
+                                rowArr.push(actualTargets[targetIdx]);
+                              } else {
+                                rowArr.push({ id: '', full_name: '', type: 'CAU_AN' } as TargetPerson); // placeholder for grid
+                              }
+                            }
+                            gridRows.push(rowArr);
+                          }
 
                           return (
                             <div
-                              className={`grid gap-x-2 gap-y-0.5 ${
-                                cols.length === 1
-                                  ? 'grid-cols-1'
-                                  : cols.length === 2
-                                  ? 'grid-cols-2'
-                                  : cols.length === 3
-                                  ? 'grid-cols-3'
-                                  : 'grid-cols-4'
+                              className={`grid gap-x-4 gap-y-[2px] w-full ${
+                                colsPerPage === 3 ? 'grid-cols-3' : 'grid-cols-2'
                               }`}
                             >
-                              {cols.map((colItems, colIdx) => {
-                                return (
-                                  <div key={colIdx} className="space-y-0">
-                                    {colItems.map((t, idx) => {
-                                      const globalNum = currentGlobalNum++
-                                      return (
-                                        <div
-                                          key={idx}
-                                          className="flex items-baseline justify-between border-b border-stone-200/70 py-[2px] leading-tight"
-                                          style={{ fontSize: '14pt', lineHeight: '1.1' }}
-                                        >
-                                          <div className="pr-1 break-words max-w-[75%]">
-                                            <span className="font-semibold text-stone-900">
-                                              {globalNum}. {t.full_name}
-                                            </span>
-                                            {t.dharma_name && (
-                                              <span className="text-amber-800 ml-1 font-medium" style={{ fontSize: '12pt' }}>
-                                                (PD: {t.dharma_name})
-                                              </span>
-                                            )}
+                              {gridRows.map((rowArr, rowIdx) => (
+                                <React.Fragment key={rowIdx}>
+                                  {rowArr.map((t, colIdx) => {
+                                    if (!t.id) return <div key={colIdx} />; // empty placeholder
+                                    const globalNum = colIdx * itemsPerCol + rowIdx + 1;
+                                    return (
+                                      <div
+                                        key={colIdx}
+                                        className="flex flex-col border-b border-stone-200/70 pb-[2px] min-h-[36px]"
+                                        style={{ fontSize: '14pt', lineHeight: '1.2' }}
+                                      >
+                                        <div className="flex justify-between items-baseline w-full">
+                                          <div className="font-semibold text-stone-900 break-words flex-1">
+                                            {globalNum}. {t.full_name}
                                           </div>
-                                          {!isCauSieu && (
-                                            <div className="text-[12px] text-stone-600 shrink-0 ml-1 self-center">
-                                              {t.birth_year ? `SN: ${t.birth_year} ` : ''}
-                                              {t.relation ? `• ${t.relation}` : ''}
+                                          {!isCauSieu && t.birth_year && (
+                                            <div className="text-[12px] text-stone-600 shrink-0 ml-2">
+                                              SN: {t.birth_year}
                                             </div>
                                           )}
                                         </div>
-                                      )
-                                    })}
-                                  </div>
-                                )
-                              })}
+                                        <div className="flex justify-between items-baseline w-full text-[12px] text-stone-600">
+                                          <div>
+                                            {t.dharma_name && (
+                                              <span className="text-amber-800 font-medium italic">
+                                                PD: {t.dharma_name}
+                                              </span>
+                                            )}
+                                          </div>
+                                          {!isCauSieu && t.relation && (
+                                            <div className="shrink-0 ml-2">
+                                              {t.relation}
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    )
+                                  })}
+                                </React.Fragment>
+                              ))}
                             </div>
                           )
                         })()}

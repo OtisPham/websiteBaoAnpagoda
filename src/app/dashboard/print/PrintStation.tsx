@@ -490,7 +490,22 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                                   </div>
                                   <div className="flex flex-col w-full text-center">
                                     {col.names.map((name, nIdx) => (
-                                      <div key={nIdx} className="font-serif fo            })() : selectedForms.map((form, formIdx) => {
+                                      <div key={nIdx} className="font-serif font-bold text-black uppercase" style={{ fontSize: '14pt', margin: 0, padding: 0, lineHeight: 1.2 }}>
+                                        {name}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              ))
+            })() : selectedForms.map((form, formIdx) => {
               const traiChuTarget = form.targets.find(t => t.relation === 'TRAI_CHU')
               const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name
               const traiChuDharma = traiChuTarget?.dharma_name
@@ -677,18 +692,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                 </div>
                 )
               })
-            }).flat()}3 border-t border-amber-900/20 space-y-2 shrink-0">
-                      <p className="font-serif italic text-center text-xs text-stone-700 leading-normal px-4">
-                        {form.form_type === 'CAU_AN'
-                          ? 'Đệ tử chúng đẳng thành tâm khấu bái, nguyện cầu Tam Bảo chứng minh, gia quyến khang ninh khương thái cát tường, sở cầu như ý, sở nguyện tòng tâm.'
-                          : 'Đệ tử chúng đẳng thành tâm khấu bái, nguyện cầu Tiếp Dẫn Đạo Sư A Di Đà Phật phóng quang tiếp độ chư hương linh trút bỏ trần duyên, siêu sinh tịnh độ.'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
+            }).flat()}
           </div>
         </div>
       )}

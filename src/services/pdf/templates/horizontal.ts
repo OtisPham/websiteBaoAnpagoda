@@ -15,7 +15,8 @@ export function generateHorizontalTemplate(
   options?: TemplateOptions
 ): string {
   const formList = Array.isArray(forms) ? forms : [forms];
-  const pages: HorizontalPage[] = chunkHorizontalColumns(formList);
+  // Cho phép tối đa 26 tên (dòng) mỗi cột thay vì 24 mặc định để tận dụng chỗ trống bên dưới
+  const pages: HorizontalPage[] = chunkHorizontalColumns(formList, 26, 4);
 
   if (pages.length === 0) {
     return `<div class="empty-state" style="text-align: center; padding: 40px; font-family: 'Times New Roman', serif;">Không có dữ liệu phiếu sớ để in.</div>`;

@@ -6,9 +6,9 @@ import { chunkHorizontalColumns, HorizontalPage } from '../lineWeight';
  * Specs:
  * - A4 Landscape layout (297mm x 210mm)
  * - 4 vertical spirit-tablet columns per sheet
- * - Top header: Sub-header "Nam Mô Tiếp Dẫn Đạo Sư A Di Đà Phật" + Title "PHỤNG VÌ"
+ * - Top header: Title "PHỤNG VÌ"
  * - Middle: Target names in bold uppercase serif
- * - Bottom footer: Title "TỌA VỊ" + Subtitle "Chùa Báo Ân • Linh Vị"
+ * - Bottom footer: Title "TỌA VỊ"
  * - STRICT REQUIREMENT: Strictly omit all form code numbers and column numbers.
  */
 export function generatePhungViToaViTemplate(
@@ -16,7 +16,8 @@ export function generatePhungViToaViTemplate(
   options?: TemplateOptions
 ): string {
   const formList = Array.isArray(forms) ? forms : [forms];
-  const pages: HorizontalPage[] = chunkHorizontalColumns(formList);
+  // Tối đa 15 tên (dòng) mỗi cột, 4 cột 1 trang
+  const pages: HorizontalPage[] = chunkHorizontalColumns(formList, 15, 4);
 
   if (pages.length === 0) {
     return `<div class="empty-state" style="text-align: center; padding: 40px; font-family: 'Times New Roman', serif;">Không có dữ liệu phiếu sớ để in.</div>`;
@@ -41,7 +42,7 @@ export function generatePhungViToaViTemplate(
             .join('');
 
           return `
-            <td class="phungvi-col" style="width: 6.5cm; max-width: 6.5cm; padding: 16px; position: relative; border: 2px dashed #a8a29e; border-right-width: ${isLastCol ? '2px' : '0px'}; height: 19cm; vertical-align: top;">
+            <td class="phungvi-col" style="width: 6.5cm; max-width: 6.5cm; padding: 16px; position: relative; border: 2px dashed #a8a29e; border-right-width: ${isLastCol ? '2px' : '0px'}; height: 16cm; vertical-align: top;">
               <!-- Scissors Cut Indicators -->
               <span style="position: absolute; top: -14px; left: -10px; font-size: 12px; color: #78716c; user-select: none;">✂</span>
               <span style="position: absolute; bottom: -14px; left: -10px; font-size: 12px; color: #78716c; user-select: none; transform: rotate(180deg);">✂</span>
@@ -54,13 +55,10 @@ export function generatePhungViToaViTemplate(
                   : ''
               }
 
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; width: 100%; padding-bottom: 60px; position: relative;">
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; width: 100%; padding-bottom: 50px; position: relative;">
                 
                 <!-- Phung Vi Header -->
                 <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 12pt; text-align: center; width: 100%; flex-shrink: 0;">
-                  <div style="font-size: 11px; font-family: 'Times New Roman', serif; font-style: italic; color: #78716c; margin-bottom: 4px;">
-                    Nam Mô Tiếp Dẫn Đạo Sư A Di Đà Phật
-                  </div>
                   <div style="font-size: 24pt; font-family: 'Times New Roman', serif; font-weight: bold; color: #451a03; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 2px solid rgba(120, 53, 15, 0.4); padding-bottom: 8px; width: 100%;">
                     PHỤNG VÌ
                   </div>
@@ -76,9 +74,6 @@ export function generatePhungViToaViTemplate(
                   <div style="font-size: 18pt; font-family: 'Times New Roman', serif; font-weight: bold; color: #431407; text-transform: uppercase; letter-spacing: 0.1em;">
                     TỌA VỊ
                   </div>
-                  <span style="font-size: 10px; font-style: italic; color: #78716c; margin-top: 4px; display: block;">
-                    Chùa Báo Ân • Linh Vị
-                  </span>
                 </div>
               </div>
             </td>
@@ -88,7 +83,7 @@ export function generatePhungViToaViTemplate(
 
       return `
         <div class="so-page-block horizontal-page" style="page-break-after: always; width: 297mm; height: 210mm; max-width: 297mm; max-height: 210mm; margin: 0 auto; padding: 8px; background: #ffffff; color: #000000; display: flex; align-items: center; justify-content: center; overflow: hidden; box-sizing: border-box;">
-          <table style="width: max-content; margin: 0 auto; border-collapse: collapse; table-layout: fixed; height: 19cm;">
+          <table style="width: max-content; margin: 0 auto; border-collapse: collapse; table-layout: fixed; height: 16cm;">
             <tbody>
               <tr>
                 ${colsHtml}

@@ -2,19 +2,79 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { LayoutDashboard, FileText, Calendar, Landmark, Printer, Settings, PenTool, Users, Image as ImageIcon } from 'lucide-react'
 
-interface MenuItem {
-  title: string
-  href: string
-  icon: any
-}
+const menuItems = [
+  {
+    title: 'Tổng quan',
+    href: '/dashboard',
+    icon: LayoutDashboard,
+    roles: ['ADMIN', 'MONK', 'VOLUNTEER']
+  },
+  {
+    title: 'Quản lý Phiếu Sớ',
+    href: '/dashboard/forms',
+    icon: FileText,
+    roles: ['ADMIN', 'MONK', 'VOLUNTEER']
+  },
+  {
+    title: 'Đại Lễ & Ca Cúng',
+    href: '/dashboard/events',
+    icon: Calendar,
+    roles: ['ADMIN', 'MONK', 'VOLUNTEER', 'MASTER']
+  },
+  {
+    title: 'Đăng Bài & CMS',
+    href: '/dashboard/posts',
+    icon: PenTool,
+    roles: ['ADMIN', 'MONK', 'VOLUNTEER', 'MASTER']
+  },
+  {
+    title: 'Quầy Công Đức O2O',
+    href: '/dashboard/donations',
+    icon: Landmark,
+    roles: ['ADMIN', 'MONK', 'VOLUNTEER']
+  },
+  {
+    title: 'Trạm In Sớ',
+    href: '/dashboard/print',
+    icon: Printer,
+    roles: ['ADMIN', 'MONK', 'VOLUNTEER']
+  },
+  {
+    title: 'Thư Viện Media',
+    href: '/dashboard/media',
+    icon: ImageIcon,
+    roles: ['ADMIN', 'MONK', 'VOLUNTEER']
+  },
+  {
+    title: 'Quản Lý Phôi Sớ',
+    href: '/dashboard/templates',
+    icon: FileText,
+    roles: ['ADMIN']
+  },
+  {
+    title: 'Quản Lý Phân Quyền',
+    href: '/dashboard/users',
+    icon: Users,
+    roles: ['ADMIN', 'MONK']
+  },
+  {
+    title: 'Cấu hình & Nhật ký',
+    href: '/dashboard/settings',
+    icon: Settings,
+    roles: ['ADMIN']
+  }
+]
 
-export default function ClientSidebarNav({ items }: { items: MenuItem[] }) {
+export default function ClientSidebarNav({ role }: { role: string }) {
   const pathname = usePathname()
+  
+  const activeMenus = menuItems.filter(item => item.roles.includes(role) || role === 'MASTER' || role === 'ADMIN')
 
   return (
     <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-      {items.map((item, index) => {
+      {activeMenus.map((item, index) => {
         const Icon = item.icon
         // Active when exact match or starts with path (except for /dashboard itself)
         const isActive = 

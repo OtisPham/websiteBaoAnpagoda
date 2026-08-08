@@ -33,6 +33,7 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [submitAction, setSubmitAction] = useState<'SAVE_AND_CLOSE' | 'SAVE_AND_CONTINUE'>('SAVE_AND_CLOSE')
 
   const selectedEvent = events.find((e) => e.id === eventId)
 
@@ -113,14 +114,38 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
       const res = await createForm(formData, finalTargets)
       if (res.success) {
         setSuccess(`Tạo sớ thành công. Mã phiếu: ${res.formCode}`)
-        setTimeout(() => {
-          setIsOpen(false)
-          setSuccess('')
-          setTargets([{ full_name: '', dharma_name: '', birth_year: undefined, death_year: undefined, relation: '' }])
-          setFormCode('')
-          setTraiChuName('')
-          setTraiChuDharma('')
-        }, 2000)
+        
+        if (submitAction === 'SAVE_AND_CONTINUE') {
+          setTimeout(() => {
+            setSuccess('')
+            setTargets([{ full_name: '', dharma_name: '', birth_year: undefined, death_year: undefined, relation: '' }])
+            setFormCode('')
+            setTraiChuName('')
+            setTraiChuDharma('')
+            setNote('')
+            
+            // Scroll lên đầu và focus vào tên trai chủ
+            const modal = document.getElementById('monk-form-modal-content')
+            if (modal) modal.scrollTo({ top: 0, behavior: 'smooth' })
+            
+            const traiChuInput = document.getElementById('trai-chu-input')
+            if (traiChuInput) {
+              traiChuInput.focus()
+            } else {
+              document.getElementById('monk-target-input-0')?.focus()
+            }
+          }, 1200) // Thời gian ngắn hơn để làm việc nhanh hơn
+        } else {
+          setTimeout(() => {
+            setIsOpen(false)
+            setSuccess('')
+            setTargets([{ full_name: '', dharma_name: '', birth_year: undefined, death_year: undefined, relation: '' }])
+            setFormCode('')
+            setTraiChuName('')
+            setTraiChuDharma('')
+            setNote('')
+          }, 2000)
+        }
       } else {
         setError(res.error || 'Có lỗi xảy ra')
       }
@@ -325,6 +350,7 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
                   <div>
                     <label className="block text-[11px] font-semibold text-stone-500 uppercase tracking-wider">Họ và tên Trai chủ *</label>
                     <input
+                      id="trai-chu-input"
                       type="text"
                       required
                       value={traiChuName}
@@ -501,9 +527,18 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
                 <button
                   type="submit"
                   disabled={loading}
+                  onClick={() => setSubmitAction('SAVE_AND_CLOSE')}
+                  className="px-6 py-2.5 text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl transition shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  Lưu & Đóng
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  onClick={() => setSubmitAction('SAVE_AND_CONTINUE')}
                   className="px-6 py-2.5 text-sm font-semibold text-white bg-amber-700 hover:bg-amber-800 rounded-xl transition shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Đang xử lý...' : 'Tạo Phiếu Sớ'}
+                  {loading ? 'Đang xử lý...' : 'Lưu & Nhập tiếp'}
                 </button>
               </div>
             </form>

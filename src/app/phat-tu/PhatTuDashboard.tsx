@@ -54,6 +54,7 @@ const LUNAR_MONTHS = Array.from({ length: 12 }, (_, i) => (i + 1).toString())
 export default function PhatTuDashboard({ userEmail, userFullName, events, forms }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingForm, setEditingForm] = useState<FormRecord | null>(null)
+  const [submitAction, setSubmitAction] = useState<'SAVE_AND_CLOSE' | 'SAVE_AND_CONTINUE'>('SAVE_AND_CLOSE')
   
   // State của form nhập liệu
   const [formType, setFormType] = useState<'CAU_AN' | 'CAU_SIEU'>('CAU_AN')
@@ -225,10 +226,24 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
 
       if (res.success) {
         setSuccessMsg(editingForm ? 'Cập nhật phiếu thành công!' : `Gửi phiếu thành công! Mã phiếu của bạn là: ${(res as any).formCode || ''}. ${(res as any).assignedSlot ? `Hệ thống đã tự động xếp vào ca cúng: ${(res as any).assignedSlot}` : ''}`)
-        setTimeout(() => {
-          setIsModalOpen(false)
-          window.location.reload()
-        }, editingForm ? 1000 : 4000)
+        
+        if (submitAction === 'SAVE_AND_CONTINUE' && !editingForm) {
+          setTimeout(() => {
+            setSuccessMsg('')
+            setTargets([{ full_name: '', dharma_name: '', birth_year: undefined, death_year: undefined, relation: '' }])
+            setNote('')
+            
+            const modal = document.getElementById('form-modal-content')
+            if (modal) modal.scrollTo({ top: 0, behavior: 'smooth' })
+            
+            document.getElementById('target-input-0')?.focus()
+          }, 1500)
+        } else {
+          setTimeout(() => {
+            setIsModalOpen(false)
+            window.location.reload()
+          }, editingForm ? 1000 : 3000)
+        }
       } else {
         setErrorMsg(res.error || 'Có lỗi xảy ra, vui lòng thử lại.')
       }
@@ -749,17 +764,35 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex items-center gap-1.5 rounded-lg bg-amber-700 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-amber-800 transition"
+                  onClick={() => setSubmitAction('SAVE_AND_CLOSE')}
+                  className={!editingForm ? "flex items-center gap-1.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 px-5 py-2.5 text-sm font-semibold hover:bg-amber-100 transition" : "flex items-center gap-1.5 rounded-lg bg-amber-700 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-amber-800 transition"}
                 >
-                  {isSubmitting ? (
+                  {isSubmitting && submitAction === 'SAVE_AND_CLOSE' ? (
                     <>
                       <RefreshCw className="h-4 w-4 animate-spin" />
                       Đang xử lý...
                     </>
                   ) : (
-                    editingForm ? 'Cập nhật & Gửi lại' : 'Gửi thông tin cúng'
+                    editingForm ? 'Cập nhật & Gửi lại' : 'Gửi & Đóng'
                   )}
                 </button>
+                {!editingForm && (
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    onClick={() => setSubmitAction('SAVE_AND_CONTINUE')}
+                    className="flex items-center gap-1.5 rounded-lg bg-amber-700 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-amber-800 transition"
+                  >
+                    {isSubmitting && submitAction === 'SAVE_AND_CONTINUE' ? (
+                      <>
+                        <RefreshCw className="h-4 w-4 animate-spin" />
+                        Đang xử lý...
+                      </>
+                    ) : (
+                      'Gửi & Nhập tiếp'
+                    )}
+                  </button>
+                )}
               </div>
             </form>
           </div>

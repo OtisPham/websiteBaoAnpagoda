@@ -4,6 +4,7 @@ import { Compass, LayoutDashboard, FileText, Calendar, Landmark, Printer, Settin
 import { createClient } from '@/utils/supabase/server'
 import { signout } from '../auth/actions'
 import PagodaLogo from '@/components/PagodaLogo'
+import ClientSidebarNav from './ClientSidebarNav'
 
 export const dynamic = 'force-dynamic'
 
@@ -143,21 +144,7 @@ export default async function DashboardLayout({
           </div>
 
           {/* Menu Items */}
-          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-            {activeMenus.map((item, index) => {
-              const Icon = item.icon
-              return (
-                <Link
-                  key={index}
-                  href={item.href}
-                  className="flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium rounded-xl text-stone-700 dark:text-stone-300 hover:bg-[#8B4513]/10 hover:text-[#8B4513] dark:hover:bg-stone-900 dark:hover:text-amber-400 active:scale-[0.99] transition-all duration-150"
-                >
-                  <Icon className="h-4 w-4 flex-shrink-0" />
-                  <span>{item.title}</span>
-                </Link>
-              )
-            })}
-          </nav>
+          <ClientSidebarNav items={activeMenus} />
         </div>
 
         {/* Footer Sidebar */}

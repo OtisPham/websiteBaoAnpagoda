@@ -53,6 +53,7 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [eventFilter, setEventFilter] = useState('')
+  const [selectedForms, setSelectedForms] = useState<Set<string>>(new Set())
 
   // Modal chỉnh sửa
   const [selectedForm, setSelectedForm] = useState<FormRecord | null>(null)
@@ -106,6 +107,39 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
 
     return matchesSearch && matchesStatus && matchesType && matchesEvent
   })
+
+  // Phân tách Sớ mới (Submitted) và Sớ cũ
+  const newForms = filteredForms.filter(f => f.status === 'Submitted')
+  const oldForms = filteredForms.filter(f => f.status !== 'Submitted')
+
+  const toggleSelectAll = () => {
+    if (selectedForms.size === newForms.length && newForms.length > 0) {
+      setSelectedForms(new Set())
+    } else {
+      setSelectedForms(new Set(newForms.map(f => f.id)))
+    }
+  }
+
+  const toggleSelect = (id: string) => {
+    const next = new Set(selectedForms)
+    if (next.has(id)) next.delete(id)
+    else next.add(id)
+    setSelectedForms(next)
+  }
+
+  const handleBulkApprove = async () => {
+    if (selectedForms.size === 0) return
+    if (!confirm(`Bạn có chắc muốn duyệt ${selectedForms.size} sớ đang chọn thành "Đã nhận"?`)) return
+    
+    setIsSubmitting(true)
+    let successCount = 0
+    for (const formId of Array.from(selectedForms)) {
+      const res = await updateFormStatus(formId, 'Accepted')
+      if (res.success) successCount++
+    }
+    alert(`Đã duyệt thành công ${successCount}/${selectedForms.size} sớ.`)
+    window.location.reload()
+  }
 
   // Đổi trạng thái nhanh theo State Machine
   const handleStatusChange = async (formId: string, nextStatus: string) => {
@@ -269,14 +303,138 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
     )
   }
 
+  const renderFormRow = (form: FormRecord) => {
+    const donation = form.donations?.[0]
+    const isNew = form.status === 'Submitted'
+    return (
+      <tr key={form.id} className="hover:bg-stone-50/50 dark:hover:bg-stone-900/10">
+        <td className="px-6 py-4">
+          {isNew && (
+            <input
+              type="checkbox"
+              checked={selectedForms.has(form.id)}
+              onChange={() => toggleSelect(form.id)}
+              className="rounded border-stone-300 dark:border-stone-700 text-amber-600 focus:ring-amber-500 cursor-pointer h-4 w-4"
+            />
+          )}
+        </td>
+        <td className="px-6 py-4 space-y-1">
+          <span className="font-bold text-stone-900 dark:text-white">{form.form_code || 'Chưa cấp'}</span>
+          <div>
+            <span className={`inline-block text-[9px] uppercase font-extrabold tracking-widest px-1.5 py-0.5 rounded ${form.form_type === 'CAU_AN' ? 'bg-green-50 text-green-700 border border-green-200/50 dark:bg-green-950/20' : 'bg-rose-50 text-rose-700 border border-rose-200/50 dark:bg-rose-950/20'}`}>
+              {form.form_type === 'CAU_AN' ? 'Cầu An' : 'Cầu Siêu'}
+            </span>
+          </div>
+        </td>
+        <td className="px-6 py-4 space-y-0.5">
+          <div className="font-semibold text-stone-800 dark:text-stone-200">
+            {form.users?.full_name || 'Phật tử ẩn danh'}
+          </div>
+          <div className="text-xs text-stone-500 dark:text-stone-450">{form.users?.phone || 'Không có SĐT'}</div>
+          {form.targets.find(t => t.relation === 'TRAI_CHU') && (
+            <div className="text-[10px] text-amber-700 font-bold mt-1">
+              Đứng tên: {form.targets.find(t => t.relation === 'TRAI_CHU')?.full_name}
+            </div>
+          )}
+        </td>
+        <td className="px-6 py-4 space-y-1">
+          <div className="text-stone-700 dark:text-stone-300 font-medium text-xs">
+            {form.events?.title || 'Không theo sự kiện lớn'}
+          </div>
+          <div className="flex items-center gap-1 text-[11px] text-stone-500 dark:text-stone-450">
+            <Clock className="h-3 w-3" />
+            {form.is_delegated ? (
+              <span className="italic text-amber-700 dark:text-amber-500 font-medium">Ủy nhiệm cho chùa</span>
+            ) : (
+              form.selected_time_slot || 'Chưa gán ca'
+            )}
+          </div>
+        </td>
+        <td className="px-6 py-4">
+          <ul className="list-disc pl-4 text-xs text-stone-600 dark:text-stone-400 space-y-0.5 max-w-xs truncate">
+            {form.targets.filter(t => t.relation !== 'TRAI_CHU').slice(0, 3).map((t, index) => (
+              <li key={t.id || index}>
+                <span className="font-semibold text-stone-800 dark:text-stone-300">{t.full_name}</span>
+                {t.dharma_name && ` (${t.dharma_name})`}
+                {t.birth_year && ` - ${t.birth_year}`}
+              </li>
+            ))}
+            {form.targets.filter(t => t.relation !== 'TRAI_CHU').length > 3 && (
+              <li className="list-none text-stone-400 dark:text-stone-600 font-medium">
+                và {form.targets.filter(t => t.relation !== 'TRAI_CHU').length - 3} người khác...
+              </li>
+            )}
+          </ul>
+        </td>
+        <td className="px-6 py-4">
+          {donation ? (
+            <div className="space-y-1">
+              <div className="font-bold text-stone-800 dark:text-stone-200">
+                {Number(donation.amount).toLocaleString('vi-VN')} đ
+              </div>
+              <span className={`inline-block text-[9px] uppercase font-extrabold tracking-widest px-1.5 py-0.5 rounded ${donation.payment_status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950/20 dark:text-yellow-400'}`}>
+                {donation.payment_status === 'CONFIRMED' ? 'Đã thu' : 'Chưa thu'}
+              </span>
+            </div>
+          ) : (
+            <span className="text-xs text-stone-400 italic">Không đóng góp</span>
+          )}
+        </td>
+        <td className="px-6 py-4 space-y-2">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => openEditModal(form)}
+              className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 rounded text-stone-600 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-500 transition"
+              title="Xem & Sửa thông tin"
+            >
+              <Edit2 className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => handleOpenHistory(form)}
+              className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 rounded text-stone-600 dark:text-stone-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
+              title="Lịch sử chỉnh sửa & in ấn"
+            >
+              <History className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => handleDelete(form.id)}
+              className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 rounded text-stone-600 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400 transition"
+              title="Xoá phiếu"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+            <span className="text-[11px] font-bold text-stone-500 bg-stone-100 dark:bg-stone-800/60 px-2 py-0.5 rounded">
+              {form.status}
+            </span>
+          </div>
+          {renderWorkflowButtons(form)}
+        </td>
+      </tr>
+    )
+  }
+
   return (
     <div className="space-y-6">
-      {/* Tiêu đề */}
+      {/* Tiêu đề & Cột Thao Tác Hàng Loạt */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="font-serif text-3xl font-bold tracking-tight">Quản Lý Phiếu Sớ</h1>
           <p className="text-stone-500 dark:text-stone-400 mt-1">Duyệt sớ, kiểm tra thông tin thụ lễ và quản lý vòng đời phiếu cúng.</p>
         </div>
+        {selectedForms.size > 0 && (
+          <div className="flex items-center gap-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 px-4 py-2 rounded-xl animate-in fade-in slide-in-from-bottom-2">
+            <span className="text-sm font-semibold text-amber-800 dark:text-amber-400">
+              Đã chọn {selectedForms.size} sớ
+            </span>
+            <button
+              onClick={handleBulkApprove}
+              disabled={isSubmitting}
+              className="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm transition disabled:opacity-50"
+            >
+              {isSubmitting ? 'Đang duyệt...' : 'Duyệt tất cả'}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Lọc & Tìm kiếm */}
@@ -347,6 +505,16 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
         <table className="min-w-full divide-y divide-stone-200 dark:divide-stone-800 text-left text-sm">
           <thead className="bg-stone-50 dark:bg-stone-900/40 text-stone-500 dark:text-stone-400 font-bold uppercase tracking-wider text-xs">
             <tr>
+              <th className="px-6 py-4 w-12">
+                <input
+                  type="checkbox"
+                  checked={newForms.length > 0 && selectedForms.size === newForms.length}
+                  onChange={toggleSelectAll}
+                  disabled={newForms.length === 0}
+                  className="rounded border-stone-300 dark:border-stone-700 text-amber-600 focus:ring-amber-500 cursor-pointer h-4 w-4"
+                  title="Chọn tất cả sớ mới"
+                />
+              </th>
               <th className="px-6 py-4">Mã Phiếu & Loại</th>
               <th className="px-6 py-4">Người Đăng Ký</th>
               <th className="px-6 py-4">Lễ & Ca Cúng</th>
@@ -356,107 +524,36 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
             </tr>
           </thead>
           <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
-            {filteredForms.map((form) => {
-              const donation = form.donations?.[0]
-              return (
-                <tr key={form.id} className="hover:bg-stone-50/50 dark:hover:bg-stone-900/10">
-                  <td className="px-6 py-4 space-y-1">
-                    <span className="font-bold text-stone-900 dark:text-white">{form.form_code || 'Chưa cấp'}</span>
-                    <div>
-                      <span className={`inline-block text-[9px] uppercase font-extrabold tracking-widest px-1.5 py-0.5 rounded ${form.form_type === 'CAU_AN' ? 'bg-green-50 text-green-700 border border-green-200/50 dark:bg-green-950/20' : 'bg-rose-50 text-rose-700 border border-rose-200/50 dark:bg-rose-950/20'}`}>
-                        {form.form_type === 'CAU_AN' ? 'Cầu An' : 'Cầu Siêu'}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 space-y-0.5">
-                    <div className="font-semibold text-stone-800 dark:text-stone-200">
-                      {form.users?.full_name || 'Phật tử ẩn danh'}
-                    </div>
-                    <div className="text-xs text-stone-500 dark:text-stone-450">{form.users?.phone || 'Không có SĐT'}</div>
-                    {form.targets.find(t => t.relation === 'TRAI_CHU') && (
-                      <div className="text-[10px] text-amber-700 font-bold mt-1">
-                        Đứng tên: {form.targets.find(t => t.relation === 'TRAI_CHU')?.full_name}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 space-y-1">
-                    <div className="text-stone-700 dark:text-stone-300 font-medium text-xs">
-                      {form.events?.title || 'Không theo sự kiện lớn'}
-                    </div>
-                    <div className="flex items-center gap-1 text-[11px] text-stone-500 dark:text-stone-450">
-                      <Clock className="h-3 w-3" />
-                      {form.is_delegated ? (
-                        <span className="italic text-amber-700 dark:text-amber-500 font-medium">Ủy nhiệm cho chùa</span>
-                      ) : (
-                        form.selected_time_slot || 'Chưa gán ca'
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <ul className="list-disc pl-4 text-xs text-stone-600 dark:text-stone-400 space-y-0.5 max-w-xs truncate">
-                      {form.targets.filter(t => t.relation !== 'TRAI_CHU').slice(0, 3).map((t, index) => (
-                        <li key={t.id || index}>
-                          <span className="font-semibold text-stone-800 dark:text-stone-300">{t.full_name}</span>
-                          {t.dharma_name && ` (${t.dharma_name})`}
-                          {t.birth_year && ` - ${t.birth_year}`}
-                        </li>
-                      ))}
-                      {form.targets.filter(t => t.relation !== 'TRAI_CHU').length > 3 && (
-                        <li className="list-none text-stone-400 dark:text-stone-600 font-medium">
-                          và {form.targets.filter(t => t.relation !== 'TRAI_CHU').length - 3} người khác...
-                        </li>
-                      )}
-                    </ul>
-                  </td>
-                  <td className="px-6 py-4">
-                    {donation ? (
-                      <div className="space-y-1">
-                        <div className="font-bold text-stone-800 dark:text-stone-200">
-                          {Number(donation.amount).toLocaleString('vi-VN')} đ
-                        </div>
-                        <span className={`inline-block text-[9px] uppercase font-extrabold tracking-widest px-1.5 py-0.5 rounded ${donation.payment_status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950/20 dark:text-yellow-400'}`}>
-                          {donation.payment_status === 'CONFIRMED' ? 'Đã thu' : 'Chưa thu'}
-                        </span>
-                      </div>
-                    ) : (
-                      <span className="text-xs text-stone-400 italic">Không đóng góp</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => openEditModal(form)}
-                        className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 rounded text-stone-600 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-500 transition"
-                        title="Xem & Sửa thông tin"
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleOpenHistory(form)}
-                        className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 rounded text-stone-600 dark:text-stone-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
-                        title="Lịch sử chỉnh sửa & in ấn"
-                      >
-                        <History className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(form.id)}
-                        className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 rounded text-stone-600 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400 transition"
-                        title="Xoá phiếu"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                      <span className="text-[11px] font-bold text-stone-500 bg-stone-100 dark:bg-stone-800/60 px-2 py-0.5 rounded">
-                        {form.status}
-                      </span>
-                    </div>
-                    {renderWorkflowButtons(form)}
+            {/* Nhóm Sớ Mới */}
+            {newForms.length > 0 && (
+              <>
+                <tr>
+                  <td colSpan={7} className="bg-amber-50/50 dark:bg-amber-950/20 px-6 py-2 border-l-4 border-amber-500">
+                    <span className="text-xs font-black uppercase tracking-widest text-amber-700 dark:text-amber-500">
+                      ↑ Sớ Mới Gửi (Chờ Duyệt) ↑
+                    </span>
                   </td>
                 </tr>
-              )
-            })}
+                {newForms.map(renderFormRow)}
+              </>
+            )}
+
+            {/* Nhóm Sớ Cũ */}
+            {oldForms.length > 0 && (
+              <>
+                <tr>
+                  <td colSpan={7} className="bg-stone-50 dark:bg-stone-900/40 px-6 py-2 border-l-4 border-stone-300 dark:border-stone-700">
+                    <span className="text-xs font-black uppercase tracking-widest text-stone-500 dark:text-stone-400">
+                      ↓ Sớ Đã Xử Lý ↓
+                    </span>
+                  </td>
+                </tr>
+                {oldForms.map(renderFormRow)}
+              </>
+            )}
             {filteredForms.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-center py-12 text-stone-400 italic">
+                <td colSpan={7} className="text-center py-12 text-stone-400 italic">
                   Không tìm thấy phiếu sớ nào phù hợp bộ lọc.
                 </td>
               </tr>

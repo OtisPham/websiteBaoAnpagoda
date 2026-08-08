@@ -33,6 +33,36 @@ function formatVietnamEventDate(dateStr: string) {
 }
 
 export default async function HomePage() {
+  if (process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#093C5D] via-[#0b486f] to-[#093C5D] flex items-center justify-center p-6 text-white text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay pointer-events-none"></div>
+        <div className="absolute -top-20 -left-20 w-96 h-96 bg-[#5DF8D8]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="max-w-2xl w-full bg-[#051420]/60 backdrop-blur-md border border-[#3B7597]/40 rounded-3xl p-10 md:p-14 shadow-2xl relative z-10 space-y-6">
+          <PagodaLogo className="h-16 w-16 mx-auto text-amber-500 mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
+          <h1 className="font-serif text-3xl md:text-4xl font-bold text-amber-400 tracking-wide">
+            Nam Mô Bổn Sư Thích Ca Mâu Ni Phật
+          </h1>
+          <div className="space-y-4 text-stone-200 text-sm md:text-base leading-relaxed max-w-xl mx-auto font-medium">
+            <p>
+              Kính bạch Chư Tôn Đức Tăng Ni,<br/>
+              Kính thưa Quý Phật tử gần xa,
+            </p>
+            <p>
+              Trang web hiện tại đang được nâng cấp và bảo trì hệ thống định kỳ.
+              Kính mong Quý vị hoan hỷ cảm thông và quay lại sau ít phút nữa.
+            </p>
+            <p className="text-amber-500/90 font-serif italic mt-6 pt-6 border-t border-[#3B7597]/30">
+              Nguyện cầu hồng ân Tam Bảo gia hộ Quý vị thân tâm thường an lạc.
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const supabase = await createClient()
 
   // 1. Lấy thông tin người dùng đang đăng nhập
@@ -572,15 +602,32 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="pt-8 border-t border-[#3B7597]/20 dark:border-[#6FD1D7]/25 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[#093C5D]/65 dark:text-[#e8f7fd]/65">
-            <p>© 2026 Chùa Báo Ân. Tất cả các quyền được bảo lưu trang nghiêm.</p>
-            <Link
-              href="/auth/login"
-              className="text-[#3B7597] dark:text-[#6FD1D7] hover:underline font-semibold flex items-center gap-1"
-            >
-              <span>Cổng Quản Trị Ban Trị Sự & Tăng Ni</span>
-              <ArrowRight className="h-3 w-3" />
-            </Link>
+          <div className="pt-8 border-t border-[#3B7597]/20 dark:border-[#6FD1D7]/25 space-y-6">
+            {/* Disclaimer Section */}
+            <div className="bg-[#093C5D]/5 dark:bg-[#e8f7fd]/5 rounded-2xl p-6 border border-[#3B7597]/10 dark:border-[#6FD1D7]/10">
+              <div className="space-y-4 text-xs md:text-sm text-[#093C5D]/80 dark:text-[#e8f7fd]/80 leading-relaxed text-justify md:text-left font-medium">
+                <p className="font-bold text-[#3B7597] dark:text-[#6FD1D7] text-sm md:text-base mb-2">Nam mô Bổn Sư Thích Ca Mâu Ni Phật.</p>
+                <p>Kính bạch Chư Tôn Đức Tăng Ni,<br/>Kính thưa Quý Phật tử gần xa,</p>
+                <p>
+                  Website của Chùa hiện đang trong quá trình xây dựng và hoàn thiện. Trong thời gian này, một số nội dung, giao diện hoặc chức năng có thể chưa đầy đủ, còn phát sinh sai sót hoặc hiển thị chưa đúng như mong muốn. Đội ngũ kỹ sư đang nỗ lực rà soát, chỉnh sửa và hoàn thiện từng chi tiết, với tâm nguyện sớm mang đến một trang thông tin trang nghiêm, dễ sử dụng và phục vụ tốt cho Quý Chư Tôn Đức cùng Quý Phật tử.
+                </p>
+                <p>
+                  Kính mong Chư Tôn Đức và Quý Phật tử hoan hỷ cảm thông, bỏ qua những điều còn khiếm khuyết trong giai đoạn đầu này. Mọi ý kiến đóng góp hoặc báo lỗi xin hoan hỷ liên hệ báo về <strong>Phật tử Quảng Minh</strong> để khắc phục ngay, xin cảm ơn.
+                </p>
+                <p className="font-bold text-[#3B7597] dark:text-[#6FD1D7]">Nam mô Công Đức Lâm Bồ Tát Ma Ha Tát.</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[#093C5D]/65 dark:text-[#e8f7fd]/65">
+              <p>© 2026 Chùa Báo Ân. Tất cả các quyền được bảo lưu trang nghiêm.</p>
+              <Link
+                href="/auth/login"
+                className="text-[#3B7597] dark:text-[#6FD1D7] hover:underline font-semibold flex items-center gap-1"
+              >
+                <span>Cổng Quản Trị Ban Trị Sự & Tăng Ni</span>
+                <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
           </div>
         </div>
       </footer>

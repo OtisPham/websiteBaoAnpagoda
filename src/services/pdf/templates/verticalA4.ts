@@ -205,7 +205,7 @@ export function generateVerticalA4Template(
 
               <!-- Target List Section -->
               <div style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
-                <h3 style="font-family: 'Times New Roman', serif; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #78350f; border-bottom: 1px solid rgba(120, 53, 15, 0.2); padding-bottom: 8px; margin: 0 0 12px 0; flex-shrink: 0;">
+                <h3 style="font-family: 'Times New Roman', serif; font-weight: bold; text-align: center; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #78350f; border-bottom: 1px solid rgba(120, 53, 15, 0.2); padding-bottom: 8px; margin: 0 0 12px 0; flex-shrink: 0;">
                   ${
                     isCauAn
                       ? 'Danh Sách Hương Linh & Phật Tử Cầu An Tiêu Tai'

@@ -101,6 +101,9 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
       if (modal) {
         modal.scrollTo({ top: modal.scrollHeight, behavior: 'smooth' })
       }
+      const nextIndex = targets.length
+      const inputEl = document.getElementById(`target-input-${nextIndex}`)
+      if (inputEl) inputEl.focus()
     }, 50)
   }
 
@@ -624,6 +627,7 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                         <div>
                           <label className="block text-[11px] font-semibold text-stone-500 uppercase tracking-wider">Họ và Tên</label>
                           <input
+                            id={`target-input-${index}`}
                             type="text"
                             required
                             placeholder="Nguyễn Văn B"

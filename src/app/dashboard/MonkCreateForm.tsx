@@ -43,6 +43,9 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
       if (modal) {
         modal.scrollTo({ top: modal.scrollHeight, behavior: 'smooth' })
       }
+      const nextIndex = targets.length
+      const inputEl = document.getElementById(`monk-target-input-${nextIndex}`)
+      if (inputEl) inputEl.focus()
     }, 50)
   }
 
@@ -360,6 +363,7 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
                       <div className="sm:col-span-3 space-y-1">
                         <label className="text-[11px] font-semibold text-stone-500 uppercase">Họ và tên *</label>
                         <input
+                          id={`monk-target-input-${index}`}
                           required
                           type="text"
                           value={target.full_name}

@@ -4,7 +4,7 @@ import { FormRecord, TargetPerson, TemplateOptions } from '../types';
  * HTML/CSS generator for Vertical A4 / Dọc A4 (A4 Portrait)
  * Specs:
  * - A4 Portrait layout (180mm x 273mm printable inner frame, outer 210mm x 297mm)
- * - Header: "Phật Giáo Việt Nam • Bổn Tự Chùa Báo Ân"
+ * - Header: "Phật Giáo Việt Nam • Chùa Báo Ân"
  * - Titles: "Sớ Phục Nguyện Cầu An" / "Sớ Phục Nguyện Cầu Siêu"
  * - Invocations: Dược Sư (Cầu An) / A Di Đà (Cầu Siêu)
  * - Seal: Red double-border square "Báo Ân Cổ Tự Pháp Ấn"
@@ -234,7 +234,7 @@ export function generateVerticalA4Template(
                   <p style="margin: 16px 0 0 0; font-style: italic; color: #71717a;">(Đã đăng ký trực tuyến)</p>
                 </div>
                 <div>
-                  <p style="font-family: 'Times New Roman', serif; font-weight: bold; color: #18181b; font-size: 14px; margin: 0;">Chùa Báo Ân • Bổn Tự Khâm Nguyện</p>
+                  <p style="font-family: 'Times New Roman', serif; font-weight: bold; color: #18181b; font-size: 14px; margin: 0;">Chùa Báo Ân • Khâm Nguyện</p>
                   <p style="margin: 16px 0 0 0; font-weight: 600; color: #78350f;">Khám Ấn Duyệt Sớ</p>
                 </div>
               </div>

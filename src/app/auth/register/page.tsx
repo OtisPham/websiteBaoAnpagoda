@@ -64,7 +64,7 @@ function RegisterContent() {
                 Chùa Báo Ân
               </span>
               <span className="text-[10px] tracking-[0.24em] uppercase font-semibold text-[#5DF8D8] block">
-                Bổn Tự Pháp Ấn
+                Tại Chùa
               </span>
             </div>
           </Link>
@@ -262,9 +262,10 @@ function RegisterContent() {
               className="hover:text-[#3B7597] dark:hover:text-[#6FD1D7] transition inline-flex items-center gap-1.5"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Quay lại Trang Chủ Chùa Báo Ân</span>
+              <span className="font-semibold text-stone-900 dark:text-white">Chùa Báo Ân</span>
             </Link>
-            <span>Bổn Tự Pháp Ấn</span>
+            <span className="mx-2 text-stone-300 dark:text-stone-700">•</span>
+            <span>Chùa Báo Ân</span>
           </div>
         </div>
       </div>

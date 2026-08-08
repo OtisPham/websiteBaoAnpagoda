@@ -47,9 +47,9 @@ export default function AdminSettingsDashboard({ settings, auditLogs }: Props) {
     setSuccessMsg('')
 
     try {
-      const res1 = await updateSetting('temple_name', templeName, 'Tên bổn tự chùa')
-      const res2 = await updateSetting('temple_address', templeAddress, 'Địa chỉ của chùa')
-      const res3 = await updateSetting('temple_phone', templePhone, 'Số điện thoại bổn tự')
+      const res1 = await updateSetting('temple_name', templeName, 'Tên chùa')
+      const res2 = await updateSetting('temple_address', templeAddress, 'Địa chỉ chùa')
+      const res3 = await updateSetting('temple_phone', templePhone, 'Số điện thoại chùa')
       const res4 = await updateSetting('bank_qr', bankQr, 'Link ảnh QR cúng dường')
 
       if (res1.success && res2.success && res3.success && res4.success) {
@@ -83,7 +83,7 @@ export default function AdminSettingsDashboard({ settings, auditLogs }: Props) {
       {/* Tiêu đề */}
       <div>
         <h1 className="font-serif text-3xl font-bold tracking-tight">Hệ Thống & Nhật Ký Audit Log</h1>
-        <p className="text-stone-500 dark:text-stone-400 mt-1">Cấu hình thông tin bổn tự và giám sát lịch sử thao tác của ban quản lý.</p>
+        <p className="text-stone-500 dark:text-stone-400 mt-1">Cấu hình thông tin nhà chùa và giám sát lịch sử thao tác của ban quản lý.</p>
       </div>
 
       {/* Tabs */}
@@ -106,7 +106,7 @@ export default function AdminSettingsDashboard({ settings, auditLogs }: Props) {
         // TAB 1: CẤU HÌNH HỆ THỐNG
         <div className="bg-white dark:bg-[#1c1816] p-6 md:p-8 rounded-2xl border border-stone-200 dark:border-stone-850 shadow-sm max-w-xl">
           <h3 className="font-serif text-lg font-bold border-b border-stone-100 dark:border-stone-800 pb-3 mb-6">
-            Thông Tin Bổn Tự Chùa
+            Thông Tin Chùa
           </h3>
 
           {errorMsg && (
@@ -124,7 +124,7 @@ export default function AdminSettingsDashboard({ settings, auditLogs }: Props) {
 
           <form onSubmit={handleSaveSettings} className="space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-stone-750 dark:text-stone-300">Tên Bổn Tự Chùa</label>
+              <label className="block text-sm font-semibold text-stone-750 dark:text-stone-300">Tên Chùa</label>
               <input
                 type="text"
                 required
@@ -135,7 +135,7 @@ export default function AdminSettingsDashboard({ settings, auditLogs }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-stone-750 dark:text-stone-300">Địa chỉ bổn tự</label>
+              <label className="block text-sm font-semibold text-stone-750 dark:text-stone-300">Địa chỉ nhà chùa</label>
               <input
                 type="text"
                 required

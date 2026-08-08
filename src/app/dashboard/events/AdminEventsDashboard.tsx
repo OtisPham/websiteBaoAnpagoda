@@ -134,7 +134,7 @@ export default function AdminEventsDashboard({ events }: Props) {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="font-serif text-3xl font-bold tracking-tight">Đại Lễ & Khung Giờ Cúng</h1>
-          <p className="text-stone-500 dark:text-stone-400 mt-1">Cấu hình các sự kiện lễ của bổn tự và cài đặt sức chứa cho từng ca cúng.</p>
+          <p className="text-stone-500 dark:text-stone-400 mt-1">Cấu hình các sự kiện lễ của chùa và cài đặt sức chứa cho từng ca cúng.</p>
         </div>
         <button
           onClick={openCreateModal}

@@ -62,6 +62,65 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
     setTargets(newTargets)
   }
 
+  const downloadTemplate = async () => {
+    try {
+      const { utils, writeFile } = await import('xlsx');
+      const ws = utils.aoa_to_sheet([
+        ['Họ và Tên', 'Pháp Danh', 'Năm Sinh', 'Năm Mất', 'Mối Quan Hệ'],
+        ['Nguyễn Văn A', 'Tự Phúc Hạnh', 1980, '', 'Cha']
+      ]);
+      const wb = utils.book_new();
+      utils.book_append_sheet(wb, ws, 'Mau_Nhap_So');
+      writeFile(wb, 'Mau_Nhap_So.xlsx');
+    } catch (err) {
+      console.error(err);
+      alert('Không thể tải file mẫu. Vui lòng thử lại sau.');
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const { read, utils } = await import('xlsx');
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const data = evt.target?.result;
+        const wb = read(data, { type: 'binary' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const jsonData = utils.sheet_to_json(ws, { header: 1 }) as any[][];
+        
+        // Skip header row
+        const rows = jsonData.slice(1).filter(row => row.length > 0 && row[0]);
+        
+        const newTargets = rows.map(row => ({
+          full_name: row[0] || '',
+          dharma_name: row[1] || '',
+          birth_year: row[2] ? parseInt(row[2]) : undefined,
+          death_year: row[3] ? parseInt(row[3]) : undefined,
+          relation: row[4] || ''
+        }));
+
+        if (newTargets.length > 0) {
+          setTargets(prev => {
+            const filteredPrev = prev.filter(t => t.full_name.trim() !== '');
+            return [...filteredPrev, ...newTargets];
+          });
+          alert(`Đã nhập thành công ${newTargets.length} tên từ file Excel!`);
+        } else {
+          alert('Không tìm thấy dữ liệu hợp lệ trong file Excel.');
+        }
+      };
+      reader.readAsBinaryString(file);
+    } catch (err) {
+      console.error(err);
+      alert('Có lỗi xảy ra khi đọc file Excel.');
+    }
+    // reset input
+    e.target.value = '';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -372,15 +431,35 @@ export default function MonkCreateForm({ events }: MonkCreateFormProps) {
 
               {/* Danh sách thụ lễ */}
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <h3 className="font-serif text-lg font-bold">Danh sách {formType === 'CAU_AN' ? 'Phật tử cầu an' : 'Hương linh'}</h3>
-                  <button
-                    type="button"
-                    onClick={handleAddTarget}
-                    className="flex items-center gap-1 text-sm font-medium text-amber-700 hover:text-amber-800 bg-amber-50 px-3 py-1.5 rounded-lg transition"
-                  >
-                    <Plus className="h-4 w-4" /> Thêm người
-                  </button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={downloadTemplate}
+                      className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-400 px-3 py-1.5 rounded-lg transition border border-emerald-200 dark:border-emerald-800"
+                    >
+                      <FileText className="h-3.5 w-3.5" /> Tải file mẫu
+                    </button>
+                    
+                    <label className="flex items-center gap-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/30 dark:text-blue-400 px-3 py-1.5 rounded-lg transition border border-blue-200 dark:border-blue-800 cursor-pointer">
+                      <Plus className="h-3.5 w-3.5" /> Nhập từ Excel
+                      <input 
+                        type="file" 
+                        accept=".xlsx, .xls" 
+                        className="hidden" 
+                        onChange={handleFileUpload} 
+                      />
+                    </label>
+
+                    <button
+                      type="button"
+                      onClick={handleAddTarget}
+                      className="flex items-center gap-1.5 text-xs font-semibold text-amber-700 hover:text-amber-800 bg-amber-50 px-3 py-1.5 rounded-lg transition"
+                    >
+                      <Plus className="h-3.5 w-3.5" /> Thêm 1 người
+                    </button>
+                  </div>
                 </div>
 
                 <div className="space-y-4">

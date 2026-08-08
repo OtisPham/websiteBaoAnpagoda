@@ -5,6 +5,9 @@ import { FileText, Search, Edit2, Trash2, CheckCircle2, AlertTriangle, XCircle, 
 import { updateFormStatus, updateAdminForm, softDeleteForm, getFormRevisions, getPrintHistory } from './actions'
 import { TargetPersonInput } from '@/app/phat-tu/actions'
 
+const LUNAR_DAYS = Array.from({ length: 30 }, (_, i) => (i + 1).toString())
+const LUNAR_MONTHS = Array.from({ length: 12 }, (_, i) => (i + 1).toString())
+
 interface EventData {
   id: string
   title: string
@@ -58,7 +61,9 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('')
   const [scheduledDate, setScheduledDate] = useState('')
   const [note, setNote] = useState('')
-  const [targets, setTargets] = useState<TargetPersonInput[]>([])
+  const [traiChuName, setTraiChuName] = useState('')
+  const [traiChuDharma, setTraiChuDharma] = useState('')
+  const [targets, setTargets] = useState<TargetPersonInput[]>([{ full_name: '', relation: '' }])
 
   // Modal Lịch sử Audit Log & Print History
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
@@ -132,13 +137,22 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
     setSelectedTimeSlot(form.selected_time_slot || '')
     setScheduledDate(form.scheduled_date)
     setNote(form.note || '')
-    setTargets(form.targets.map((t) => ({
-      full_name: t.full_name,
-      dharma_name: t.dharma_name || undefined,
-      birth_year: t.birth_year || undefined,
-      death_year: t.death_year || undefined,
-      relation: t.relation || undefined
-    })))
+    const traiChu = form.targets.find(t => t.relation === 'TRAI_CHU')
+    setTraiChuName(traiChu ? traiChu.full_name : '')
+    setTraiChuDharma(traiChu ? (traiChu.dharma_name || '') : '')
+
+    const otherTargets = form.targets.filter(t => t.relation !== 'TRAI_CHU')
+    if (otherTargets.length === 0) {
+      setTargets([{ full_name: '', relation: '' }])
+    } else {
+      setTargets(otherTargets.map((t) => ({
+        full_name: t.full_name,
+        dharma_name: t.dharma_name || undefined,
+        birth_year: t.birth_year || undefined,
+        death_year: t.death_year || undefined,
+        relation: t.relation || undefined
+      })))
+    }
     setErrorMsg('')
     setIsEditModalOpen(true)
   }
@@ -172,6 +186,15 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
       return
     }
 
+    const finalTargets = [...targets]
+    if (traiChuName.trim()) {
+      finalTargets.push({
+        full_name: traiChuName,
+        dharma_name: traiChuDharma,
+        relation: 'TRAI_CHU'
+      })
+    }
+
     const res = await updateAdminForm(
       selectedForm.id,
       selectedForm.form_type,
@@ -180,7 +203,7 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
       selectedForm.event_id || null,
       scheduledDate,
       note,
-      targets
+      finalTargets
     )
 
     if (res.success) {
@@ -200,39 +223,10 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
         {current === 'Submitted' && (
           <>
             <button
-              onClick={() => handleStatusChange(form.id, 'Waiting Verification')}
-              className="bg-yellow-50 text-yellow-700 border border-yellow-200 hover:bg-yellow-100 px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 transition"
-            >
-              Chờ duyệt tịnh tài
-            </button>
-            <button
               onClick={() => handleStatusChange(form.id, 'Accepted')}
               className="bg-amber-600 text-white hover:bg-amber-700 px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 transition"
             >
               Duyệt sớ (Nhận lễ)
-            </button>
-            <button
-              onClick={() => handleStatusChange(form.id, 'Rejected')}
-              className="bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 transition"
-            >
-              Từ chối
-            </button>
-          </>
-        )}
-
-        {current === 'Waiting Verification' && (
-          <>
-            <button
-              onClick={() => handleStatusChange(form.id, 'Accepted')}
-              className="bg-amber-600 text-white hover:bg-amber-700 px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 transition"
-            >
-              Duyệt sớ (Nhận lễ)
-            </button>
-            <button
-              onClick={() => handleStatusChange(form.id, 'Rejected')}
-              className="bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 transition"
-            >
-              Từ chối
             </button>
           </>
         )}
@@ -310,7 +304,6 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
           >
             <option value="" className="bg-white dark:bg-[#1c1816]">Tất cả trạng thái</option>
             <option value="Submitted" className="bg-white dark:bg-[#1c1816]">Mới gửi (Chờ duyệt)</option>
-            <option value="Waiting Verification" className="bg-white dark:bg-[#1c1816]">Chờ duyệt tịnh tài</option>
             <option value="Accepted" className="bg-white dark:bg-[#1c1816]">Đã nhận, chờ đọc</option>
             <option value="Printed" className="bg-white dark:bg-[#1c1816]">Đã in sớ</option>
             <option value="Completed" className="bg-white dark:bg-[#1c1816]">Đã hoàn thành</option>
@@ -504,17 +497,40 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-stone-700 dark:text-stone-300">Ngày làm lễ</label>
-                  <input
-                    type="date"
-                    required
-                    value={scheduledDate}
-                    onChange={(e) => setScheduledDate(e.target.value)}
-                    className="mt-1 block w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 focus:outline-none sm:text-sm"
-                  />
+                  <label className="block text-[11px] font-semibold text-stone-500 uppercase mb-1">Ngày làm lễ</label>
+                  {selectedForm.form_type === 'CAU_SIEU' ? (
+                    <div className="flex gap-2">
+                      <select
+                        value={scheduledDate && scheduledDate.startsWith('Ngày') ? scheduledDate.split('Ngày ')[1]?.split(' ')[0] : '15'}
+                        onChange={(e) => setScheduledDate(`Ngày ${e.target.value} Tháng ${scheduledDate && scheduledDate.startsWith('Ngày') ? scheduledDate.split('Tháng ')[1] : '7'}`)}
+                        required={!isDelegated}
+                        className="w-1/2 bg-white dark:bg-[#12100e] border border-stone-200 dark:border-stone-800 rounded-xl px-4 py-2.5 outline-none focus:border-amber-500 transition sm:text-sm"
+                      >
+                        <option value="" disabled>Ngày</option>
+                        {LUNAR_DAYS.map(d => <option key={d} value={d} className="bg-white dark:bg-[#1c1816]">Ngày {d}</option>)}
+                      </select>
+                      <select
+                        value={scheduledDate && scheduledDate.startsWith('Ngày') ? scheduledDate.split('Tháng ')[1] : '7'}
+                        onChange={(e) => setScheduledDate(`Ngày ${scheduledDate && scheduledDate.startsWith('Ngày') ? scheduledDate.split('Ngày ')[1]?.split(' ')[0] : '15'} Tháng ${e.target.value}`)}
+                        required={!isDelegated}
+                        className="w-1/2 bg-white dark:bg-[#12100e] border border-stone-200 dark:border-stone-800 rounded-xl px-4 py-2.5 outline-none focus:border-amber-500 transition sm:text-sm"
+                      >
+                        <option value="" disabled>Tháng</option>
+                        {LUNAR_MONTHS.map(m => <option key={m} value={m} className="bg-white dark:bg-[#1c1816]">Tháng {m}</option>)}
+                      </select>
+                    </div>
+                  ) : (
+                    <input
+                      type="date"
+                      required
+                      value={scheduledDate && !scheduledDate.startsWith('Ngày') ? scheduledDate : ''}
+                      onChange={(e) => setScheduledDate(e.target.value)}
+                      className="mt-1 block w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 focus:outline-none sm:text-sm"
+                    />
+                  )}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-stone-700 dark:text-stone-300">Phân ca cúng</label>
+                  <label className="block text-[11px] font-semibold text-stone-500 uppercase mb-1">Phân ca cúng</label>
                   <div className="mt-3 flex items-center gap-4">
                     <div className="flex items-center gap-1.5">
                       <input
@@ -537,6 +553,35 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
                         className="flex-1 rounded-lg border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-1 text-stone-900 dark:text-white focus:border-amber-500 focus:ring-amber-500 focus:outline-none sm:text-xs"
                       />
                     )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Thông tin Trai chủ */}
+              <div className="bg-stone-50 dark:bg-stone-900/30 border border-stone-200 dark:border-stone-800 rounded-xl p-4 space-y-3">
+                <label className="block text-sm font-semibold text-stone-900 dark:text-stone-100 mb-2">
+                  Thông Tin Trai Chủ (Người đứng tên)
+                </label>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-stone-500 uppercase tracking-wider">Họ và tên Trai chủ *</label>
+                    <input
+                      id="admin-trai-chu-input"
+                      type="text"
+                      required
+                      value={traiChuName}
+                      onChange={(e) => setTraiChuName(e.target.value)}
+                      className="mt-1 block w-full rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-[#12100e] px-3 py-2 text-stone-900 dark:text-white sm:text-sm focus:border-amber-500 focus:outline-none transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-stone-500 uppercase tracking-wider">Pháp danh (Nếu có)</label>
+                    <input
+                      type="text"
+                      value={traiChuDharma}
+                      onChange={(e) => setTraiChuDharma(e.target.value)}
+                      className="mt-1 block w-full rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-[#12100e] px-3 py-2 text-stone-900 dark:text-white sm:text-sm focus:border-amber-500 focus:outline-none transition"
+                    />
                   </div>
                 </div>
               </div>

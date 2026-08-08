@@ -410,7 +410,7 @@ export default async function HomePage() {
             </div>
             <p className="text-sm text-[#093C5D]/75 dark:text-[#e8f7fd]/75 max-w-md">
               Kính mời quý Phật tử sắp xếp thời gian quang lâm tham dự các thời khóa hành lễ trang
-              nghiêm tại bổn tự.
+              nghiêm tại chùa.
             </p>
           </div>
 
@@ -523,7 +523,7 @@ export default async function HomePage() {
               Bước Vào Chốn Tĩnh Lặng • Tìm Về An Nhiên
             </h2>
             <p className="mx-auto max-w-2xl text-white/90 text-sm sm:text-base leading-relaxed">
-              Kính mời quý Phật tử và thiện hữu xa gần sắp xếp thời gian quang lâm bổn tự chiêm bái,
+              Kính mời quý Phật tử và thiện hữu xa gần sắp xếp thời gian quang lâm nhà chùa chiêm bái,
               tham dự các thời khóa tu học và trải nghiệm đời sống chánh niệm thanh tịnh.
             </p>
           </div>
@@ -548,7 +548,7 @@ export default async function HomePage() {
               <div className="flex items-center gap-3">
                 <PagodaLogo className="h-9 w-9" />
                 <span className="font-serif text-lg font-bold text-[#093C5D] dark:text-white">
-                  Chùa Báo Ân • Bổn Tự Pháp Ấn
+                  Chùa Báo Ân
                 </span>
               </div>
               <p className="text-xs text-[#093C5D]/75 dark:text-[#e8f7fd]/75 max-w-md leading-relaxed">

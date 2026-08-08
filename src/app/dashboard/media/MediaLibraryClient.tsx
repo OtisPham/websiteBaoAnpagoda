@@ -29,7 +29,7 @@ export default function MediaLibraryClient({ initialItems, userRole }: Props) {
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
-  const folders = ['ALL', 'Phôi Sớ', 'Đại Lễ', 'Bài Viết', 'Bổn Tự', 'Chung']
+  const folders = ['ALL', 'Phôi Sớ', 'Đại Lễ', 'Bài Viết', 'Nhà Chùa', 'Chung']
 
   const filteredItems = items.filter((item) => {
     const matchesFolder = activeFolder === 'ALL' || item.folder === activeFolder
@@ -138,7 +138,7 @@ export default function MediaLibraryClient({ initialItems, userRole }: Props) {
             Thư Viện Media & Phôi Mẫu
           </h1>
           <p className="text-stone-500 dark:text-stone-400 text-sm mt-1">
-            Lưu trữ hình ảnh bổn tự, phôi sớ nền, ảnh sự kiện đại lễ và minh họa bài viết phật sự.
+            Lưu trữ hình ảnh nhà chùa, phôi sớ nền, ảnh sự kiện đại lễ và minh họa bài viết phật sự.
           </p>
         </div>
 
@@ -340,7 +340,7 @@ export default function MediaLibraryClient({ initialItems, userRole }: Props) {
                   <option value="Phôi Sớ">Phôi Sớ (Templates)</option>
                   <option value="Đại Lễ">Đại Lễ & Ca Cúng</option>
                   <option value="Bài Viết">Bài Viết & Tin Tức</option>
-                  <option value="Bổn Tự">Hình Ảnh Bổn Tự</option>
+                  <option value="Nhà Chùa">Hình Ảnh Nhà Chùa</option>
                   <option value="Chung">Chung</option>
                 </select>
               </div>

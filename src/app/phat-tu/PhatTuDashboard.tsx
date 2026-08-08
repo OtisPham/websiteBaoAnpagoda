@@ -326,7 +326,7 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
           <div className="space-y-2">
             <h1 className="font-serif text-2xl sm:text-3xl font-bold">Nam Mô A Di Đà Phật!</h1>
             <p className="text-amber-100 text-sm max-w-xl">
-              Chào đạo hữu {userFullName}. Đạo hữu có thể gửi phiếu đăng ký Cầu An, Cầu Siêu và cúng dường trực tuyến tại đây. Các phiếu này sẽ được Tăng Ni và phụng sự viên bổn tự tiếp nhận và chuẩn bị sớ điệp trang nghiêm.
+              Chào đạo hữu {userFullName}. Đạo hữu có thể gửi phiếu đăng ký Cầu An, Cầu Siêu và cúng dường trực tuyến tại đây. Các phiếu này sẽ được Tăng Ni và phụng sự viên nhà chùa tiếp nhận và chuẩn bị sớ điệp trang nghiêm.
             </p>
           </div>
           <button
@@ -427,18 +427,11 @@ export default function PhatTuDashboard({ userEmail, userFullName, events, forms
                           <Edit2 className="h-3.5 w-3.5" />
                           Chỉnh sửa
                         </button>
-                        <button
-                          onClick={() => handleCancel(form.id)}
-                          className="flex items-center gap-1.5 rounded-lg border border-red-200 text-red-600 px-3.5 py-2 text-xs font-semibold hover:bg-red-50 dark:border-red-950 dark:text-red-400 dark:hover:bg-red-950/20 transition"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                          Hủy phiếu
-                        </button>
                       </>
                     ) : (
                       <span className="text-xs italic text-stone-400 flex items-center gap-1">
                         <Info className="h-3.5 w-3.5" />
-                        Đã quá 24h hoặc sớ đã in, không thể sửa/hủy
+                        Đã quá 24h hoặc sớ đã in, không thể sửa
                       </span>
                     )}
                   </div>

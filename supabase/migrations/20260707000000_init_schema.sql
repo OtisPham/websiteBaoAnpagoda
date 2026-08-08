@@ -206,9 +206,9 @@ begin
   if tg_table_name = 'forms' then
     if new.form_code is null then
       if new.form_type = 'CAU_AN' then
-        new.form_code := 'CA' || lpad(nextval('public.cau_an_seq')::text, 3, '0');
+        new.form_code := 'CA' || lpad(nextval('public.cau_an_seq')::text, 4, '0');
       else
-        new.form_code := 'CS' || lpad(nextval('public.cau_sieu_seq')::text, 3, '0');
+        new.form_code := 'CS' || lpad(nextval('public.cau_sieu_seq')::text, 4, '0');
       end if;
     end if;
   elsif tg_table_name = 'donations' then

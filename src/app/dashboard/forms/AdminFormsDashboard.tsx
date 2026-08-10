@@ -748,7 +748,6 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
                             <label className="block text-[10px] font-semibold text-stone-500 uppercase tracking-wider">Năm mất</label>
                             <input
                               type="number"
-                              required={selectedForm.form_type === 'CAU_SIEU'}
                               value={target.death_year || ''}
                               onChange={(e) => updateTargetField(index, 'death_year', e.target.value ? parseInt(e.target.value) : undefined)}
                               className="mt-1 block w-full rounded-md border border-stone-300 dark:border-stone-700 bg-transparent px-2.5 py-1.5 text-stone-900 dark:text-white sm:text-xs"

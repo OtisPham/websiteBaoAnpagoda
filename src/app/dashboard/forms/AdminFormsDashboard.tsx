@@ -167,6 +167,7 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
   // Mở form edit cho admin
   const openEditModal = (form: FormRecord) => {
     setSelectedForm(form)
+    setEditFormCode(form.form_code)
     setIsDelegated(form.is_delegated)
     setSelectedTimeSlot(form.selected_time_slot || '')
     setScheduledDate(form.scheduled_date)
@@ -237,7 +238,8 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
       selectedForm.event_id || null,
       scheduledDate,
       note,
-      finalTargets
+      finalTargets,
+      editFormCode.trim() !== selectedForm.form_code ? editFormCode.trim() : undefined
     )
 
     if (res.success) {
@@ -585,6 +587,19 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
             )}
 
             <form onSubmit={handleEditSubmit} className="space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-semibold text-stone-500 uppercase tracking-wider">Mã Số Sớ</label>
+                  <input
+                    type="text"
+                    value={editFormCode}
+                    onChange={(e) => setEditFormCode(e.target.value.toUpperCase())}
+                    required
+                    className="mt-1 block w-full rounded-md border border-stone-300 dark:border-stone-700 bg-transparent px-3 py-2 text-stone-900 dark:text-white text-sm font-bold tracking-wider"
+                  />
+                </div>
+              </div>
+
               <div className="bg-stone-50 dark:bg-stone-900/40 p-4 rounded-xl border border-stone-200/50 dark:border-stone-800/40 text-xs space-y-1">
                 <p className="font-semibold text-stone-700 dark:text-stone-300">Thông tin Phật tử đăng ký:</p>
                 <p>Họ tên: {selectedForm.users?.full_name}</p>

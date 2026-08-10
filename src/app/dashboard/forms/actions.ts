@@ -92,7 +92,8 @@ export async function updateAdminForm(
   eventId: string | null,
   scheduledDate: string,
   note: string,
-  targets: TargetPersonInput[]
+  targets: TargetPersonInput[],
+  formCode?: string
 ) {
   try {
     const { supabase, user } = await checkAuthAndRole()
@@ -119,11 +120,15 @@ export async function updateAdminForm(
         scheduled_date: scheduledDate,
         selected_time_slot: finalSlot || null,
         note: note,
+        ...(formCode ? { form_code: formCode } : {}),
         updated_at: new Date().toISOString()
       })
       .eq('id', formId)
 
     if (formError) {
+      if (formError.code === '23505') {
+        return { success: false, error: 'Mã sớ này đã tồn tại, vui lòng nhập mã khác.' }
+      }
       return { success: false, error: formError.message }
     }
 

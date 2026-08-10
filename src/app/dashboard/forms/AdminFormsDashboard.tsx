@@ -416,6 +416,12 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
     )
   }
 
+  const caNums = forms.filter(f => f.form_type === 'CAU_AN').map(f => parseInt(f.form_code?.replace(/\D/g, '') || '0', 10))
+  const maxCa = caNums.length > 0 ? Math.max(...caNums) : 0
+  
+  const csNums = forms.filter(f => f.form_type === 'CAU_SIEU').map(f => parseInt(f.form_code?.replace(/\D/g, '') || '0', 10))
+  const maxCs = csNums.length > 0 ? Math.max(...csNums) : 0
+
   return (
     <div className="space-y-6">
       {/* Tiêu đề & Cột Thao Tác Hàng Loạt */}
@@ -423,6 +429,14 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
         <div>
           <h1 className="font-serif text-3xl font-bold tracking-tight">Quản Lý Phiếu Sớ</h1>
           <p className="text-stone-500 dark:text-stone-400 mt-1">Duyệt sớ, kiểm tra thông tin thụ lễ và quản lý vòng đời phiếu cúng.</p>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold uppercase tracking-wider">
+            <span className="text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200/50 dark:border-green-900/50 px-2 py-1 rounded">
+              Số Cầu An lớn nhất: CA{maxCa.toString().padStart(4, '0')}
+            </span>
+            <span className="text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 border border-rose-200/50 dark:border-rose-900/50 px-2 py-1 rounded">
+              Số Cầu Siêu lớn nhất: CS{maxCs.toString().padStart(4, '0')}
+            </span>
+          </div>
         </div>
         {selectedForms.size > 0 && (
           <div className="flex items-center gap-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 px-4 py-2 rounded-xl animate-in fade-in slide-in-from-bottom-2">

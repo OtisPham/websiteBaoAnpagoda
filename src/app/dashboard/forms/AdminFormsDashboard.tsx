@@ -64,6 +64,7 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
   const [note, setNote] = useState('')
   const [traiChuName, setTraiChuName] = useState('')
   const [traiChuDharma, setTraiChuDharma] = useState('')
+  const [editFormCode, setEditFormCode] = useState('')
   const [targets, setTargets] = useState<TargetPersonInput[]>([{ full_name: '', relation: '' }])
 
   // Modal Lịch sử Audit Log & Print History

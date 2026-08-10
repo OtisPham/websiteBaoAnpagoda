@@ -15,8 +15,8 @@ export function generateHorizontalTemplate(
   options?: TemplateOptions
 ): string {
   const formList = Array.isArray(forms) ? forms : [forms];
-  // Cho phép tối đa 26 tên (dòng) mỗi cột thay vì 24 mặc định để tận dụng chỗ trống bên dưới
-  const pages: HorizontalPage[] = chunkHorizontalColumns(formList, 26, 4);
+  // Cho phép tối đa 24 tên (dòng) mỗi cột
+  const pages: HorizontalPage[] = chunkHorizontalColumns(formList, 24, 4);
 
   if (pages.length === 0) {
     return `<div class="empty-state" style="text-align: center; padding: 40px; font-family: 'Times New Roman', serif;">Không có dữ liệu phiếu sớ để in.</div>`;
@@ -71,14 +71,15 @@ export function generateHorizontalTemplate(
         .join('');
 
       return `
-        <div class="so-page-block horizontal-page" style="page-break-after: always; width: 297mm; height: 210mm; max-width: 297mm; max-height: 210mm; margin: 0 auto; padding: 8px; background: #ffffff; color: #000000; display: flex; align-items: center; justify-content: center; overflow: hidden; box-sizing: border-box;">
-          <table style="width: max-content; margin: 0 auto; border-collapse: collapse; table-layout: fixed; height: 19cm;">
+        <div class="so-page-block horizontal-page" style="page-break-after: always; width: 297mm; height: 210mm; max-width: 297mm; max-height: 210mm; margin: 0 auto; padding: 8px; background: #ffffff; color: #000000; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; overflow: hidden; box-sizing: border-box; border-bottom: 1px dashed #78716c; position: relative;">
+          <table style="width: max-content; margin: 0 auto; margin-top: auto; margin-bottom: auto; border-collapse: collapse; table-layout: fixed; height: 19cm;">
             <tbody>
               <tr>
                 ${colsHtml}
               </tr>
             </tbody>
           </table>
+          <span style="position: absolute; bottom: -6px; left: 0; font-size: 12px; color: #78716c; user-select: none;">✂</span>
         </div>
       `;
     })

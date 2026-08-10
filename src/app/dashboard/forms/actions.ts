@@ -194,7 +194,10 @@ export async function softDeleteForm(formId: string) {
 
     const { error } = await supabase
       .from('forms')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ 
+        deleted_at: new Date().toISOString(),
+        form_code: null
+      })
       .eq('id', formId)
 
     if (error) {

@@ -66,6 +66,11 @@ export function renderSoHtml(
       page-break-inside: avoid;
       break-inside: avoid;
     }
+    
+    .so-page-block:last-child {
+      page-break-after: auto;
+      break-after: auto;
+    }
 
     .empty-state {
       font-family: "Times New Roman", Times, serif;

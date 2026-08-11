@@ -82,7 +82,7 @@ export function generatePhungViToaViTemplate(
         .join('');
 
       return `
-        <div class="so-page-block horizontal-page" style="page-break-after: always; width: 297mm; height: 210mm; max-width: 297mm; max-height: 210mm; margin: 0 auto; padding: 8px; background: #ffffff; color: #000000; display: flex; align-items: center; justify-content: center; overflow: hidden; box-sizing: border-box;">
+        <div class="so-page-block horizontal-page" style="page-break-after: __PAGE_BREAK__; width: 297mm; height: 210mm; max-width: 297mm; max-height: 210mm; margin: 0 auto; padding: 8px; background: #ffffff; color: #000000; display: flex; align-items: center; justify-content: center; overflow: hidden; box-sizing: border-box;">
           <table style="width: max-content; margin: 0 auto; border-collapse: collapse; table-layout: fixed; height: 16cm;">
             <tbody>
               <tr>
@@ -92,6 +92,9 @@ export function generatePhungViToaViTemplate(
           </table>
         </div>
       `;
+    })
+    .map((html, idx, arr) => {
+      return html.replace('__PAGE_BREAK__', idx === arr.length - 1 ? 'auto' : 'always');
     })
     .join('');
 

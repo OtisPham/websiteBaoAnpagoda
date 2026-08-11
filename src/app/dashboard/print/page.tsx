@@ -51,7 +51,7 @@ export default async function PrintPage() {
         type
       )
     `)
-    .eq('status', 'Accepted')
+    .in('status', ['Accepted', 'Printed'])
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
 

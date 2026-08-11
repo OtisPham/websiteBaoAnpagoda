@@ -49,16 +49,21 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false)
   const [isDownloadingWord, setIsDownloadingWord] = useState(false)
   const [filterDate, setFilterDate] = useState<string>('ALL')
+  const [activeTab, setActiveTab] = useState<'CHUA_IN' | 'DA_IN'>('CHUA_IN')
 
   const selectedTemplateUrl = templates.find(t => t.id === selectedTemplateId)?.file_url
 
+  const chuaInForms = acceptedForms.filter(f => f.status === 'Accepted')
+  const daInForms = acceptedForms.filter(f => f.status === 'Printed')
+  const activeForms = activeTab === 'CHUA_IN' ? chuaInForms : daInForms
+
   // Lấy danh sách các ngày duy nhất để làm bộ lọc
-  const uniqueDates = Array.from(new Set(acceptedForms.map(f => f.scheduled_date).filter(Boolean))).sort()
+  const uniqueDates = Array.from(new Set(activeForms.map(f => f.scheduled_date).filter(Boolean))).sort()
   
   // Danh sách sớ đã được lọc
   const displayForms = filterDate === 'ALL' 
-    ? acceptedForms 
-    : acceptedForms.filter(f => f.scheduled_date === filterDate)
+    ? activeForms 
+    : activeForms.filter(f => f.scheduled_date === filterDate)
 
   // Toggle chọn phiếu
   const handleToggleSelect = (id: string) => {
@@ -225,9 +230,33 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
           </div>
 
           <div className="bg-white dark:bg-[#1c1816] p-6 rounded-2xl border border-stone-200 dark:border-stone-850 shadow-sm space-y-4">
+            
+            {/* Tabs */}
+            <div className="flex gap-6 border-b border-stone-200 dark:border-stone-800 w-full mb-4">
+              <button
+                onClick={() => { setActiveTab('CHUA_IN'); setFilterDate('ALL'); setSelectedIds([]); }}
+                className={`pb-3 font-semibold text-sm border-b-2 transition-colors ${
+                  activeTab === 'CHUA_IN' 
+                    ? 'border-amber-600 text-amber-700 dark:text-amber-500 dark:border-amber-500' 
+                    : 'border-transparent text-stone-500 hover:text-stone-700 dark:hover:text-stone-300'
+                }`}
+              >
+                Chưa in ({chuaInForms.length})
+              </button>
+              <button
+                onClick={() => { setActiveTab('DA_IN'); setFilterDate('ALL'); setSelectedIds([]); }}
+                className={`pb-3 font-semibold text-sm border-b-2 transition-colors ${
+                  activeTab === 'DA_IN' 
+                    ? 'border-amber-600 text-amber-700 dark:text-amber-500 dark:border-amber-500' 
+                    : 'border-transparent text-stone-500 hover:text-stone-700 dark:hover:text-stone-300'
+                }`}
+              >
+                Đã in ({daInForms.length})
+              </button>
+            </div>
+
             <div className="flex justify-between items-center flex-wrap gap-4">
               <div className="flex items-center gap-4">
-                <h3 className="font-serif text-lg font-bold">Phiếu Lễ Sẵn Sàng In ({displayForms.length})</h3>
                 {uniqueDates.length > 0 && (
                   <select
                     value={filterDate}
@@ -311,10 +340,10 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                       </td>
                     </tr>
                   ))}
-                  {acceptedForms.length === 0 && (
+                  {displayForms.length === 0 && (
                     <tr>
                       <td colSpan={6} className="text-center py-12 text-stone-400 italic">
-                        Không có phiếu sớ nào ở trạng thái chờ in cúng dường.
+                        Không có phiếu sớ nào trong danh sách này.
                       </td>
                     </tr>
                   )}

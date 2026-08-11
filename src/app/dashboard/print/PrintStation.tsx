@@ -445,10 +445,11 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               return pages.map((pageCols, pageIdx) => (
                 <div
                   key={`poster-page-${pageIdx}`}
-                  className="so-page-block bg-white text-black p-8 print:p-0 w-full print:w-full print:max-w-full print:h-[175mm] print:max-h-[175mm] print:border-none print:shadow-none print:m-0 break-after-page flex justify-center min-h-[50vh] print:min-h-0 overflow-hidden"
+                  className="so-page-block bg-white text-black p-8 print:p-4 w-full print:w-full print:max-w-full print:border-none print:shadow-none print:m-0 break-after-page flex justify-center min-h-[50vh] print:min-h-0"
                   style={{ pageBreakAfter: pageIdx === pages.length - 1 ? 'auto' : 'always', page: 'so-page' as any }}
                 >
-                  <table className="mx-auto border-collapse" style={{ width: 'max-content', height: printMode === 'PHUNG_VI' ? '16cm' : '19cm', tableLayout: 'fixed' }}>
+                  <table className="mx-auto" style={{ borderCollapse: 'separate', borderSpacing: 0, width: 'max-content', height: printMode === 'PHUNG_VI' ? '16cm' : '19cm', tableLayout: 'fixed' }}>
+
                     <tbody>
                       <tr>
                         {pageCols.map((col, colIdx) => (

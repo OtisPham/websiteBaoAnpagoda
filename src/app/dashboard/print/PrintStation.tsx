@@ -445,7 +445,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               return pages.map((pageCols, pageIdx) => (
                 <div
                   key={`poster-page-${pageIdx}`}
-                  className="so-page-block bg-white text-black p-8 print:p-4 w-full print:w-full print:max-w-full print:border-none print:shadow-none print:m-0 break-after-page flex justify-center min-h-[50vh] print:min-h-0"
+                  className="so-page-block bg-white text-black w-full print:w-[297mm] print:h-[210mm] border-none shadow-none m-0 p-8 print:p-0 break-after-page flex items-center justify-center min-h-[50vh] print:min-h-0 mx-auto"
                   style={{ pageBreakAfter: pageIdx === pages.length - 1 ? 'auto' : 'always', page: 'so-page' as any }}
                 >
                   <table className="mx-auto" style={{ borderCollapse: 'separate', borderSpacing: 0, width: 'max-content', height: printMode === 'PHUNG_VI' ? '16cm' : '19cm', tableLayout: 'fixed' }}>
@@ -557,7 +557,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                   <div key={`${form.id}-page-${pageIdx}`}>
                     {(formIdx > 0 || pageIdx > 0) && <hr className="my-12 border-t-[3px] border-dashed border-stone-300 dark:border-stone-700 print:hidden w-full max-w-[210mm] mx-auto" />}
                     <div
-                      className="so-page-block bg-white text-stone-900 p-8 print:p-0 w-full max-w-[210mm] print:w-full print:max-w-full print:h-[297mm] mx-auto break-after-page print:flex print:items-center print:justify-center"
+                      className="so-page-block bg-white text-stone-900 p-8 print:p-0 w-full max-w-[210mm] print:w-[210mm] print:h-[297mm] mx-auto break-after-page flex items-center justify-center print:flex print:items-center print:justify-center"
                       style={{ pageBreakAfter: isAbsolutelyLast ? 'auto' : 'always', page: 'so-portrait-page' as any }}
                     >
                     {/* Khung Sớ A4 Dọc Chuẩn gom vừa khít 1 trang A4 */}

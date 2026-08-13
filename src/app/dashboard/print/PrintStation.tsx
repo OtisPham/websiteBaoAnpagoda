@@ -62,9 +62,14 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
   const uniqueDates = Array.from(new Set(activeForms.map(f => f.scheduled_date).filter(Boolean))).sort()
   
   // Danh sách sớ đã được lọc
-  const displayForms = filterDate === 'ALL' 
+  const displayForms = (filterDate === 'ALL' 
     ? activeForms 
     : activeForms.filter(f => f.scheduled_date === filterDate)
+  ).sort((a, b) => {
+    if (!a.form_code) return 1;
+    if (!b.form_code) return -1;
+    return a.form_code.localeCompare(b.form_code, undefined, { numeric: true });
+  })
 
   // Toggle chọn phiếu
   const handleToggleSelect = (id: string) => {
@@ -203,9 +208,13 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
     <div className="space-y-6 print:space-y-0 print:m-0 print:p-0">
       <style>{`
         @media print {
+          @page {
+            size: ${printMode === 'POSTER' || printMode === 'PHUNG_VI' ? 'A4 landscape' : 'A4 portrait'};
+            margin: 0;
+          }
           @page so-portrait-page {
             size: A4 portrait;
-            margin: 0; /* Remove margin to hide headers/footers and prevent overflow */
+            margin: 0;
           }
           @page so-page {
             size: A4 landscape;
@@ -492,7 +501,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               return pages.map((pageCols, pageIdx) => (
                 <div
                   key={`poster-page-${pageIdx}`}
-                  className={`so-page-block bg-white text-black w-full max-w-[297mm] print:w-[297mm] print:h-[210mm] border-none shadow-none m-0 p-8 print:p-0 flex flex-col items-center justify-center min-h-[50vh] mx-auto print-center-container overflow-hidden ${pageIdx !== pages.length - 1 ? 'break-after-page' : ''}`}
+                  className={`so-page-block bg-white text-black w-full print:w-[297mm] print:h-[210mm] border-none shadow-none m-0 p-8 print:p-0 flex flex-col items-center justify-center min-h-[50vh] mx-auto print-center-container overflow-hidden ${pageIdx !== pages.length - 1 ? 'break-after-page' : ''}`}
                   style={{ pageBreakAfter: pageIdx === pages.length - 1 ? 'auto' : 'always', page: 'so-page' as any }}
                 >
                   <table className="mx-auto print-center-table" style={{ borderCollapse: 'separate', borderSpacing: 0, width: `${pageCols.length * 6.75}cm`, height: printMode === 'PHUNG_VI' ? '16cm' : '19cm', tableLayout: 'fixed' }}>

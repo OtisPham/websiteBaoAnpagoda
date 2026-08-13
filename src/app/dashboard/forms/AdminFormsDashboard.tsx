@@ -342,34 +342,6 @@ export default function AdminFormsDashboard({ forms, events }: Props) {
               Đứng tên: {form.targets.find(t => isTraiChu(t.relation))?.full_name}
             </p>
           )}
-
-          <div className="mt-3 bg-stone-50 rounded p-3">
-            <h4 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">
-              Danh sách ghi sớ ({form.targets.length} người)
-            </h4>
-            <div className="space-y-1">
-              {(() => {
-                const traiChuTarget = form.targets.find(t => isTraiChu(t.relation));
-                const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name || '';
-                const actualTargets = form.targets.filter(t => !isTraiChu(t.relation) && t.full_name.trim().toLowerCase() !== traiChuName.trim().toLowerCase());
-                return (
-                  <>
-                    {actualTargets.slice(0, 3).map((t, index) => (
-                      <div key={index} className="text-sm text-stone-700 flex justify-between">
-                        <span>{t.full_name}</span>
-                        {t.birth_year && <span className="text-stone-400">SN: {t.birth_year}</span>}
-                      </div>
-                    ))}
-                    {actualTargets.length > 3 && (
-                      <div className="text-xs text-stone-500 italic mt-1">
-                        ... và {actualTargets.length - 3} người khác...
-                      </div>
-                    )}
-                  </>
-                );
-              })()}
-            </div>
-          </div>
         </td>
         <td className="px-6 py-4 space-y-1">
           <div className="text-stone-700 dark:text-stone-300 font-medium text-xs">

@@ -501,8 +501,13 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               return pages.map((pageCols, pageIdx) => (
                 <div
                   key={`poster-page-${pageIdx}`}
-                  className={`so-page-block bg-white text-black w-full print:w-[297mm] print:h-[210mm] border-none shadow-none m-0 p-8 print:p-0 flex flex-col items-center justify-center min-h-[50vh] mx-auto print-center-container overflow-hidden ${pageIdx !== pages.length - 1 ? 'break-after-page' : ''}`}
-                  style={{ pageBreakAfter: pageIdx === pages.length - 1 ? 'auto' : 'always', page: 'so-page' as any }}
+                  className={`so-page-block bg-white text-black print:m-0 print:p-0 flex flex-col items-center justify-center mx-auto print-center-container overflow-hidden ${pageIdx !== pages.length - 1 ? 'break-after-page' : ''}`}
+                  style={{ 
+                    pageBreakAfter: pageIdx === pages.length - 1 ? 'auto' : 'always', 
+                    page: 'so-page' as any,
+                    width: '297mm',
+                    height: '210mm'
+                  }}
                 >
                   <table className="mx-auto print-center-table" style={{ borderCollapse: 'separate', borderSpacing: 0, width: `${pageCols.length * 6.75}cm`, height: printMode === 'PHUNG_VI' ? '16cm' : '19cm', tableLayout: 'fixed' }}>
 
@@ -613,8 +618,13 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                   <div key={`${form.id}-page-${pageIdx}`}>
                     {(formIdx > 0 || pageIdx > 0) && <hr className="my-12 border-t-[3px] border-dashed border-stone-300 dark:border-stone-700 print:hidden w-full max-w-[210mm] mx-auto" />}
                     <div
-                      className={`so-page-block bg-white text-stone-900 p-8 print:p-0 w-full max-w-[210mm] print:w-[210mm] print:h-[297mm] mx-auto flex items-center justify-center print:flex print:items-center print:justify-center ${!isAbsolutelyLast ? 'break-after-page' : ''}`}
-                      style={{ pageBreakAfter: isAbsolutelyLast ? 'auto' : 'always', page: 'so-portrait-page' as any }}
+                      className={`so-page-block bg-white text-stone-900 print:p-0 mx-auto flex items-center justify-center print:flex print:items-center print:justify-center print-center-container ${!isAbsolutelyLast ? 'break-after-page' : ''}`}
+                      style={{ 
+                        pageBreakAfter: !isAbsolutelyLast ? 'always' : 'auto', 
+                        page: 'so-portrait-page' as any,
+                        width: '210mm',
+                        height: '297mm'
+                      }}
                     >
                     {/* Khung Sớ A4 Dọc Chuẩn gom vừa khít 1 trang A4 */}
                     <div

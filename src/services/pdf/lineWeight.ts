@@ -1,4 +1,5 @@
 import { FormRecord, TargetPerson } from './types';
+import { isTraiChu } from '@/utils/so/isTraiChu';
 
 export const MAX_LINES_PER_COL_VERTICAL = 28;
 export const MAX_LINES_PER_COL_HORIZONTAL = 24;
@@ -143,7 +144,9 @@ export function chunkHorizontalColumns(
 
   for (const form of forms) {
     const shortCode = form.form_code ? form.form_code.slice(-3) : '';
-    const actualTargets = (form.targets || []).filter((t) => t.relation !== 'TRAI_CHU');
+    const traiChuTarget = (form.targets || []).find((t) => isTraiChu(t.relation));
+    const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name || '';
+    const actualTargets = (form.targets || []).filter((t) => !isTraiChu(t.relation) && t.full_name.trim().toLowerCase() !== traiChuName.trim().toLowerCase());
 
     let currentColNames: string[] = [];
     let currentLines = 0;

@@ -1,4 +1,5 @@
 import { FormRecord, TargetPerson, TemplateOptions } from '../types';
+import { isTraiChu } from '@/utils/so/isTraiChu';
 
 /**
  * HTML/CSS generator for Vertical A4 / Dọc A4 (A4 Portrait)
@@ -26,10 +27,10 @@ export function generateVerticalA4Template(
   return formList
     .map((form, index) => {
       const isCauAn = form.form_type === 'CAU_AN';
-      const traiChuTarget = (form.targets || []).find((t) => t.relation === 'TRAI_CHU');
-      const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name || 'Gia chủ';
-      const traiChuDharma = traiChuTarget?.dharma_name;
-      const actualTargets = (form.targets || []).filter((t) => t.relation !== 'TRAI_CHU');
+      const traiChuTarget = (form.targets || []).find((t) => isTraiChu(t.relation));
+      const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name || '';
+      const traiChuDharma = traiChuTarget?.dharma_name || '';
+      const actualTargets = (form.targets || []).filter((t) => !isTraiChu(t.relation) && t.full_name.trim().toLowerCase() !== traiChuName.trim().toLowerCase());
 
       const bgStyle = templateUrl
         ? `background-image: url('${escapeAttribute(templateUrl)}'); background-size: cover; background-position: center;`

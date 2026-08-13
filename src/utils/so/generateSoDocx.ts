@@ -17,6 +17,7 @@ import {
   ImageRun
 } from 'docx';
 import { saveAs } from 'file-saver';
+import { isTraiChu } from '@/utils/so/isTraiChu';
 
 // Loại bỏ những imports nội bộ nếu không tương thích browser,
 // chúng ta nhận data thuần từ PrintStation
@@ -49,10 +50,10 @@ export const generateSoDocxFromUI = async (
   if (printMode === 'READING') {
     // Chế độ A4 DỌC
     for (const form of selectedForms) {
-      const traiChuTarget = form.targets.find((t: any) => t.relation === 'TRAI_CHU');
-      const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name;
+      const traiChuTarget = form.targets.find((t: any) => isTraiChu(t.relation));
+      const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name || '';
       const traiChuDharma = traiChuTarget?.dharma_name;
-      const actualTargets = form.targets.filter((t: any) => t.relation !== 'TRAI_CHU');
+      const actualTargets = form.targets.filter((t: any) => !isTraiChu(t.relation) && t.full_name.trim().toLowerCase() !== traiChuName.trim().toLowerCase());
 
       const isCauAn = form.form_type === 'CAU_AN';
 
@@ -241,7 +242,9 @@ export const generateSoDocxFromUI = async (
 
     selectedForms.forEach((form) => {
       const shortCode = form.form_code.slice(-3);
-      const actualTargets = form.targets.filter((t: any) => t.relation !== 'TRAI_CHU');
+      const traiChuTarget = form.targets.find((t: any) => isTraiChu(t.relation));
+      const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name || '';
+      const actualTargets = form.targets.filter((t: any) => !isTraiChu(t.relation) && t.full_name.trim().toLowerCase() !== traiChuName.trim().toLowerCase());
       let currentCol: string[] = [];
       let currentLines = 0;
 

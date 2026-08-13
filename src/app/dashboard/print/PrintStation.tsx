@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Printer, Calendar, Clock, FileText, CheckCircle2, ChevronRight, RefreshCw, X } from 'lucide-react'
 import { markAsPrinted } from './actions'
+import { isTraiChu } from '@/utils/so/isTraiChu'
 
 interface TargetPerson {
   id: string
@@ -442,7 +443,9 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
 
               selectedForms.forEach((form) => {
                 const shortCode = form.form_code.slice(-3)
-                const actualTargets = form.targets.filter(t => t.relation !== 'TRAI_CHU')
+                const traiChuTarget = form.targets.find((t: any) => isTraiChu(t.relation))
+                const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name || ''
+                const actualTargets = form.targets.filter((t: any) => !isTraiChu(t.relation) && t.full_name.trim().toLowerCase() !== traiChuName.trim().toLowerCase())
 
                 let currentCol: string[] = []
                 let currentLines = 0
@@ -565,10 +568,10 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                 </div>
               ))
             })() : selectedForms.map((form, formIdx) => {
-              const traiChuTarget = form.targets.find(t => t.relation === 'TRAI_CHU')
-              const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name
+              const traiChuTarget = form.targets.find((t: any) => isTraiChu(t.relation))
+              const traiChuName = traiChuTarget ? traiChuTarget.full_name : form.users?.full_name || ''
               const traiChuDharma = traiChuTarget?.dharma_name
-              const actualTargets = form.targets.filter(t => t.relation !== 'TRAI_CHU')
+              const actualTargets = form.targets.filter((t: any) => !isTraiChu(t.relation) && t.full_name.trim().toLowerCase() !== traiChuName.trim().toLowerCase())
 
               const MAX_ITEMS_PER_PAGE = 30;
               const pagesData: TargetPerson[][] = [];

@@ -272,15 +272,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                 )}
               </div>
               <div className="flex gap-3">
-                {selectedIds.length > 0 && (
-                  <button
-                    onClick={handlePreparePrint}
-                    className="flex items-center gap-2 bg-amber-700 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-amber-800 transition text-xs"
-                  >
-                    <Printer className="h-4 w-4" />
-                    Chuẩn bị in sớ ({selectedIds.length} phiếu)
-                  </button>
-                )}
+                {/* Nút chuẩn bị in sớ đã được di chuyển xuống floating bar bên dưới để tiện lợi hơn */}
               </div>
             </div>
 
@@ -352,6 +344,28 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               </table>
             </div>
           </div>
+
+          {/* Floating Action Bar - Premium Glassmorphism UI */}
+          {selectedIds.length > 0 && (
+            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-white/85 dark:bg-stone-900/85 backdrop-blur-xl px-2 py-2 rounded-full shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] border border-stone-200/60 dark:border-stone-700/60 flex items-center gap-4 transition-all duration-300">
+              <div className="flex items-center gap-3 pl-4 pr-2">
+                <div className="bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400 font-bold h-7 w-7 rounded-full flex items-center justify-center text-xs">
+                  {selectedIds.length}
+                </div>
+                <span className="text-sm font-medium text-stone-700 dark:text-stone-300">
+                  phiếu đã chọn
+                </span>
+              </div>
+              <div className="w-px h-6 bg-stone-300 dark:bg-stone-700"></div>
+              <button
+                onClick={handlePreparePrint}
+                className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold px-6 py-2.5 rounded-full shadow-lg shadow-amber-600/30 hover:shadow-amber-600/50 hover:-translate-y-0.5 transition-all duration-200 text-sm"
+              >
+                <Printer className="h-4 w-4" />
+                Chuẩn bị in sớ
+              </button>
+            </div>
+          )}
         </>
       ) : (
         // GIAO DIỆN IN SỚ (Full-screen Overlay & Horizontal Writing Mode)
@@ -436,7 +450,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
           <div className="so-print-layout print:m-0 print:p-0">
             {printMode === 'POSTER' || printMode === 'PHUNG_VI' ? (() => {
               // Gom TẤT CẢ các cột từ tất cả các sớ được chọn (selectedForms) để xếp kề bên nhau trên cùng trang
-              const MAX_LINES_PER_COL = printMode === 'PHUNG_VI' ? 15 : 26
+              const MAX_LINES_PER_COL = printMode === 'PHUNG_VI' ? 15 : 25
               const MAX_COLS_PER_PAGE = 4
 
               const allColumns: { shortCode: string; names: string[] }[] = []
@@ -452,7 +466,8 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
 
                 actualTargets.forEach((t) => {
                   const name = t.full_name.trim()
-                  const linesNeeded = 1
+                  const wordCount = name ? name.split(/\s+/).length : 0;
+                  const linesNeeded = wordCount >= 4 || name.length >= 15 ? 2 : 1;
 
                   if (currentLines + linesNeeded > MAX_LINES_PER_COL && currentCol.length > 0) {
                     allColumns.push({ shortCode, names: currentCol })
@@ -477,7 +492,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               return pages.map((pageCols, pageIdx) => (
                 <div
                   key={`poster-page-${pageIdx}`}
-                  className={`so-page-block bg-white text-black w-full print:w-full print:h-[100vh] border-none shadow-none m-0 p-8 print:p-0 flex flex-col items-center justify-center min-h-[50vh] mx-auto print-center-container ${pageIdx !== pages.length - 1 ? 'break-after-page' : ''}`}
+                  className={`so-page-block bg-white text-black w-full max-w-[297mm] print:w-[297mm] print:h-[210mm] border-none shadow-none m-0 p-8 print:p-0 flex flex-col items-center justify-center min-h-[50vh] mx-auto print-center-container overflow-hidden ${pageIdx !== pages.length - 1 ? 'break-after-page' : ''}`}
                   style={{ pageBreakAfter: pageIdx === pages.length - 1 ? 'auto' : 'always', page: 'so-page' as any }}
                 >
                   <table className="mx-auto print-center-table" style={{ borderCollapse: 'separate', borderSpacing: 0, width: `${pageCols.length * 6.75}cm`, height: printMode === 'PHUNG_VI' ? '16cm' : '19cm', tableLayout: 'fixed' }}>

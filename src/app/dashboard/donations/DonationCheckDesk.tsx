@@ -59,6 +59,10 @@ export default function DonationCheckDesk({ pendingForms }: Props) {
     const targetMatch = f.targets.some((t) => t.full_name.toLowerCase().includes(searchTerm.toLowerCase()))
     
     return searchTerm === '' || codeMatch || userMatch || targetMatch
+  }).sort((a, b) => {
+    if (!a.form_code) return 1;
+    if (!b.form_code) return -1;
+    return a.form_code.localeCompare(b.form_code, undefined, { numeric: true });
   })
 
   // Chọn phiếu từ danh sách

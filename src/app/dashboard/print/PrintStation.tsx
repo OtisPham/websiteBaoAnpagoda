@@ -501,13 +501,16 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
               return pages.map((pageCols, pageIdx) => (
                 <div
                   key={`poster-page-${pageIdx}`}
-                  className={`so-page-block bg-white text-black w-full min-h-[50vh] print:min-h-[100vh] print:m-0 print:p-0 flex flex-col items-center justify-center mx-auto overflow-hidden ${pageIdx !== pages.length - 1 ? 'break-after-page' : ''}`}
+                  className={`so-page-block bg-white text-black w-full min-h-[50vh] print:h-[98vh] print:w-full print:m-0 print:p-0 relative overflow-hidden flex flex-col items-center justify-center print:block ${pageIdx !== pages.length - 1 ? 'break-after-page' : ''}`}
                   style={{ 
                     pageBreakAfter: pageIdx === pages.length - 1 ? 'auto' : 'always', 
                     page: 'so-page' as any
                   }}
                 >
-                  <table className="mx-auto" style={{ borderCollapse: 'separate', borderSpacing: 0, width: `${pageCols.length * 6.75}cm`, height: printMode === 'PHUNG_VI' ? '16cm' : '19cm', tableLayout: 'fixed' }}>
+                  <table 
+                    className="mx-auto print:absolute print:top-[50%] print:left-[50%] print:transform print:-translate-x-1/2 print:-translate-y-1/2 print:m-0" 
+                    style={{ borderCollapse: 'separate', borderSpacing: 0, width: `${pageCols.length * 6.75}cm`, height: printMode === 'PHUNG_VI' ? '16cm' : '19cm', tableLayout: 'fixed' }}
+                  >
 
                     <tbody>
                       <tr>
@@ -616,7 +619,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                   <div key={`${form.id}-page-${pageIdx}`}>
                     {(formIdx > 0 || pageIdx > 0) && <hr className="my-12 border-t-[3px] border-dashed border-stone-300 dark:border-stone-700 print:hidden w-full max-w-[210mm] mx-auto" />}
                     <div
-                      className={`bg-white text-stone-900 w-full min-h-[50vh] print:min-h-[100vh] print:p-0 mx-auto flex items-center justify-center print:flex print:items-center print:justify-center ${!isAbsolutelyLast ? 'break-after-page' : ''}`}
+                      className={`bg-white text-stone-900 w-full min-h-[50vh] print:h-[98vh] print:w-full print:p-0 relative flex items-center justify-center print:block ${!isAbsolutelyLast ? 'break-after-page' : ''}`}
                       style={{ 
                         pageBreakAfter: !isAbsolutelyLast ? 'always' : 'auto', 
                         page: 'so-portrait-page' as any
@@ -624,7 +627,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                     >
                     {/* Khung Sớ A4 Dọc Chuẩn gom vừa khít 1 trang A4 */}
                     <div
-                      className="relative w-full h-[270mm] max-h-[270mm] print:h-[270mm] print:max-h-[270mm] print:w-[190mm] print:max-w-[190mm] overflow-hidden border-2 border-amber-900/40 print:border-amber-900/60 rounded-xl p-8 print:p-6 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:shadow-none"
+                      className="print-wrapper mx-auto print:absolute print:top-[50%] print:left-[50%] print:transform print:-translate-x-1/2 print:-translate-y-1/2 print:m-0 relative w-full h-[270mm] max-h-[270mm] print:h-[270mm] print:max-h-[270mm] print:w-[190mm] print:max-w-[190mm] overflow-hidden border-2 border-amber-900/40 print:border-amber-900/60 rounded-xl p-8 print:p-6 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:shadow-none"
                       style={{
                         backgroundImage: selectedTemplateUrl ? `url(${selectedTemplateUrl})` : 'none',
                         backgroundSize: 'cover',

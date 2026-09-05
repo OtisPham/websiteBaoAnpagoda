@@ -39,11 +39,15 @@ export default function AdminSidebar({ currentPath = '/admin' }: AdminSidebarPro
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
-                currentPath === item.href
-                  ? 'bg-amber-600 text-white shadow-sm'
-                  : 'text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
-              }`}
+              prefetch={true}
+              className={`
+                flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                ${
+                  currentPath === item.href
+                    ? 'bg-amber-100 text-amber-900 font-semibold shadow-sm'
+                    : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
+                }
+              `}
             >
               <item.icon className="h-4 w-4" />
               <span>{item.title}</span>

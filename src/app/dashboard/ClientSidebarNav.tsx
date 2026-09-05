@@ -86,6 +86,7 @@ export default function ClientSidebarNav({ role }: { role: string }) {
           <Link
             key={index}
             href={item.href}
+            prefetch={true}
             className={`flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium rounded-xl transition-all duration-150 active:scale-[0.99] ${
               isActive
                 ? 'bg-[#8B4513] text-white dark:bg-amber-500 dark:text-stone-900 shadow-md shadow-[#8B4513]/20 dark:shadow-amber-900/20'

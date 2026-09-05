@@ -620,16 +620,17 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                   <div key={`${form.id}-page-${pageIdx}`}>
                     {(formIdx > 0 || pageIdx > 0) && <hr className="my-12 border-t-[3px] border-dashed border-stone-300 dark:border-stone-700 print:hidden w-full max-w-[210mm] mx-auto" />}
                     <div
-                      className={`bg-white text-stone-900 w-full min-h-[50vh] print:h-[98vh] print:w-full print:p-0 relative print:block ${!isAbsolutelyLast ? 'break-after-page' : ''}`}
+                      className={`so-page-block bg-white text-stone-900 w-full min-h-[50vh] print:h-[98vh] print:w-full print:p-0 relative print:block ${!isAbsolutelyLast ? 'break-after-page' : ''}`}
                       style={{ 
                         pageBreakAfter: !isAbsolutelyLast ? 'always' : 'auto', 
                         page: 'so-portrait-page' as any,
-                        paddingTop: '13.5mm'
+                        paddingTop: '13.5mm',
+                        paddingBottom: '13.5mm'
                       }}
                     >
                     {/* Khung Sớ A4 Dọc Chuẩn gom vừa khít 1 trang A4 */}
                     <div
-                      className="print-wrapper mx-auto relative w-full h-[270mm] max-h-[270mm] print:h-[270mm] print:max-h-[270mm] print:w-[190mm] print:max-w-[190mm] overflow-hidden border-2 border-amber-900/40 print:border-amber-900/60 rounded-xl p-8 print:p-6 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:shadow-none"
+                      className="print-wrapper mx-auto relative w-[190mm] max-w-[190mm] h-[270mm] max-h-[270mm] print:h-[270mm] print:max-h-[270mm] print:w-[190mm] print:max-w-[190mm] overflow-hidden border-2 border-amber-900/40 print:border-amber-900/60 rounded-xl p-8 print:p-6 bg-[#fdfbf7] flex flex-col justify-between shadow-sm print:shadow-none"
                       style={{
                         backgroundImage: selectedTemplateUrl ? `url(${selectedTemplateUrl})` : 'none',
                         backgroundSize: 'cover',

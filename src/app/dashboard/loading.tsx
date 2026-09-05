@@ -1,17 +1,23 @@
 import React from 'react'
-import { Loader2 } from 'lucide-react'
 
 export default function DashboardLoading() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center min-h-[50vh] p-8">
       <div className="bg-white/50 dark:bg-stone-900/50 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in duration-300">
-        <Loader2 className="h-10 w-10 text-amber-600 dark:text-amber-500 animate-spin" />
+        <div className="relative w-32 h-32 mb-2 animate-bounce">
+          {/* We assume the user will save their image as /images/chu-tieu-loading.png */}
+          <img 
+            src="/images/chu-tieu-loading.png" 
+            alt="Chú tiểu đang chạy" 
+            className="w-full h-full object-contain"
+          />
+        </div>
         <div className="space-y-1 text-center">
           <p className="font-serif font-bold text-amber-950 dark:text-amber-100 text-lg">
-            Đang tải dữ liệu...
+            Chờ chú tiểu xíu...
           </p>
           <p className="text-sm text-stone-500 dark:text-stone-400">
-            Xin quý vị hoan hỷ chờ trong giây lát
+            Đang chạy đi lấy dữ liệu cho quý vị
           </p>
         </div>
       </div>

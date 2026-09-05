@@ -695,7 +695,7 @@ export default function PrintStation({ acceptedForms, templates }: Props) {
                         <div className="mt-4 flex-1">
                           <h3 className="font-serif font-bold text-center text-sm uppercase tracking-wider text-amber-900 border-b border-amber-900/20 pb-2 mb-3">
                             {form.form_type === 'CAU_AN'
-                              ? 'Danh Sách Hương Linh & Phật Tử Cầu An Tiêu Tai'
+                              ? 'Danh Sách Tín Chủ & Phật Tử Cầu An Tiêu Tai'
                               : 'Danh Sách Chư Hương Linh Phục Nguyện Siêu Độ'}
                           </h3>
 
